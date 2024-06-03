@@ -1,0 +1,8 @@
+all = [
+{'id': 18873, 'name': 'Bafing', 'state_id': 2650, 'state_code': 'WR', 'state_name': 'Woroba District', 'country_id': 54, 'country_code': 'CI', 'country_name': "Cote D'Ivoire (Ivory Coast)", 'latitude': '8.40611000', 'longitude': '-7.58048000', 'wikiDataId': 'Q799800'},
+{'id': 18888, 'name': 'Béré', 'state_id': 2650, 'state_code': 'WR', 'state_name': 'Woroba District', 'country_id': 54, 'country_code': 'CI', 'country_name': "Cote D'Ivoire (Ivory Coast)", 'latitude': '8.18952000', 'longitude': '-6.17157000', 'wikiDataId': 'Q2922170'},
+{'id': 18920, 'name': 'Mankono', 'state_id': 2650, 'state_code': 'WR', 'state_name': 'Woroba District', 'country_id': 54, 'country_code': 'CI', 'country_name': "Cote D'Ivoire (Ivory Coast)", 'latitude': '8.05861000', 'longitude': '-6.18972000', 'wikiDataId': 'Q1191011'},
+{'id': 18932, 'name': 'Séguéla', 'state_id': 2650, 'state_code': 'WR', 'state_name': 'Woroba District', 'country_id': 54, 'country_code': 'CI', 'country_name': "Cote D'Ivoire (Ivory Coast)", 'latitude': '7.96111000', 'longitude': '-6.67306000', 'wikiDataId': 'Q952665'},
+{'id': 18937, 'name': 'Touba', 'state_id': 2650, 'state_code': 'WR', 'state_name': 'Woroba District', 'country_id': 54, 'country_code': 'CI', 'country_name': "Cote D'Ivoire (Ivory Coast)", 'latitude': '8.28333000', 'longitude': '-7.68333000', 'wikiDataId': 'Q2308752'},
+{'id': 18941, 'name': 'Worodougou', 'state_id': 2650, 'state_code': 'WR', 'state_name': 'Woroba District', 'country_id': 54, 'country_code': 'CI', 'country_name': "Cote D'Ivoire (Ivory Coast)", 'latitude': '8.16482000', 'longitude': '-6.66595000', 'wikiDataId': 'Q2308752'},
+]

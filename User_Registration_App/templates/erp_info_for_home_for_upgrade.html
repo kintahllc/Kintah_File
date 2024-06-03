@@ -1,0 +1,312 @@
+<!-- erp_info_form.html -->
+{% extends 'home_base.html' %}
+{% block home_content %}
+  <style>
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    textarea,
+    button {
+      width: 100%;
+      padding: 10px;
+
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+
+
+
+  <h2>ERP Info Form</h2>
+
+  <form method="post" action="{% url 'erp_info_check_for_upgrade' %}">
+    {% csrf_token %}
+
+    <label for="erp_name">ERP Name:</label>
+    {% if erp_info.erp_name %}
+    <input type="text" id="erp_name" name="erp_name" value="{{erp_info.erp_name}}" readonly>
+    {% else %}
+    <input type="text" id="erp_name" name="erp_name" required>
+    {% endif %}
+
+
+    <input type="hidden" id="" name="sub_id" value="{{sub_id}}">
+
+
+    <label for="erp_site_name">ERP Site Name:</label>
+    {% if erp_info.erp_site_name %}
+    <input type="text" id="erp_site_name" name="erp_site_name" value="{{erp_info.erp_site_name}}" readonly>
+    {% else %}
+    <input type="text" id="erp_site_name" name="erp_site_name" required>
+    {% endif %}
+
+    <label for="erp_admin_user_name">ERP Admin User Name:</label>
+    {% if erp_info.erp_admin_user_name %}
+    <input type="text" id="erp_admin_user_name" name="erp_admin_user_name" value="{{erp_info.erp_admin_user_name}}" readonly>
+    {% else %}
+    <input type="text" id="erp_admin_user_name" name="erp_admin_user_name" required>
+    {% endif %}
+
+    <label for="erp_admin_pw_encrypted">ERP Admin Password (Encrypted):</label>
+    {% if erp_info.erp_admin_pw_encrypted %}
+    <input type="password" id="erp_admin_pw_encrypted" name="erp_admin_pw_encrypted" value="{{erp_info.erp_admin_pw_encrypted}}" readonly>
+    {% else %}
+    <input type="password" id="erp_admin_pw_encrypted" name="erp_admin_pw_encrypted" required>
+    {% endif %}
+
+
+    <label for="erp_api_key_encrypted">ERP API Key (Encrypted):</label>
+    {% if erp_info.erp_api_key_encrypted %}
+    <input type="password" id="erp_api_key_encrypted" name="erp_api_key" value="{{erp_info.erp_api_key_encrypted}}" readonly>
+    {% else %}
+    <input type="password" id="erp_api_key_encrypted" name="erp_api_key" required>
+    {% endif %}
+
+    <label for="erp_api_secret_encrypted">ERP API Secret (Encrypted):</label>
+    {% if erp_info.erp_api_secret_encrypted %}
+    <input type="password" id="erp_api_secret_encrypted" name="erp_api_secret" value="{{erp_info.erp_api_secret_encrypted}}" readonly>
+    {% else %}
+    <input type="password" id="erp_api_secret_encrypted" name="erp_api_secret" required>
+    {% endif %}
+
+    <label for="erp_page_about_us_content">About Us Content:</label>
+    {% if erp_info.erp_page_about_us_content %}
+    <textarea id="erp_page_about_us_content" name="erp_page_about_us_content" rows="4" readonly>{{erp_info.erp_page_about_us_content}}</textarea>
+    {% else %}
+    <textarea id="erp_page_about_us_content" name="erp_page_about_us_content" rows="4" required></textarea>
+    {% endif %}
+
+    <label for="erp_page_contact_us_content">Contact Us Content:</label>
+    {% if erp_info.erp_page_contact_us_content %}
+    <textarea id="erp_page_contact_us_content" name="erp_page_contact_us_content" rows="4" readonly>{{erp_info.erp_page_contact_us_content}}</textarea>
+    {% else %}
+    <textarea id="erp_page_contact_us_content" name="erp_page_contact_us_content" rows="4" required></textarea>
+    {% endif %}
+
+    <label for="erp_pages_root_email">Root Email:</label>
+    {% if erp_info.erp_pages_root_email %}
+    <input type="password" id="erp_pages_root_email" name="erp_pages_root_email" required autocomplete="new-password" value="{{erp_info.erp_pages_root_email}}" readonly>
+    {% else %}
+    <input type="password" id="erp_pages_root_email" name="erp_pages_root_email" required autocomplete="new-password">
+    {% endif %}
+
+    <label for="erp_pages_root_email_pw_encrypted">Root Email Password (Encrypted):</label>
+    {% if erp_info.erp_pages_root_email_pw_encrypted %}
+    <input type="password" id="erp_pages_root_email_pw_encrypted" name="erp_pages_root_email_pw" value="{{erp_info.erp_pages_root_email_pw_encrypted}}" readonly>
+    {% else %}
+    <input type="password" id="erp_pages_root_email_pw_encrypted" name="erp_pages_root_email_pw" required>
+    {% endif %}
+
+    <label for="erp_country">Country:</label>
+    {% if erp_info.erp_country %}
+    <input type="text" id="erp_country" name="erp_country" value="{{erp_info.erp_country}}" readonly>
+    {% else %}
+    <input type="text" id="erp_country" name="erp_country" required>
+    {% endif %}
+
+    <label for="erp_timezone">Timezone:</label>
+    {% if erp_info.erp_timezone %}
+<!--    <input type="text" id="erp_timezone" name="erp_timezone" value="{{sub_id_info.erp_timezone}}" readonly>-->
+
+    <select id="erp_timezone" name="erp_timezone" required>
+      <option value="{{erp_info.erp_timezone}}">{{erp_info.erp_timezone}}</option>
+      {% for timezone in timezone_all %}
+        <option value="{{ timezone.utc.0 }}">{{ timezone.text }}</option>
+      {% endfor %}
+    </select>
+    {% else %}
+    <select id="erp_timezone" name="erp_timezone" required>
+      {% for timezone in timezone_all %}
+        <option value="{{ timezone.utc.0 }}">{{ timezone.text }}</option>
+      {% endfor %}
+    </select>
+<!--    <input type="text" id="erp_timezone" name="erp_timezone" required>-->
+    {% endif %}
+<br>
+    <label for="erp_contact_phone">Contact Phone:</label>
+    {% if erp_info.erp_contact_phone %}
+    <input type="text" id="erp_contact_phone" name="erp_contact_phone" value="{{erp_info.erp_contact_phone}}" readonly>
+    {% else %}
+    <input type="text" id="erp_contact_phone" name="erp_contact_phone" required>
+    {% endif %}
+
+    <label for="erp_contact_email">Contact Email:</label>
+    {% if erp_info.erp_contact_email %}
+    <input type="email" id="erp_contact_email" name="erp_contact_email" value="{{erp_info.erp_contact_email}}" readonly>
+    {% else %}
+    <input type="email" id="erp_contact_email" name="erp_contact_email" required>
+    {% endif %}
+
+    <label for="erp_whatsapp_phone">WhatsApp Phone:</label>
+    {% if erp_info.erp_whatsapp_phone %}
+    <input type="text" id="erp_whatsapp_phone" name="erp_whatsapp_phone" value="{{erp_info.erp_whatsapp_phone}}" readonly>
+    {% else %}
+    <input type="text" id="erp_whatsapp_phone" name="erp_whatsapp_phone" required>
+    {% endif %}
+
+    <label for="erp_email_account_name">Email Account Name:</label>
+    {% if erp_info.erp_email_account_name %}
+    <input type="text" id="erp_email_account_name" name="erp_email_account_name" value="{{erp_info.erp_email_account_name}}" readonly>
+    {% else %}
+    <input type="text" id="erp_email_account_name" name="erp_email_account_name" required>
+    {% endif %}
+
+    <label for="erp_email_id">Email ID:</label>
+    {% if erp_info.erp_email_id %}
+    <input type="email" id="erp_email_id" name="erp_email_id" value="{{erp_info.erp_email_id}}" readonly>
+    {% else %}
+    <input type="email" id="erp_email_id" name="erp_email_id" required>
+    {% endif %}
+
+    <label for="erp_email_account_password">Email Account Password:</label>
+    {% if erp_info.erp_email_account_password_encrypted %}
+    <input type="password" id="erp_email_account_password" name="erp_email_account_password" value="{{erp_info.erp_email_account_password_encrypted}}" readonly>
+    {% else %}
+    <input type="password" id="erp_email_account_password" name="erp_email_account_password" required>
+    {% endif %}
+
+    <label for="erp_smtp_server">SMTP Server:</label>
+    {% if erp_info.erp_smtp_server %}
+    <input type="text" id="erp_smtp_server" name="erp_smtp_server" value="{{erp_info.erp_smtp_server}}" readonly>
+    {% else %}
+    <input type="text" id="erp_smtp_server" name="erp_smtp_server" required>
+    {% endif %}
+
+    <label for="erp_smtp_port">SMTP Port:</label>
+    {% if erp_info.erp_smtp_port %}
+    <input type="number" id="erp_smtp_port" name="erp_smtp_port" value="{{erp_info.erp_smtp_port}}" readonly>
+    {% else %}
+    <input type="number" id="erp_smtp_port" name="erp_smtp_port" required>
+    {% endif %}
+
+    <label for="erp_use_tls">Use TLS:</label>
+    {% if erp_info.erp_use_tls %}
+    <input type="checkbox" id="erp_use_tls" name="erp_use_tls" checked readonly>
+    {% else %}
+    <input type="checkbox" id="erp_use_tls" name="erp_use_tls">
+    {% endif %}
+
+    <label for="erp_use_ssl">Use SSL:</label>
+    {% if erp_info.erp_use_ssl %}
+    <input type="checkbox" id="erp_use_ssl" name="erp_use_ssl" checked readonly>
+    {% else %}
+    <input type="checkbox" id="erp_use_ssl" name="erp_use_ssl">
+    {% endif %}
+
+    <label for="erp_imap_server">IMAP Server:</label>
+    {% if erp_info.erp_imap_server %}
+    <input type="text" id="erp_imap_server" name="erp_imap_server" value="{{erp_info.erp_imap_server}}" readonly>
+    {% else %}
+    <input type="text" id="erp_imap_server" name="erp_imap_server" required>
+    {% endif %}
+
+    <label for="erp_imap_port">IMAP Port:</label>
+    {% if erp_info.erp_imap_port %}
+    <input type="number" id="erp_imap_port" name="erp_imap_port" value="{{erp_info.erp_imap_port}}" readonly>
+    {% else %}
+    <input type="number" id="erp_imap_port" name="erp_imap_port" required>
+    {% endif %}
+
+    <label for="erp_stripe_account_id_encrypted">Stripe Account ID (Encrypted):</label>
+    {% if erp_info.erp_stripe_account_id_encrypted %}
+    <input type="password" id="erp_stripe_account_id_encrypted" name="erp_stripe_account_id" value="{{erp_info.erp_stripe_account_id_encrypted}}" readonly>
+    {% else %}
+    <input type="password" id="erp_stripe_account_id_encrypted" name="erp_stripe_account_id" required>
+    {% endif %}
+
+    <label for="erp_stripe_access_key_encrypted">Stripe Access Key (Encrypted):</label>
+    {% if erp_info.erp_stripe_access_key_encrypted %}
+    <input type="password" id="erp_stripe_access_key_encrypted" name="erp_stripe_access_key" value="{{erp_info.erp_stripe_access_key_encrypted}}" readonly>
+    {% else %}
+    <input type="password" id="erp_stripe_access_key_encrypted" name="erp_stripe_access_key" required>
+    {% endif %}
+
+    <label for="erp_stripe_api_secret_encrypted">Stripe API Secret (Encrypted):</label>
+    {% if erp_info.erp_stripe_api_secret_encrypted %}
+    <input type="password" id="erp_stripe_api_secret_encrypted" name="erp_stripe_api_secret" value="{{erp_info.erp_stripe_api_secret_encrypted}}" readonly>
+    {% else %}
+    <input type="password" id="erp_stripe_api_secret_encrypted" name="erp_stripe_api_secret" required>
+    {% endif %}
+
+    <label for="erp_shipper_name">Shipper Name:</label>
+    {% if erp_info.erp_shipper_name %}
+    <input type="text" id="erp_shipper_name" name="erp_shipper_name" value="{{erp_info.erp_shipper_name}}" readonly>
+    {% else %}
+    <input type="text" id="erp_shipper_name" name="erp_shipper_name" required>
+    {% endif %}
+
+    <label for="erp_shipper_api_key_encrypted">Shipper API Key (Encrypted):</label>
+    {% if erp_info.erp_shipper_api_key_encrypted %}
+    <input type="password" id="erp_shipper_api_key_encrypted" name="erp_shipper_api_key" value="{{erp_info.erp_shipper_api_key_encrypted}}" readonly>
+    {% else %}
+    <input type="password" id="erp_shipper_api_key_encrypted" name="erp_shipper_api_key" required>
+    {% endif %}
+
+    <label for="erp_shipper_api_secret_encrypted">Shipper API Secret (Encrypted):</label>
+    {% if erp_info.erp_shipper_api_secret_encrypted %}
+    <input type="password" id="erp_shipper_api_secret_encrypted" name="erp_shipper_api_secret" value="{{erp_info.erp_shipper_api_secret_encrypted}}" readonly>
+    {% else %}
+    <input type="password" id="erp_shipper_api_secret_encrypted" name="erp_shipper_api_secret" required>
+    {% endif %}
+
+    <label for="erp_whatsup_api_url">WhatsApp API URL:</label>
+    {% if erp_info.erp_whatsup_api_url %}
+    <input type="text" id="erp_whatsup_api_url" name="erp_whatsup_api_url" value="{{erp_info.erp_whatsup_api_url}}" readonly>
+    {% else %}
+    <input type="text" id="erp_whatsup_api_url" name="erp_whatsup_api_url" required>
+    {% endif %}
+
+    <label for="erp_whatsup_api_token_encrypted">WhatsApp API Token (Encrypted):</label>
+    {% if erp_info.erp_whatsup_api_token_encrypted %}
+    <input type="password" id="erp_whatsup_api_token_encrypted" name="erp_whatsup_api_token" value="{{erp_info.erp_whatsup_api_token_encrypted}}" readonly>
+    {% else %}
+    <input type="password" id="erp_whatsup_api_token_encrypted" name="erp_whatsup_api_token" required>
+    {% endif %}
+
+    <label for="erp_whatsup_version">WhatsApp Version:</label>
+    {% if erp_info.erp_whatsup_version %}
+    <input type="text" id="erp_whatsup_version" name="erp_whatsup_version" value="{{erp_info.erp_whatsup_version}}" readonly>
+    {% else %}
+    <input type="text" id="erp_whatsup_version" name="erp_whatsup_version" required>
+    {% endif %}
+
+    <label for="erp_whatsup_phone_id">WhatsApp Phone ID:</label>
+    {% if erp_info.erp_whatsup_phone_id %}
+    <input type="text" id="erp_whatsup_phone_id" name="erp_whatsup_phone_id" value="{{erp_info.erp_whatsup_phone_id}}" readonly>
+    {% else %}
+    <input type="text" id="erp_whatsup_phone_id" name="erp_whatsup_phone_id" required>
+    {% endif %}
+
+    <label for="erp_whatsup_business_id">WhatsApp Business ID:</label>
+    {% if erp_info.erp_whatsup_business_id %}
+    <input type="text" id="erp_whatsup_business_id" name="erp_whatsup_business_id" value="{{erp_info.erp_whatsup_business_id}}" readonly>
+    {% else %}
+    <input type="text" id="erp_whatsup_business_id" name="erp_whatsup_business_id" required>
+    {% endif %}
+
+    <!-- Add more fields as needed -->
+
+    <button type="submit">Submit</button>
+  </form>
+
+
+{% endblock %}

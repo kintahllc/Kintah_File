@@ -1,0 +1,13 @@
+all = [
+{'id': 31880, 'name': '‘Izbat al Burj', 'state_id': 3245, 'state_code': 'DK', 'state_name': 'Dakahlia', 'country_id': 65, 'country_code': 'EG', 'country_name': 'Egypt', 'latitude': '31.50840000', 'longitude': '31.84106000', 'wikiDataId': 'Q1010823'},
+{'id': 31762, 'name': 'Ajā', 'state_id': 3245, 'state_code': 'DK', 'state_name': 'Dakahlia', 'country_id': 65, 'country_code': 'EG', 'country_name': 'Egypt', 'latitude': '30.94162000', 'longitude': '31.29039000', 'wikiDataId': 'Q10961074'},
+{'id': 31770, 'name': 'Al Jammālīyah', 'state_id': 3245, 'state_code': 'DK', 'state_name': 'Dakahlia', 'country_id': 65, 'country_code': 'EG', 'country_name': 'Egypt', 'latitude': '31.18065000', 'longitude': '31.86497000', 'wikiDataId': 'Q203299'},
+{'id': 31775, 'name': 'Al Manşūrah', 'state_id': 3245, 'state_code': 'DK', 'state_name': 'Dakahlia', 'country_id': 65, 'country_code': 'EG', 'country_name': 'Egypt', 'latitude': '31.03637000', 'longitude': '31.38069000', 'wikiDataId': 'Q223587'},
+{'id': 31774, 'name': 'Al Manzalah', 'state_id': 3245, 'state_code': 'DK', 'state_name': 'Dakahlia', 'country_id': 65, 'country_code': 'EG', 'country_name': 'Egypt', 'latitude': '31.15823000', 'longitude': '31.93600000', 'wikiDataId': 'Q3494688'},
+{'id': 31776, 'name': 'Al Maţarīyah', 'state_id': 3245, 'state_code': 'DK', 'state_name': 'Dakahlia', 'country_id': 65, 'country_code': 'EG', 'country_name': 'Egypt', 'latitude': '31.18287000', 'longitude': '32.03108000', 'wikiDataId': 'Q23955475'},
+{'id': 31800, 'name': 'Bilqās', 'state_id': 3245, 'state_code': 'DK', 'state_name': 'Dakahlia', 'country_id': 65, 'country_code': 'EG', 'country_name': 'Egypt', 'latitude': '31.21452000', 'longitude': '31.35798000', 'wikiDataId': 'Q950839'},
+{'id': 31808, 'name': 'Dikirnis', 'state_id': 3245, 'state_code': 'DK', 'state_name': 'Dakahlia', 'country_id': 65, 'country_code': 'EG', 'country_name': 'Egypt', 'latitude': '31.08898000', 'longitude': '31.59478000', 'wikiDataId': 'Q23952236'},
+{'id': 31844, 'name': 'Minyat an Naşr', 'state_id': 3245, 'state_code': 'DK', 'state_name': 'Dakahlia', 'country_id': 65, 'country_code': 'EG', 'country_name': 'Egypt', 'latitude': '31.12624000', 'longitude': '31.64313000', 'wikiDataId': 'Q950786'},
+{'id': 31865, 'name': 'Shirbīn', 'state_id': 3245, 'state_code': 'DK', 'state_name': 'Dakahlia', 'country_id': 65, 'country_code': 'EG', 'country_name': 'Egypt', 'latitude': '31.19688000', 'longitude': '31.52430000', 'wikiDataId': 'Q1524502'},
+{'id': 31876, 'name': 'Ţalkhā', 'state_id': 3245, 'state_code': 'DK', 'state_name': 'Dakahlia', 'country_id': 65, 'country_code': 'EG', 'country_name': 'Egypt', 'latitude': '31.05390000', 'longitude': '31.37787000', 'wikiDataId': 'Q952118'},
+]

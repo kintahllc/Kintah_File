@@ -1,0 +1,9 @@
+all = [
+{'id': 66581, 'name': 'Alytus', 'state_id': 1605, 'state_code': '02', 'state_name': 'Alytus City Municipality', 'country_id': 126, 'country_code': 'LT', 'country_name': 'Lithuania', 'latitude': '54.39635000', 'longitude': '24.04142000', 'wikiDataId': 'Q450625'},
+{'id': 66592, 'name': 'Daugai', 'state_id': 1605, 'state_code': '02', 'state_name': 'Alytus City Municipality', 'country_id': 126, 'country_code': 'LT', 'country_name': 'Lithuania', 'latitude': '54.36667000', 'longitude': '24.33333000', 'wikiDataId': 'Q27485543'},
+{'id': 66593, 'name': 'Druskininkai', 'state_id': 1605, 'state_code': '02', 'state_name': 'Alytus City Municipality', 'country_id': 126, 'country_code': 'LT', 'country_name': 'Lithuania', 'latitude': '54.01573000', 'longitude': '23.98703000', 'wikiDataId': 'Q1261509'},
+{'id': 66630, 'name': 'Lazdijai', 'state_id': 1605, 'state_code': '02', 'state_name': 'Alytus City Municipality', 'country_id': 126, 'country_code': 'LT', 'country_name': 'Lithuania', 'latitude': '54.23333000', 'longitude': '23.51667000', 'wikiDataId': 'Q46786'},
+{'id': 66678, 'name': 'Simnas', 'state_id': 1605, 'state_code': '02', 'state_name': 'Alytus City Municipality', 'country_id': 126, 'country_code': 'LT', 'country_name': 'Lithuania', 'latitude': '54.38200000', 'longitude': '23.64600000', 'wikiDataId': 'Q1892074'},
+{'id': 66694, 'name': 'Varėna', 'state_id': 1605, 'state_code': '02', 'state_name': 'Alytus City Municipality', 'country_id': 126, 'country_code': 'LT', 'country_name': 'Lithuania', 'latitude': '54.21667000', 'longitude': '24.56667000', 'wikiDataId': 'Q621181'},
+{'id': 66695, 'name': 'Veisiejai', 'state_id': 1605, 'state_code': '02', 'state_name': 'Alytus City Municipality', 'country_id': 126, 'country_code': 'LT', 'country_name': 'Lithuania', 'latitude': '54.10110000', 'longitude': '23.69614000', 'wikiDataId': 'Q2044626'},
+]

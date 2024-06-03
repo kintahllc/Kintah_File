@@ -1,0 +1,11 @@
+all = [
+{'id': 63133, 'name': 'Al Jīzah', 'state_id': 965, 'state_code': 'AM', 'state_name': 'Amman', 'country_id': 111, 'country_code': 'JO', 'country_name': 'Jordan', 'latitude': '31.69893000', 'longitude': '35.95530000', 'wikiDataId': 'Q3505791'},
+{'id': 63132, 'name': 'Al Jubayhah', 'state_id': 965, 'state_code': 'AM', 'state_name': 'Amman', 'country_id': 111, 'country_code': 'JO', 'country_name': 'Jordan', 'latitude': '32.01071000', 'longitude': '35.89802000', 'wikiDataId': 'Q3505791'},
+{'id': 63141, 'name': 'Amman', 'state_id': 965, 'state_code': 'AM', 'state_name': 'Amman', 'country_id': 111, 'country_code': 'JO', 'country_name': 'Jordan', 'latitude': '31.95522000', 'longitude': '35.94503000', 'wikiDataId': 'Q3805'},
+{'id': 63203, 'name': 'Ḩayy al Bunayyāt', 'state_id': 965, 'state_code': 'AM', 'state_name': 'Amman', 'country_id': 111, 'country_code': 'JO', 'country_name': 'Jordan', 'latitude': '31.89603000', 'longitude': '35.88465000', 'wikiDataId': 'Q15222591'},
+{'id': 63204, 'name': 'Ḩayy al Quwaysimah', 'state_id': 965, 'state_code': 'AM', 'state_name': 'Amman', 'country_id': 111, 'country_code': 'JO', 'country_name': 'Jordan', 'latitude': '31.91037000', 'longitude': '35.94975000', 'wikiDataId': 'Q3505801'},
+{'id': 63162, 'name': 'Jāwā', 'state_id': 965, 'state_code': 'AM', 'state_name': 'Amman', 'country_id': 111, 'country_code': 'JO', 'country_name': 'Jordan', 'latitude': '31.85247000', 'longitude': '35.93928000', 'wikiDataId': 'Q31565'},
+{'id': 63185, 'name': 'Saḩāb', 'state_id': 965, 'state_code': 'AM', 'state_name': 'Amman', 'country_id': 111, 'country_code': 'JO', 'country_name': 'Jordan', 'latitude': '31.87032000', 'longitude': '36.00479000', 'wikiDataId': 'Q2305496'},
+{'id': 63192, 'name': 'Umm as Summāq', 'state_id': 965, 'state_code': 'AM', 'state_name': 'Amman', 'country_id': 111, 'country_code': 'JO', 'country_name': 'Jordan', 'latitude': '31.88542000', 'longitude': '35.85430000', 'wikiDataId': 'Q131955'},
+{'id': 63194, 'name': 'Wādī as Sīr', 'state_id': 965, 'state_code': 'AM', 'state_name': 'Amman', 'country_id': 111, 'country_code': 'JO', 'country_name': 'Jordan', 'latitude': '31.95450000', 'longitude': '35.81831000', 'wikiDataId': 'Q1020997'},
+]

@@ -1,0 +1,146 @@
+{% extends 'eShopAnalytics/base.html' %}
+{% block title %}Kintah Platform{% endblock %}
+{% block content %}
+
+<h3 class="text-center" style="margin-top:55px;">Data Connection Configuration</h3>
+<hr>
+<!--<a href="{% url 'storeconnect:see_store_list' %}">See My Store</a>-->
+<a href="/eShopAnalytics/see_store_list/" class="btn btn-warning btn-sm">See My Shop list</a>
+<form method="POST" enctype="multipart/form-data"  style="margin-top:35px;" action="{% url 'eShopAnalytics:connect_shop' %}">
+  {% csrf_token %}
+<div class="form-group row">
+
+
+  <div class="container mt-5">
+  <label for="exampleSelect">Select Options:</label>
+  <select class="custom-select" id="exampleSelect" name="store_name">
+    <option value="default" selected>Select your shop</option>
+    <option value="shopify">shopify</option>
+<!--    <option value="wix">wix</option>-->
+<!--    <option value="option3">Option 3</option>-->
+  </select>
+    <input type="hidden" class="form-control" id="input1ww" name="resubmit" value="{% if resubmit %}{{ resubmit }}{% endif %}">
+    <input type="hidden" class="form-control" id="input1ssww" name="external_shop_info_table_of_shop_pk" value="{% if external_shop_info_table_of_shop_pk %}{{ external_shop_info_table_of_shop_pk }}{% endif %}">
+
+    <div id="inputFields" style="display:none;">
+    <label for="input1">Shop Name:</label>
+    <input type="text" class="form-control" id="input1" name="shopify_shop_name" value="{% if shop_name %}{{ shop_name }}{% endif %}">
+
+    <label for="input2">Access Token:</label>
+    <input type="text" class="form-control" id="input2" name="shopify_access_token" value="{% if access_token %}{{ access_token }}{% endif %}">
+
+    <label for="input3">App Version:</label>
+    <input type="text" class="form-control" id="input3" name="shopify_app_version" value="{% if app_version %}{{ app_version }}{% endif %}">
+
+
+    <label for="input4">Logo:</label>
+    <input type="file" class="form-control" id="input4" name="logo" accept=".png, .jpg, .jpeg">
+</br>
+    <label for="tags">Search keywords:</label>
+    <input type="text" name="keywords" id="tags" placeholder="Tag1,Tag2,Tag3">
+
+{% if twilioKeys_info %}
+        {% else %}
+</br>
+</br>
+      <hr>
+      <hr>
+      <div style=" font-size: xx-large; text-align: center; ">Twilio Information</div>
+      <hr><hr>
+      <label for="account_sid">Account SID:</label>
+    <input type="text" class="form-control" id="account_sid" name="name_account_sid" >
+      </br>
+      <label for="auth_token">Account SID:</label>
+      <input type="text" class="form-control" id="auth_token" name="name_auth_token" >
+      </br>
+      <label for="twilio_number">Twilio Number:</label>
+      <input type="text" class="form-control" id="twilio_number" name="name_twilio_number" >
+</br>
+
+      {% endif %}
+
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+
+
+    <div id="inputFieldsWix" style="display:none;">
+    <label for="input1wix">Oath Name:</label>
+    <input type="text" class="form-control" id="input1wix" name="wix_oath">
+
+    <label for="input2wix">App Id:</label>
+    <input type="text" class="form-control" id="input2wix" name="wix_app_id">
+
+    <label for="input3wix">Secret Id:</label>
+    <input type="text" class="form-control" id="input3wix" name="wix_secret_id">
+<!--    <input type="hidden" class="form-control" id="" name="shop_name", value="shopifys">-->
+
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+
+
+
+
+</div>
+
+
+
+<!--  -->
+<!--  <div class="col">-->
+<!--    <label for="upload_files">Choose file</label>-->
+<!--    <input class="form-control" id="upload_files" type="file" name="file">-->
+<!--    <small id="" class="form-text text-muted"></small>-->
+<!--  </div>-->
+</div>
+
+
+
+
+</form>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var selectElement = document.getElementById("exampleSelect");
+  var inputFieldsContainer = document.getElementById("inputFields");
+
+  selectElement.addEventListener("change", function() {
+    if (selectElement.value === "shopify") {
+      inputFieldsContainer.style.display = "block";
+    } else {
+      inputFieldsContainer.style.display = "none";
+    }
+  });
+});
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var selectElement = document.getElementById("exampleSelect");
+  var inputFieldsContainer = document.getElementById("inputFieldsWix");
+
+  selectElement.addEventListener("change", function() {
+    if (selectElement.value === "wix") {
+      inputFieldsContainer.style.display = "block";
+    } else {
+      inputFieldsContainer.style.display = "none";
+    }
+  });
+});
+</script>
+
+
+
+
+
+
+{% endblock %}

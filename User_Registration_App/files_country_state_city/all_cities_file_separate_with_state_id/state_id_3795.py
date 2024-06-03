@@ -1,0 +1,9 @@
+all = [
+{'id': 130247, 'name': 'Huyện Chiêm Hóa', 'state_id': 3795, 'state_code': '07', 'state_name': 'Tuyên Quang', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.17895000', 'longitude': '105.27671000', 'wikiDataId': 'Q3710815'},
+{'id': 130305, 'name': 'Huyện Hàm Yên', 'state_id': 3795, 'state_code': '07', 'state_name': 'Tuyên Quang', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.10935000', 'longitude': '105.01630000', 'wikiDataId': 'Q3710957'},
+{'id': 130345, 'name': 'Huyện Lâm Bình', 'state_id': 3795, 'state_code': '07', 'state_name': 'Tuyên Quang', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.46411000', 'longitude': '105.21903000', 'wikiDataId': 'Q3711115'},
+{'id': 130373, 'name': 'Huyện Na Hang', 'state_id': 3795, 'state_code': '07', 'state_name': 'Tuyên Quang', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.47522000', 'longitude': '105.48380000', 'wikiDataId': 'Q3711220'},
+{'id': 130423, 'name': 'Huyện Sơn Dương', 'state_id': 3795, 'state_code': '07', 'state_name': 'Tuyên Quang', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.63623000', 'longitude': '105.38901000', 'wikiDataId': 'Q3711485'},
+{'id': 130519, 'name': 'Huyện Yên Sơn', 'state_id': 3795, 'state_code': '07', 'state_name': 'Tuyên Quang', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.88363000', 'longitude': '105.27656000', 'wikiDataId': 'Q3711616'},
+{'id': 130619, 'name': 'Tuyên Quang', 'state_id': 3795, 'state_code': '07', 'state_name': 'Tuyên Quang', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.82356000', 'longitude': '105.21424000', 'wikiDataId': 'Q33389'},
+]

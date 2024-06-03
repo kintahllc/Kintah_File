@@ -1,0 +1,210 @@
+
+{% extends 'eShopAnalytics/base.html' %}
+{% block title %}Payment for eShopAnalysis{% endblock %}
+{% block content %}
+
+
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+      .StripeElement {
+        box-sizing: border-box;
+        height: 40px;
+        padding: 10px 12px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background-color: white;
+        box-shadow: 0 1px 3px 0 #e6ebf1;
+        -webkit-transition: box-shadow 150ms ease;
+        transition: box-shadow 150ms ease;
+      }
+
+      .StripeElement--focus {
+        box-shadow: 0 1px 3px 0 #cfd7df;
+      }
+
+      .StripeElement--invalid {
+        border-color: #fa755a;
+      }
+
+      .StripeElement--webkit-autofill {
+        background-color: #fefde5 !important;
+      }
+      .form-row,
+      .submit-btn,
+      .card-element {
+        width: 100%;
+        border-color: #17a2b8;
+      }
+      .form-row {
+        padding: 2em;
+      }
+      #paypal-button-container {
+        margin-top: 2em;
+        width: 100%;
+      }
+    </style>
+
+
+
+    <div class="container col-md-6" style="margin-left:auto; margin-right:auto; margin-top:35px;">
+        <div class="card">
+          <div class="card-body">
+              {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+                      <strong>{{ message }}</strong>
+<!--                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--                        <span aria-hidden="true">&times;</span>-->
+<!--                      </button>-->
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+
+                <div class="m-l-25 m-r--38 m-lr-0-xl">
+                    <div class="wrap-table-shopping-cart">
+                        <table class="table-shopping-cart" id="items">
+                            <tr class="table_head">
+                                <th class="column-1"></th>
+                                <th class="column-2"></th>
+                                <th class="column-3"></th>
+                                <th class="column-5"></th>
+                            </tr>
+                            <tr>
+                                <td colspan="5">
+                                    <div class="size-400 bor10 p-lr-70 p-t-30 p-b-70 p-lr-15-lg w-full-md">
+                                        <h3 class="text-center">Credit Card</h3><hr>
+                                        <form method="POST" id="payment-form" class="payment-form" action="{% url 'eShopAnalytics:Payment_Submit' %}">
+                                            {% csrf_token %}
+                                            <div class="form-row">
+
+                                              <div class="input-group mb-3">
+                                                  <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1" style="border-color: #17a2b8;background-color: #17a2b8;color: white;">Amount</span>
+                                                  </div>
+                                                  <input type="number" style="border-color: #17a2b8;" class="form-control" name="payment_amount" readonly="" step="any" value="{{total_amount}}" aria-label="Amount" aria-describedby="basic-addon1">
+                                                  <input type="hidden" name="analytics_services_info_id" value="{{analytics_services_info_id}}" >
+                                                </div>
+
+                                              <label for="card-element">
+                                                Credit or Debit Card
+                                              </label>
+                                              <div id="card-element" class="card-element"></div>
+                                              <div id="card-errors" role="alert"></div>
+
+                                              <button class="btn btn-info submit-btn mt-2" type="submit">
+                                                Submit Payment
+                                              </button>
+
+                                              <div id="paypal-button-container"></div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+          </div>
+        </div>
+
+
+
+<!--        <form method="POST">-->
+<!--            {% csrf_token %}-->
+<!--            <div class="form-group col-md-6">-->
+<!--                <h6>Payment amount</h6>-->
+<!--            </div>-->
+<!--            <div class="form-group col-md-6">-->
+<!--                <input type="text" class="form-control" name="amount" placeholder="Amount in Australian dollars (e.g. 10.25)">-->
+<!--            </div>-->
+<!--            <div class="form-group col-md-6">-->
+<!--                <h6>Card info</h6>-->
+<!--            </div>-->
+<!--            <div class="form-group col-md-6">-->
+<!--                <input type="text" class="form-control" name="card_name" placeholder="Name on card">-->
+<!--            </div>-->
+<!--            <div class="form-group col-md-6">-->
+<!--                <input type="text" class="form-control" name="card_number" placeholder="Card number">-->
+<!--            </div>-->
+<!--            <div class="form-group col-md-6">-->
+<!--                <input type="text" class="form-control" name="card_expiry" placeholder="Expiry month/Expiry year (e.g. 01/25)">-->
+<!--            </div>-->
+<!--            <div class="form-group col-md-6">-->
+<!--                <input type="text" class="form-control" name="card_security_code" placeholder="Security code">-->
+<!--            </div>-->
+<!--            <br>-->
+<!--            <div class="form-group col-md-6">-->
+<!--                <button type="submit" class="btn btn-primary">Pay Now</button>-->
+<!--            </div>-->
+<!--        </form>-->
+
+    </div>
+
+<!-- stripe payments -->
+<script>
+  console.log('{{publishable_key}}')
+  var stripe = Stripe('{{publishable_key}}');
+  var elements = stripe.elements();
+
+  var style = {
+    base: {
+      color: "#32325d",
+      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+      fontSmoothing: "antialiased",
+      fontSize: "16px",
+      "::placeholder": {
+        color: "#aab7c4",
+      },
+    },
+    invalid: {
+      color: "#fa755a",
+      iconColor: "#fa755a",
+    },
+  };
+
+  var card = elements.create("card", { style: style });
+
+  card.mount("#card-element");
+
+  card.on("change", function (event) {
+    var displayError = document.getElementById("card-errors");
+    if (event.error) {
+      displayError.textContent = event.error.message;
+    } else {
+      displayError.textContent = "";
+    }
+  });
+
+  var form = document.getElementById("payment-form");
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    stripe.createToken(card).then(function (result) {
+      if (result.error) {
+        var errorElement = document.getElementById("card-errors");
+        errorElement.textContent = result.error.message;
+      } else {
+        stripeTokenHandler(result.token);
+      }
+    });
+  });
+
+  function stripeTokenHandler(token) {
+    var form = document.getElementById("payment-form");
+    var hiddenInput = document.createElement("input");
+    hiddenInput.setAttribute("type", "hidden");
+    hiddenInput.setAttribute("name", "stripeToken");
+    hiddenInput.setAttribute("value", token.id);
+    form.appendChild(hiddenInput);
+    form.submit();
+  }
+</script>
+<!-- stripe payments -->
+
+
+
+
+
+{% endblock %}

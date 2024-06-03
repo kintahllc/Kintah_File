@@ -1,0 +1,13 @@
+all = [
+{'id': 108819, 'name': 'Çerkezköy', 'state_id': 2167, 'state_code': '59', 'state_name': 'Tekirdağ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.28616000', 'longitude': '27.99969000', 'wikiDataId': 'Q2619996'},
+{'id': 108842, 'name': 'Çorlu', 'state_id': 2167, 'state_code': '59', 'state_name': 'Tekirdağ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.15917000', 'longitude': '27.80000000', 'wikiDataId': 'Q214655'},
+{'id': 107594, 'name': 'Ergene', 'state_id': 2167, 'state_code': '59', 'state_name': 'Tekirdağ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '40.85953000', 'longitude': '27.27081000', 'wikiDataId': 'Q16957420'},
+{'id': 107813, 'name': 'Hayrabolu', 'state_id': 2167, 'state_code': '59', 'state_name': 'Tekirdağ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.21311000', 'longitude': '27.10688000', 'wikiDataId': 'Q1020642'},
+{'id': 107885, 'name': 'Kapaklı', 'state_id': 2167, 'state_code': '59', 'state_name': 'Tekirdağ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.32912000', 'longitude': '27.98064000', 'wikiDataId': 'Q5247279'},
+{'id': 108144, 'name': 'Malkara', 'state_id': 2167, 'state_code': '59', 'state_name': 'Tekirdağ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '40.89000000', 'longitude': '26.90111000', 'wikiDataId': 'Q937499'},
+{'id': 108156, 'name': 'Marmaraereğlisi', 'state_id': 2167, 'state_code': '59', 'state_name': 'Tekirdağ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '40.97003000', 'longitude': '27.95528000', 'wikiDataId': 'Q985638'},
+{'id': 108223, 'name': 'Muratlı', 'state_id': 2167, 'state_code': '59', 'state_name': 'Tekirdağ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.18345000', 'longitude': '27.51454000', 'wikiDataId': 'Q2581023'},
+{'id': 108388, 'name': 'Saray', 'state_id': 2167, 'state_code': '59', 'state_name': 'Tekirdağ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.44431000', 'longitude': '27.92194000', 'wikiDataId': 'Q1011256'},
+{'id': 108937, 'name': 'Şarköy', 'state_id': 2167, 'state_code': '59', 'state_name': 'Tekirdağ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '40.62513000', 'longitude': '27.10069000', 'wikiDataId': 'Q388544'},
+{'id': 108522, 'name': 'Süleymanpaşa', 'state_id': 2167, 'state_code': '59', 'state_name': 'Tekirdağ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '40.97990000', 'longitude': '27.30377000', 'wikiDataId': 'Q16897309'},
+]

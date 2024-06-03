@@ -1,0 +1,11 @@
+all = [
+{'id': 134552, 'name': '‘Anah', 'state_id': 3964, 'state_code': 'AN', 'state_name': 'Al Anbar', 'country_id': 104, 'country_code': 'IQ', 'country_name': 'Iraq', 'latitude': '34.36857000', 'longitude': '41.98194000', 'wikiDataId': 'Q2627750'},
+{'id': 134553, 'name': '‘Anat al Qadīmah', 'state_id': 3964, 'state_code': 'AN', 'state_name': 'Al Anbar', 'country_id': 104, 'country_code': 'IQ', 'country_name': 'Iraq', 'latitude': '34.46934000', 'longitude': '41.94223000', 'wikiDataId': 'Q2627750'},
+{'id': 134478, 'name': 'Al Fallūjah', 'state_id': 3964, 'state_code': 'AN', 'state_name': 'Al Anbar', 'country_id': 104, 'country_code': 'IQ', 'country_name': 'Iraq', 'latitude': '33.34913000', 'longitude': '43.78599000', 'wikiDataId': 'Q191170'},
+{'id': 134495, 'name': 'Ar Ruţbah', 'state_id': 3964, 'state_code': 'AN', 'state_name': 'Al Anbar', 'country_id': 104, 'country_code': 'IQ', 'country_name': 'Iraq', 'latitude': '33.03718000', 'longitude': '40.28586000', 'wikiDataId': 'Q4532299'},
+{'id': 134548, 'name': 'Ḩadīthah', 'state_id': 3964, 'state_code': 'AN', 'state_name': 'Al Anbar', 'country_id': 104, 'country_code': 'IQ', 'country_name': 'Iraq', 'latitude': '34.13661000', 'longitude': '42.37727000', 'wikiDataId': 'Q944368'},
+{'id': 134514, 'name': 'Hīt', 'state_id': 3964, 'state_code': 'AN', 'state_name': 'Al Anbar', 'country_id': 104, 'country_code': 'IQ', 'country_name': 'Iraq', 'latitude': '33.63664000', 'longitude': '42.82768000', 'wikiDataId': 'Q2422345'},
+{'id': 134515, 'name': 'Hīt District', 'state_id': 3964, 'state_code': 'AN', 'state_name': 'Al Anbar', 'country_id': 104, 'country_code': 'IQ', 'country_name': 'Iraq', 'latitude': '33.73482000', 'longitude': '42.68228000', 'wikiDataId': 'Q4119531'},
+{'id': 134533, 'name': 'Ramadi', 'state_id': 3964, 'state_code': 'AN', 'state_name': 'Al Anbar', 'country_id': 104, 'country_code': 'IQ', 'country_name': 'Iraq', 'latitude': '33.42056000', 'longitude': '43.30778000', 'wikiDataId': 'Q192961'},
+{'id': 134535, 'name': 'Rāwah', 'state_id': 3964, 'state_code': 'AN', 'state_name': 'Al Anbar', 'country_id': 104, 'country_code': 'IQ', 'country_name': 'Iraq', 'latitude': '34.48229000', 'longitude': '41.91898000', 'wikiDataId': 'Q2354244'},
+]

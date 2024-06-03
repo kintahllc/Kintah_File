@@ -1,0 +1,18 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+    <h1>Upload Products</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" action="#">
+        {% csrf_token %}
+        <label for="csv_file">CSV File:</label>
+        <input type="file" id="csv_file" name="csv_file" accept=".csv" required><br><br>
+        <label for="image_folder">Image Folder:</label>
+        <input type="file" id="image_folder" name="image_folder" webkitdirectory directory multiple><br><br>
+        <button type="submit">Upload</button>
+    </form>
+{% endblock %}

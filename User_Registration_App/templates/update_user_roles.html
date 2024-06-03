@@ -1,0 +1,23 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+
+
+    <h1>Update User Roles</h1>
+    <form action="#" method="POST">
+        {% csrf_token %}
+        <label for="user_id">User ID:</label>
+        <input type="number" id="user_id" name="user_id" value="{{ user_id }}" readonly><br><br>
+
+        <label for="group_ids">Group IDs:</label><br>
+        {% for role in roles %}
+            <input type="checkbox" id="role_{{ role.id }}" name="group_ids" value="{{ role.id }}"
+                   {% if role.id in user_roles %}checked{% endif %}>
+            <label for="role_{{ role.id }}">{{ role.name }}</label><br>
+        {% endfor %}
+
+        <button type="submit">Update Roles</button>
+    </form>
+
+
+{% endblock %}

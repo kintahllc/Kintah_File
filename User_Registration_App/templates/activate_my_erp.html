@@ -1,0 +1,88 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+
+
+
+
+
+<!-- billing_history.html -->
+<style>
+  .billing-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .billing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .billing-table th, .billing-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  .billing-table th {
+    background-color: #f2f2f2;
+    color: #333;
+  }
+
+  .billing-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .billing-table tbody tr:hover {
+    background-color: #f2f2f2;
+  }
+</style>
+<div class="billing-container">
+<table class="billing-table">
+  <thead>
+    <tr>
+      <th>Erp Name</th>
+      <th>Website name</th>
+      <th>Domain</th>
+      {% if erp_active %}
+      <th>ODOO Company ID</th>
+      <th>ODOO Website ID</th>
+      {% else %}
+      <th>Action</th>
+      {% endif %}
+
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td>{{ erp.erp_name }}</td>
+      <td>{{ erp.erp_site_name }}</td>
+      <td>{{ erp.erp_smtp_server }}</td>
+
+
+          {% if erp_active %}
+      <td>{{erp_active.company_id}}</td>
+      <td>{{erp_active.website_id}}</td>
+      {% else %}
+      <td>
+      <form method="POST" action="#"> {% csrf_token %}
+            <input type="hidden" value="{{erp.id}}" name="erp_id">
+            <input type="hidden" value="{{subcription_one.number_of_expected_users_of_the_platform}}" name="user_count">
+            <button type="submit">Connect</button>
+
+        </form>
+        </td>
+      {% endif %}
+
+
+    </tr>
+
+  </tbody>
+</table>
+
+</div>
+
+{% endblock %}
+
+

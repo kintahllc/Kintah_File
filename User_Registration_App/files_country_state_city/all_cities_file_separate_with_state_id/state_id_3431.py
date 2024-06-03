@@ -1,0 +1,11 @@
+all = [
+{'id': 135228, 'name': 'Álftanes', 'state_id': 3431, 'state_code': '1', 'state_name': 'Capital Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.10000000', 'longitude': '-22.01667000', 'wikiDataId': 'Q139045'},
+{'id': 135181, 'name': 'Garðabær', 'state_id': 3431, 'state_code': '1', 'state_name': 'Capital Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.08865000', 'longitude': '-21.92298000', 'wikiDataId': 'Q186142'},
+{'id': 135186, 'name': 'Hafnarfjörður', 'state_id': 3431, 'state_code': '1', 'state_name': 'Capital Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.06710000', 'longitude': '-21.93774000', 'wikiDataId': 'Q103725'},
+{'id': 135196, 'name': 'Kjósarhreppur', 'state_id': 3431, 'state_code': '1', 'state_name': 'Capital Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.30644000', 'longitude': '-21.49919000', 'wikiDataId': 'Q1744094'},
+{'id': 135197, 'name': 'Kópavogur', 'state_id': 3431, 'state_code': '1', 'state_name': 'Capital Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.11234000', 'longitude': '-21.91298000', 'wikiDataId': 'Q163852'},
+{'id': 135200, 'name': 'Mosfellsbaer', 'state_id': 3431, 'state_code': '1', 'state_name': 'Capital Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.15000000', 'longitude': '-21.65000000', 'wikiDataId': 'Q829859'},
+{'id': 135201, 'name': 'Mosfellsbær', 'state_id': 3431, 'state_code': '1', 'state_name': 'Capital Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.16667000', 'longitude': '-21.70000000', 'wikiDataId': 'Q829859'},
+{'id': 135206, 'name': 'Reykjavík', 'state_id': 3431, 'state_code': '1', 'state_name': 'Capital Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.13548000', 'longitude': '-21.89541000', 'wikiDataId': 'Q1764'},
+{'id': 135211, 'name': 'Seltjarnarnes', 'state_id': 3431, 'state_code': '1', 'state_name': 'Capital Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.15309000', 'longitude': '-21.99499000', 'wikiDataId': 'Q192898'},
+]

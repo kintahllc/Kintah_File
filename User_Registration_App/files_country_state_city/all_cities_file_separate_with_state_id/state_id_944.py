@@ -1,0 +1,12 @@
+all = [
+{'id': 77154, 'name': 'Achuapa', 'state_id': 944, 'state_code': 'LE', 'state_name': 'León', 'country_id': 159, 'country_code': 'NI', 'country_name': 'Nicaragua', 'latitude': '13.05370000', 'longitude': '-86.59004000', 'wikiDataId': 'Q8075286'},
+{'id': 77184, 'name': 'El Jicaral', 'state_id': 944, 'state_code': 'LE', 'state_name': 'León', 'country_id': 159, 'country_code': 'NI', 'country_name': 'Nicaragua', 'latitude': '12.72676000', 'longitude': '-86.38057000', 'wikiDataId': 'Q369423'},
+{'id': 77188, 'name': 'El Sauce', 'state_id': 944, 'state_code': 'LE', 'state_name': 'León', 'country_id': 159, 'country_code': 'NI', 'country_name': 'Nicaragua', 'latitude': '12.88687000', 'longitude': '-86.53903000', 'wikiDataId': 'Q1647835'},
+{'id': 77205, 'name': 'La Paz Centro', 'state_id': 944, 'state_code': 'LE', 'state_name': 'León', 'country_id': 159, 'country_code': 'NI', 'country_name': 'Nicaragua', 'latitude': '12.34000000', 'longitude': '-86.67528000', 'wikiDataId': 'Q21052193'},
+{'id': 77209, 'name': 'Larreynaga', 'state_id': 944, 'state_code': 'LE', 'state_name': 'León', 'country_id': 159, 'country_code': 'NI', 'country_name': 'Nicaragua', 'latitude': '12.67692000', 'longitude': '-86.57193000', 'wikiDataId': 'Q2215577'},
+{'id': 77212, 'name': 'León', 'state_id': 944, 'state_code': 'LE', 'state_name': 'León', 'country_id': 159, 'country_code': 'NI', 'country_name': 'Nicaragua', 'latitude': '12.43787000', 'longitude': '-86.87804000', 'wikiDataId': 'Q208151'},
+{'id': 77239, 'name': 'Nagarote', 'state_id': 944, 'state_code': 'LE', 'state_name': 'León', 'country_id': 159, 'country_code': 'NI', 'country_name': 'Nicaragua', 'latitude': '12.26593000', 'longitude': '-86.56474000', 'wikiDataId': 'Q2604568'},
+{'id': 77252, 'name': 'Quezalguaque', 'state_id': 944, 'state_code': 'LE', 'state_name': 'León', 'country_id': 159, 'country_code': 'NI', 'country_name': 'Nicaragua', 'latitude': '12.50683000', 'longitude': '-86.90292000', 'wikiDataId': 'Q739841'},
+{'id': 77274, 'name': 'Santa Rosa del Peñón', 'state_id': 944, 'state_code': 'LE', 'state_name': 'León', 'country_id': 159, 'country_code': 'NI', 'country_name': 'Nicaragua', 'latitude': '12.80116000', 'longitude': '-86.36994000', 'wikiDataId': 'Q2215566'},
+{'id': 77282, 'name': 'Telica', 'state_id': 944, 'state_code': 'LE', 'state_name': 'León', 'country_id': 159, 'country_code': 'NI', 'country_name': 'Nicaragua', 'latitude': '12.52200000', 'longitude': '-86.85938000', 'wikiDataId': 'Q1647817'},
+]

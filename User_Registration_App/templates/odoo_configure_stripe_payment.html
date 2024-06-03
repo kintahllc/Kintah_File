@@ -1,0 +1,58 @@
+
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    input[type="text"], input[type="number"], input[type="date"], input[type="password"], input[type="email"], select {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<h1>Configure Stripe Payment Provider</h1>
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="hidden" value="{{erp_active.id}}" name="erp_active_id">
+
+
+    <div class="form-group">
+        <label for="fiscal_year_start">Stripe Secret Key:</label>
+        <input type="text" id="fiscal_year_start" name="stripe_secret_key" required>
+    </div>
+    <div class="form-group">
+        <label for="fiscal_year_end">Stripe Publishable Key:</label>
+        <input type="text" id="fiscal_year_end" name="stripe_publishable_key" required>
+    </div>
+
+
+
+    <input type="submit" value="Configure Stripe">
+</form>
+
+{% endblock %}
+

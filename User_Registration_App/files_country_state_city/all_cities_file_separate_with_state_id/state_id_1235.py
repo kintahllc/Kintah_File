@@ -1,0 +1,11 @@
+all = [
+{'id': 130705, 'name': 'Al Khabt', 'state_id': 1235, 'state_code': 'MW', 'state_name': 'Al Mahwit', 'country_id': 245, 'country_code': 'YE', 'country_name': 'Yemen', 'latitude': '15.48170000', 'longitude': '43.36770000', 'wikiDataId': 'Q4117341'},
+{'id': 130715, 'name': 'Al Mahwait', 'state_id': 1235, 'state_code': 'MW', 'state_name': 'Al Mahwit', 'country_id': 245, 'country_code': 'YE', 'country_name': 'Yemen', 'latitude': '15.41170000', 'longitude': '43.56630000', 'wikiDataId': 'Q4117248'},
+{'id': 130729, 'name': 'Al Maḩwīt', 'state_id': 1235, 'state_code': 'MW', 'state_name': 'Al Mahwit', 'country_id': 245, 'country_code': 'YE', 'country_name': 'Yemen', 'latitude': '15.47007000', 'longitude': '43.54481000', 'wikiDataId': 'Q310622'},
+{'id': 130768, 'name': 'Ar Rujum', 'state_id': 1235, 'state_code': 'MW', 'state_name': 'Al Mahwit', 'country_id': 245, 'country_code': 'YE', 'country_name': 'Yemen', 'latitude': '15.41010000', 'longitude': '43.66060000', 'wikiDataId': 'Q4117345'},
+{'id': 130808, 'name': 'Aţ Ţawīlah', 'state_id': 1235, 'state_code': 'MW', 'state_name': 'Al Mahwit', 'country_id': 245, 'country_code': 'YE', 'country_name': 'Yemen', 'latitude': '15.44165000', 'longitude': '43.77484000', 'wikiDataId': 'Q4812416'},
+{'id': 130817, 'name': "Bani Sa'd", 'state_id': 1235, 'state_code': 'MW', 'state_name': 'Al Mahwit', 'country_id': 245, 'country_code': 'YE', 'country_name': 'Yemen', 'latitude': '15.23550000', 'longitude': '43.51560000', 'wikiDataId': 'Q4117337'},
+{'id': 130868, 'name': 'Hufash', 'state_id': 1235, 'state_code': 'MW', 'state_name': 'Al Mahwit', 'country_id': 245, 'country_code': 'YE', 'country_name': 'Yemen', 'latitude': '15.37470000', 'longitude': '43.42650000', 'wikiDataId': 'Q4117243'},
+{'id': 130925, 'name': 'Milhan', 'state_id': 1235, 'state_code': 'MW', 'state_name': 'Al Mahwit', 'country_id': 245, 'country_code': 'YE', 'country_name': 'Yemen', 'latitude': '15.32240000', 'longitude': '43.33180000', 'wikiDataId': 'Q6851806'},
+{'id': 130980, 'name': 'Shibām Kawkabān', 'state_id': 1235, 'state_code': 'MW', 'state_name': 'Al Mahwit', 'country_id': 245, 'country_code': 'YE', 'country_name': 'Yemen', 'latitude': '15.50277000', 'longitude': '43.84237000', 'wikiDataId': 'Q4117372'},
+]

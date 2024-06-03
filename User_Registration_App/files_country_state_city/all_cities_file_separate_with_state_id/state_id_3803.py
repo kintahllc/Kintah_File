@@ -1,0 +1,10 @@
+all = [
+{'id': 130631, 'name': 'Ðông Hà', 'state_id': 3803, 'state_code': '25', 'state_name': 'Quảng Trị', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '16.81625000', 'longitude': '107.10031000', 'wikiDataId': 'Q33343'},
+{'id': 130242, 'name': 'Huyện Cam Lộ', 'state_id': 3803, 'state_code': '25', 'state_name': 'Quảng Trị', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '16.79335000', 'longitude': '106.96175000', 'wikiDataId': 'Q4838559'},
+{'id': 130527, 'name': 'Huyện Đa Krông', 'state_id': 3803, 'state_code': '25', 'state_name': 'Quảng Trị', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '16.55543000', 'longitude': '106.97208000', 'wikiDataId': 'Q5295738'},
+{'id': 130288, 'name': 'Huyện Gio Linh', 'state_id': 3803, 'state_code': '25', 'state_name': 'Quảng Trị', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '16.91667000', 'longitude': '107.00000000', 'wikiDataId': 'Q3031261'},
+{'id': 130316, 'name': 'Huyện Hải Lăng', 'state_id': 3803, 'state_code': '25', 'state_name': 'Quảng Trị', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '16.67574000', 'longitude': '107.23388000', 'wikiDataId': 'Q5942590'},
+{'id': 130311, 'name': 'Huyện Hướng Hóa', 'state_id': 3803, 'state_code': '25', 'state_name': 'Quảng Trị', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '16.70132000', 'longitude': '106.67036000', 'wikiDataId': 'Q5942590'},
+{'id': 130462, 'name': 'Huyện Triệu Phong', 'state_id': 3803, 'state_code': '25', 'state_name': 'Quảng Trị', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '16.78132000', 'longitude': '107.16034000', 'wikiDataId': 'Q1320227'},
+{'id': 130500, 'name': 'Huyện Vĩnh Linh', 'state_id': 3803, 'state_code': '25', 'state_name': 'Quảng Trị', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '17.01600000', 'longitude': '106.93384000', 'wikiDataId': 'Q7932536'},
+]

@@ -1,0 +1,68 @@
+{% extends 'eShopAnalytics/base.html' %}
+{% block title %}Kintah Platform{% endblock %}
+{% block content %}
+
+
+                {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-dismissible fade show" role="alert">
+            <strong>{{ message }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Extract Now</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Scheduling Extract</a>
+  </li>
+
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+    <form action="{% url 'eShopAnalytics:extracting_now' %}" method="POST">{% csrf_token %}
+        <input type="hidden" name="pk" value="{{pk}}">
+        <button  type="submit" class="btn btn-info my-3 my-sm-2 mr-3" style=" width: 100%; ">Extracting Now</button>
+    </form>
+
+  </div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+      <form action="{% url 'eShopAnalytics:extracting_now' %}" method="POST">{% csrf_token %}
+        <input type="hidden" name="pk" value="{{pk}}">
+
+          <label for="option1">
+  <input type="radio" id="option1" name="option" value="midnight" checked>
+  Reload data and rerun model at midnight today using
+frequency per month selected on subscription payment
+</label>
+<br>
+<label for="option2">
+  <input type="radio" id="option2" name="option" value="date">
+  Reload data and rerun model at midnight from date:
+</label>
+<input type="date" id="dateInput" name="dateInput" disabled>
+
+
+
+          
+        <button  type="submit" class="btn btn-info my-3 my-sm-2 mr-3" style=" width: 100%; ">Submit</button>
+    </form>
+
+
+
+  </div>
+</div>
+
+<script>
+  document.getElementById("option2").addEventListener("change", function() {
+    document.getElementById("dateInput").disabled = !this.checked;
+  });
+</script>
+
+{% endblock %}

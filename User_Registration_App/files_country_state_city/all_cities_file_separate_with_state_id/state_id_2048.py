@@ -1,0 +1,10 @@
+all = [
+{'id': 130070, 'name': 'Colón', 'state_id': 2048, 'state_code': 'S', 'state_name': 'Táchira', 'country_id': 239, 'country_code': 'VE', 'country_name': 'Venezuela', 'latitude': '8.03125000', 'longitude': '-72.26053000', 'wikiDataId': 'Q3072164'},
+{'id': 130090, 'name': 'La Fría', 'state_id': 2048, 'state_code': 'S', 'state_name': 'Táchira', 'country_id': 239, 'country_code': 'VE', 'country_name': 'Venezuela', 'latitude': '8.21523000', 'longitude': '-72.24888000', 'wikiDataId': 'Q525112'},
+{'id': 130091, 'name': 'La Grita', 'state_id': 2048, 'state_code': 'S', 'state_name': 'Táchira', 'country_id': 239, 'country_code': 'VE', 'country_name': 'Venezuela', 'latitude': '8.13316000', 'longitude': '-71.98390000', 'wikiDataId': 'Q3134346'},
+{'id': 130114, 'name': 'Municipio José María Vargas', 'state_id': 2048, 'state_code': 'S', 'state_name': 'Táchira', 'country_id': 239, 'country_code': 'VE', 'country_name': 'Venezuela', 'latitude': '8.03514000', 'longitude': '-72.05675000', 'wikiDataId': 'Q2545115'},
+{'id': 130138, 'name': 'Rubio', 'state_id': 2048, 'state_code': 'S', 'state_name': 'Táchira', 'country_id': 239, 'country_code': 'VE', 'country_name': 'Venezuela', 'latitude': '7.70131000', 'longitude': '-72.35569000', 'wikiDataId': 'Q1002638'},
+{'id': 130140, 'name': 'San Antonio del Táchira', 'state_id': 2048, 'state_code': 'S', 'state_name': 'Táchira', 'country_id': 239, 'country_code': 'VE', 'country_name': 'Venezuela', 'latitude': '7.81454000', 'longitude': '-72.44310000', 'wikiDataId': 'Q2602785'},
+{'id': 130144, 'name': 'San Cristóbal', 'state_id': 2048, 'state_code': 'S', 'state_name': 'Táchira', 'country_id': 239, 'country_code': 'VE', 'country_name': 'Venezuela', 'latitude': '7.76694000', 'longitude': '-72.22500000', 'wikiDataId': 'Q820235'},
+{'id': 130163, 'name': 'Táriba', 'state_id': 2048, 'state_code': 'S', 'state_name': 'Táchira', 'country_id': 239, 'country_code': 'VE', 'country_name': 'Venezuela', 'latitude': '7.81880000', 'longitude': '-72.22427000', 'wikiDataId': 'Q167974'},
+]

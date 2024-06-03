@@ -1,0 +1,278 @@
+{% extends 'home_base2.html' %}
+{% block home_content %}
+
+<div class="container" style="margin-bottom:25px; margin-top:25px;">
+<div class="container-fluid" >
+
+
+<form method="POST" action="#"> {% csrf_token %}
+  <div class="row mt-3">
+
+<input type="hidden" name="com_id" value="{{company_info.id}}">
+
+    <div class="col-md-6">
+      <label for="input1">Company 6-8 Characters Short Name:</label>
+      <input type="text" class="form-control" id="file_number_id" name="file_number"  placeholder="File Number" pattern="[A-Za-z0-9]{6,8}"  onkeyup="enable_submit_button()" value="{{company_info.file_number}}">
+    </div>
+
+    <div class="col-md-6">
+      <label for="input2">Parent company Name:</label>
+      <input type="text" class="form-control" id="client_source_id" name="client_source" placeholder="Client Source"  onkeyup="enable_submit_button()"  value="{{company_info.client_source}}">
+    </div>
+
+
+<!--    <div class="col-md-12">-->
+<!--      <label for="input2">Agreed Upon Fee:</label>-->
+<!--      <div class="input-group mb-3">-->
+<!--        <div class="input-group-prepend">-->
+<!--          <span class="input-group-text" id="basic-addon1">$</span>-->
+<!--        </div>-->
+<!--        <input type="text" id="fee_amount_id" class="form-control" placeholder="Fee Amount" name="fee_amount" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()"   value="{{company_info.fee_amount}}">-->
+<!--        -->
+<!--      </div>-->
+<!--    </div>-->
+      <input type="hidden" id="fee_amount_id" class="form-control" placeholder="Fee Amount" name="fee_amount" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()"   value="0">
+
+
+    <div class="col-md-6">
+      <label for="Partner_client_company_name_id">Partner
+        Client
+        company name:</label>
+      <input type="text" class="form-control" id="Partner_client_company_name_id" name="Partner_client_company_name" placeholder="Partner Client Company Name"  onkeyup="enable_submit_button()"  value="{{company_info.Partner_client_company_name}}">
+    </div>
+
+    <div class="col-md-6">
+      <label for="partner_client_contact_full_name_id">Partner client contact full name:</label>
+      <input type="text" class="form-control" id="partner_client_contact_full_name_id" name="partner_client_contact_full_name" placeholder="Partner Client Contact Full Name"  onkeyup="enable_submit_button()"  value="{{company_info.partner_client_contact_full_name}}">
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="input2">Client Email Address:</label>
+      <input type="text"  id="client_email_address_id" class="form-control" placeholder="Client Email Address" name="client_email_address" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()" value="{{company_info.client_email_address}}">
+    </div>
+
+
+<!--    <div class="col-md-12">-->
+<!--      <label for="input2">Client Phone Number:</label>-->
+<!--      <input type="text" class="form-control" placeholder="client phone number" id="client_phone_number_id" name="client_phone_number" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()" value="{{company_info.client_phone_number}}">-->
+<!--    </div>-->
+<!--      -->
+
+
+
+    <div class="col-md-12">
+      <label for="input2">Client Phone Number:</label>
+<!--      <input type="text" class="form-control" placeholder="client phone number" id="client_phone_number_id" name="client_phone_number" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()">-->
+    </div>
+
+    <div class="col-md-3">
+        <label for="countryCode">Phone Code </label>
+                            <select id="countryCode" class="form-control" name="countryCode" onchange="enable_submit_button()" required>
+
+                                {% if company_info.client_phone_code %}
+                                <option value="{{company_info.client_phone_code}}">{{company_info.client_phone_code}}</option>
+                                {% endif %}
+                                {% for code in phone_codes %}
+                                <option value="{{ code.dial_code }}">{{ code.name }} ({{ code.dial_code }})</option>
+                                {% endfor %}
+                            </select>
+    </div>
+      <div class="col-md-9">
+          <label for="phoneNumber">Phone Number</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Phone Number</span>
+                                </div>
+                                <input type="tel" maxlength="12" class="form-control" placeholder="client phone number" id="client_phone_number_id" name="client_phone_number" value="{{company_info.client_phone_number}}" onkeyup="enable_submit_button()" required >
+                            </div>
+                            <small class="form-text text-muted">Please enter the phone number without the country code.</small>
+
+    </div>
+
+
+
+
+
+
+
+
+    <div class="col-md-12">
+      <label for="input2">Partner client company address:</label>
+      <input type="text" id="partner_client_company_address_id" class="form-control" placeholder="Partner client company address" name="partner_client_company_address" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()"  value="{{company_info.partner_client_company_address}}">
+    </div>
+
+
+    <div class="form-group col-md-12">
+      <label for="partner_client_company_country_id">Partner client company country</label>
+      <select class="form-control" id="partner_client_company_country_id" name="partner_client_company_country" onchange="for_get_state(this)">
+            <option value="{{company_info.partner_client_company_country}}">{{company_info.partner_client_company_country}}</option>
+            {% for country_name in country_names %}
+                <option value="{{ country_name }}">{{ country_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+    <div class="form-group col-md-12">
+      <label for="partner_client_company_state_or_province_id">Partner client company state or province</label>
+      <select class="form-control" id="partner_client_company_state_or_province_id" name="partner_client_company_state_or_province"  onchange="for_get_cities(this)">
+        <option value="{{company_info.partner_client_company_state_or_province}}">{{company_info.partner_client_company_state_or_province}}</option>
+
+      </select>
+    </div>
+
+
+
+
+
+    <div class="form-group col-md-12">
+      <label for="partner_client_company_city_id">Partner client company city</label>
+      <select class="form-control" id="partner_client_company_city_id" name="partner_client_company_city"  onchange="enable_submit_button()">
+        <option value="{{company_info.partner_client_company_city}}">{{company_info.partner_client_company_city}}</option>
+
+      </select>
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="input2">Partner client company zip or postal code:</label>
+      <input type="text" id="partner_client_company_zip_or_postal_code_id" class="form-control"  name="partner_client_company_zip_or_postal_code" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()" value="{{company_info.partner_client_company_zip_or_postal_code}}">
+    </div>
+
+
+    <div class="col-md-12">
+      <input type="hidden"  class="form-control" id="password" name="password" onkeyup="enable_submit_button()" value="3">
+    </div>
+    <div class="col-md-12">
+      <input type="hidden" class="form-control" id="retype_password" name="retype-password" onkeyup="enable_submit_button()" value="3">
+    </div>
+
+    <button type="submit" style=" margin-top: 12px; width: 20%; margin-left: 40%; " class="form-control btn btn-primary" id="submit_id" disabled>Submit</button>
+  </div>
+</form>
+
+
+
+</div>
+</div>
+<script>
+function enable_submit_button1(){
+  console.log('clicked');
+}
+
+</script>
+
+
+<script>
+
+function enable_submit_button(){
+  console.log('sasasasa')
+
+  const file_number_id = document.getElementById('file_number_id');
+  const client_source_id = document.getElementById('client_source_id');
+  const fee_amount_id = document.getElementById('fee_amount_id');
+  const Partner_client_company_name_id = document.getElementById('Partner_client_company_name_id');
+  const partner_client_contact_full_name_id = document.getElementById('partner_client_contact_full_name_id');
+  const client_email_address_id = document.getElementById('client_email_address_id');
+  const client_phone_number_id = document.getElementById('client_phone_number_id');
+  const partner_client_company_address_id = document.getElementById('partner_client_company_address_id');
+  const partner_client_company_country_id = document.getElementById('partner_client_company_country_id');
+  const partner_client_company_state_or_province_id = document.getElementById('partner_client_company_state_or_province_id');
+  const partner_client_company_city_id = document.getElementById('partner_client_company_city_id');
+  const partner_client_company_zip_or_postal_code_id = document.getElementById('partner_client_company_zip_or_postal_code_id');
+
+  const passwordInput = document.getElementById('password');
+  const retypePasswordInput = document.getElementById('retype_password');
+  const submitButton = document.getElementById('submit_id');
+
+  if (
+    file_number_id && file_number_id.value.trim() !== '' &&
+    client_source_id && client_source_id.value.trim() !== '' &&
+    fee_amount_id && fee_amount_id.value.trim() !== '' &&
+    Partner_client_company_name_id && Partner_client_company_name_id.value.trim() !== '' &&
+    partner_client_contact_full_name_id && partner_client_contact_full_name_id.value.trim() !== '' &&
+    client_email_address_id && client_email_address_id.value.trim() !== '' &&
+    client_phone_number_id && client_phone_number_id.value.trim() !== '' &&
+    partner_client_company_address_id && partner_client_company_address_id.value.trim() !== '' &&
+
+    partner_client_company_zip_or_postal_code_id && partner_client_company_zip_or_postal_code_id.value.trim() !== ''
+    )
+
+      {
+        const password = passwordInput.value.trim();
+        const retypePassword = retypePasswordInput.value.trim();
+
+        if (password !== '' && retypePassword !== '' && password === retypePassword) {
+                submitButton.disabled = false;
+                }
+        else {
+              submitButton.disabled = true;
+            }
+      }
+
+
+}
+
+
+
+
+  </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function for_get_state(selectElement) {
+    var countryId = $(selectElement).val(); // Use jQuery to get the value of the selected option
+    $.ajax({
+        url: '/get_states_for_update_ajax/',  // URL to fetch states/provinces
+        method: 'GET',
+        data: {'country_id': countryId},
+        success: function(response) {
+            // Clear existing options
+            $('#partner_client_company_state_or_province_id').empty();
+
+            // Append a placeholder option
+            $('#partner_client_company_state_or_province_id').append('<option value="">Select State/Province</option>');
+
+            // Append new options based on the response data
+            response.forEach(function(state) {
+                $('#partner_client_company_state_or_province_id').append('<option value="' + state.id + '">' + state.text + '</option>');
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+    enable_submit_button();
+}
+</script>
+
+<script>
+function for_get_cities(selectElement) {
+    var stateId = $(selectElement).val(); // Use jQuery to get the value of the selected option
+    $.ajax({
+        url: '/get_cities_for_update_ajax/',  // URL to fetch cities
+        method: 'GET',
+        data: {'state_id': stateId},
+        success: function(response) {
+            // Clear existing options
+            $('#partner_client_company_city_id').empty();
+
+            // Append a placeholder option
+            $('#partner_client_company_city_id').append('<option value="">Select City</option>');
+
+            // Append new options based on the response data
+            response.forEach(function(city) {
+                $('#partner_client_company_city_id').append('<option value="' + city.text + '">' + city.text + '</option>');
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+    enable_submit_button();
+}
+</script>
+
+{% endblock %}
+
+

@@ -1,0 +1,730 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+
+<style>
+    .hidden-input {
+  display: none;
+}
+</style>
+
+<h3 class="text-center" style="margin-top:55px;">Authorize the following connected services</h3>
+<hr>
+
+
+<form method="POST" enctype="multipart/form-data"  style="margin-top:35px;" action="{% url 'upgrade_subscription' company_info.id %}">
+  {% csrf_token %}
+
+    <input type="hidden" name="from_back" value="coming_back">
+    <input class="form-check-input" type="hidden" name="external_shop_info_table_of_shop_pk" value="{{ExternalShopInfoTableOfShop_pk}}">
+      <input class="form-check-input" type="hidden" name="external_csv_file_store_table_of_shop_pk" value="{{ExternalCsvFileStoreTableOfShop_pk}}">
+
+    <input class="form-check-input" type="hidden" name="CompanyRegistrationInformationId" value="{{CompanyRegistrationInformationId}}">
+    <input class="form-check-input" type="hidden" name="demandscaled" value="{{demandscaled}}">
+      <input class="form-check-input" type="hidden" name="acquirescaled" value="{{acquirescaled}}">
+      <input class="form-check-input" type="hidden" name="Product_recommendations" value="{{Product_recommendations}}">
+      <input class="form-check-input" type="hidden" name="sub_id" value="{{sub_id}}">
+    <input class="form-check-input" type="hidden" name="campaignscaled" value="{{campaignscaled}}">
+      <input class="form-check-input" type="hidden"  name="plane_price" value="{{plane_price}}">
+    <button type="submit" class="btn btn-primary">BACK</button>
+</form>
+
+
+<form method="POST" enctype="multipart/form-data"  style="margin-top:35px;" action="{% url 'upgrade_submit_subscription_inside_home' company_info.id %}">
+  {% csrf_token %}
+<div class="form-group row">
+<div class="col-8">
+  <div class="form-check">
+
+      <input class="form-check-input" type="hidden" name="CompanyRegistrationInformationId" value="{{CompanyRegistrationInformationId}}">
+      <input class="form-check-input" type="hidden" name="sub_id" value="{{sub_id}}">
+    <input class="form-check-input" type="hidden"  name="plane_price" value="{{plane_price}}">
+      <input class="form-check-input" type="hidden" name="CompanyRegistrationInformationId" value="{{CompanyRegistrationInformationId}}">
+
+
+      <input class="form-check-input" type="text" style=" display: none; " name="demandscaled" id="demandscaled" value="{{demandscaled}}">
+      <input class="form-check-input" type="number" style=" display: none; " name="demandscaled_monthly_base_cost" id="demandscaled_monthly_base_cost" value="{{demandscaled_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; " name="demandscaled_monthly_coef" id="demandscaled_monthly_coef" value="{{demandscaled_monthly_coef}}">
+      <input class="form-check-input" type="number"  style=" display: none; " name="demandscaled_monthly_activity_free" id="demandscaled_monthly_activity_free" value="{{demandscaled_monthly_activity_free}}">
+
+
+      <input class="form-check-input" type="text" style=" display: none; "  id="acquirescaled" name="acquirescaled" value="{{acquirescaled}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="acquirescaled_monthly_base_cost" name="acquirescaled_monthly_base_cost" value="{{acquirescaled_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="acquirescaled_monthly_coef" name="acquirescaled_monthly_coef" value="{{acquirescaled_monthly_coef}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="acquirescaled_monthly_activity_free" name="acquirescaled_monthly_activity_free" value="{{acquirescaled_monthly_activity_free}}">
+
+      <input class="form-check-input" type="text" style=" display: none; "  id="campaignscaled" name="campaignscaled" value="{{campaignscaled}}">
+
+
+      <input class="form-check-input" type="text" style=" display: none; "  id="Product_recommendations" name="Product_recommendations" value="{{Product_recommendations}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="Product_recommendations_monthly_base_cost" name="Product_recommendations_monthly_base_cost" value="{{Product_recommendations_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="Product_recommendations_monthly_coef" name="Product_recommendations_monthly_coef" value="{{Product_recommendations_monthly_coef}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="Product_recommendations_monthly_activity_free" name="Product_recommendations_monthly_activity_free" value="{{Product_recommendations_monthly_activity_free}}">
+
+
+      <input class="form-check-input" type="number" style=" display: none; "  id="prescriptive_ai_monthly_base_cost" name="prescriptive_ai_monthly_base_cost" value="{{prescriptive_ai_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="prescriptive_ai_monthly_coef" name="prescriptive_ai_monthly_coef" value="{{prescriptive_ai_monthly_coef}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="prescriptive_ai_monthly_activity_free" name="prescriptive_ai_monthly_activity_free" value="{{prescriptive_ai_monthly_activity_free}}">
+
+
+      <input class="form-check-input" type="text" style=" display: none; " name="metricscaled" id="metricscaled" value="{{metricscaled}}">
+      <input class="form-check-input" type="number" style=" display: none; " name="metricscaled_monthly_base_cost" id="metricscaled_monthly_base_cost" value="{{metricscaled_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; " name="metricscaled_monthly_coef" id="metricscaled_monthly_coef" value="{{metricscaled_monthly_coef}}">
+      <input class="form-check-input" type="number"  style=" display: none; " name="metricscaled_monthly_activity_free" id="metricscaled_monthly_activity_free" value="{{metricscaled_monthly_activity_free}}">
+
+
+      <input class="form-check-input" type="number" style=" display: none; "  id="driven_erp_monthly_base_cost" name="driven_erp_monthly_base_cost" value="{{driven_erp_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="driven_erp_monthly_coef" name="driven_erp_monthly_coef" value="{{driven_erp_monthly_coef}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="driven_erp_monthly_activity_free" name="driven_erp_monthly_activity_free" value="{{driven_erp_monthly_activity_free}}">
+
+
+      <input class="form-check-input" type="number" style=" display: none; "  id="driven_edriven_e_commerce_monthly_base_cost" name="driven_edriven_e_commerce_monthly_base_cost" value="{{driven_edriven_e_commerce_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="driven_edriven_e_commerce_monthly_coef" name="driven_edriven_e_commerce_monthly_coef" value="{{driven_edriven_e_commerce_monthly_coef}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="driven_edriven_e_commerce_monthly_coef_monthly_activity_free" name="driven_edriven_e_commerce_monthly_coef_monthly_activity_free" value="{{driven_edriven_e_commerce_monthly_coef_monthly_activity_free}}">
+
+
+
+
+
+
+      <!-- Hidden input fields for package_price_demandscaled -->
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_demandscaled_base_price" id="package_price_demandscaled_base_price" value="{{ package_price_demandscaled_base_price }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_demandscaled_base_number_of_subscription_months" id="package_price_demandscaled_base_number_of_subscription_months" value="{{ package_price_demandscaled_base_number_of_subscription_months }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_demandscaled_base_number_of_users" id="package_price_demandscaled_base_number_of_users" value="{{ package_price_demandscaled_base_number_of_users }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_demandscaled_base_number_data_reloads" id="package_price_demandscaled_base_number_data_reloads" value="{{ package_price_demandscaled_base_number_data_reloads }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_demandscaled_saturation_coef" id="package_price_demandscaled_saturation_coef" value="{{ package_price_demandscaled_saturation_coef }}">
+
+    <!-- Hidden input fields for package_price_acquirescaled -->
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_acquirescaled_base_price" id="package_price_acquirescaled_base_price" value="{{ package_price_acquirescaled_base_price }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_acquirescaled_base_number_of_subscription_months" id="package_price_acquirescaled_base_number_of_subscription_months" value="{{ package_price_acquirescaled_base_number_of_subscription_months }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_acquirescaled_base_number_of_users" id="package_price_acquirescaled_base_number_of_users" value="{{ package_price_acquirescaled_base_number_of_users }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_acquirescaled_base_number_data_reloads" id="package_price_acquirescaled_base_number_data_reloads" value="{{ package_price_acquirescaled_base_number_data_reloads }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_acquirescaled_saturation_coef" id="package_price_acquirescaled_saturation_coef" value="{{ package_price_acquirescaled_saturation_coef }}">
+
+    <!-- Hidden input fields for package_price_recommendscaled -->
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_recommendscaled_base_price" id="package_price_recommendscaled_base_price" value="{{ package_price_recommendscaled_base_price }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_recommendscaled_base_number_of_subscription_months" id="package_price_recommendscaled_base_number_of_subscription_months" value="{{ package_price_recommendscaled_base_number_of_subscription_months }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_recommendscaled_base_number_of_users" id="package_price_recommendscaled_base_number_of_users" value="{{ package_price_recommendscaled_base_number_of_users }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_recommendscaled_base_number_data_reloads" id="package_price_recommendscaled_base_number_data_reloads" value="{{ package_price_recommendscaled_base_number_data_reloads }}">
+    <input class="form-check-input" type="number" style="display: none;" name="package_price_recommendscaled_saturation_coef" id="package_price_recommendscaled_saturation_coef" value="{{ package_price_recommendscaled_saturation_coef }}">
+
+
+
+      <!-- Hidden input fields for prescriptive_ai_monthly -->
+<input class="form-check-input" type="number" style="display: none;" name="prescriptive_ai_monthly_base_price" id="prescriptive_ai_monthly_base_price" value="{{ prescriptive_ai_monthly_base_price }}">
+<input class="form-check-input" type="number" style="display: none;" name="prescriptive_ai_monthly_base_number_of_subscription_months" id="prescriptive_ai_monthly_base_number_of_subscription_months" value="{{ prescriptive_ai_monthly_base_number_of_subscription_months }}">
+<input class="form-check-input" type="number" style="display: none;" name="prescriptive_ai_monthly_base_number_of_users" id="prescriptive_ai_monthly_base_number_of_users" value="{{ prescriptive_ai_monthly_base_number_of_users }}">
+<input class="form-check-input" type="number" style="display: none;" name="prescriptive_ai_monthly_base_number_data_reloads" id="prescriptive_ai_monthly_base_number_data_reloads" value="{{ prescriptive_ai_monthly_base_number_data_reloads }}">
+<input class="form-check-input" type="number" style="display: none;" name="prescriptive_ai_monthly_saturation_coef" id="prescriptive_ai_monthly_saturation_coef" value="{{ prescriptive_ai_monthly_saturation_coef }}">
+
+<!-- Hidden input fields for metricscaled_monthly -->
+<input class="form-check-input" type="number" style="display: none;" name="metricscaled_monthly_base_price" id="metricscaled_monthly_base_price" value="{{ metricscaled_monthly_base_price }}">
+<input class="form-check-input" type="number" style="display: none;" name="metricscaled_monthly_base_number_of_subscription_months" id="metricscaled_monthly_base_number_of_subscription_months" value="{{ metricscaled_monthly_base_number_of_subscription_months }}">
+<input class="form-check-input" type="number" style="display: none;" name="metricscaled_monthly_base_number_of_users" id="metricscaled_monthly_base_number_of_users" value="{{ metricscaled_monthly_base_number_of_users }}">
+<input class="form-check-input" type="number" style="display: none;" name="metricscaled_monthly_base_number_data_reloads" id="metricscaled_monthly_base_number_data_reloads" value="{{ metricscaled_monthly_base_number_data_reloads }}">
+<input class="form-check-input" type="number" style="display: none;" name="metricscaled_monthly_saturation_coef" id="metricscaled_monthly_saturation_coef" value="{{ metricscaled_monthly_saturation_coef }}">
+
+
+      <!-- Hidden input fields for driven_erp_monthly -->
+<input class="form-check-input" type="number" style="display: none;" name="driven_erp_monthly_base_price" id="driven_erp_monthly_base_price" value="{{ driven_erp_monthly_base_price }}">
+<input class="form-check-input" type="number" style="display: none;" name="driven_erp_monthly_base_number_of_subscription_months" id="driven_erp_monthly_base_number_of_subscription_months" value="{{ driven_erp_monthly_base_number_of_subscription_months }}">
+<input class="form-check-input" type="number" style="display: none;" name="driven_erp_monthly_base_number_of_users" id="driven_erp_monthly_base_number_of_users" value="{{ driven_erp_monthly_base_number_of_users }}">
+<input class="form-check-input" type="number" style="display: none;" name="driven_erp_monthly_base_number_data_reloads" id="driven_erp_monthly_base_number_data_reloads" value="{{ driven_erp_monthly_base_number_data_reloads }}">
+<input class="form-check-input" type="number" style="display: none;" name="driven_erp_monthly_saturation_coef" id="driven_erp_monthly_saturation_coef" value="{{ driven_erp_monthly_saturation_coef }}">
+
+<!-- Hidden input fields for driven_edriven_e_commerce_monthly -->
+<input class="form-check-input" type="number" style="display: none;" name="driven_edriven_e_commerce_monthly_base_price" id="driven_edriven_e_commerce_monthly_base_price" value="{{ driven_edriven_e_commerce_monthly_base_price }}">
+<input class="form-check-input" type="number" style="display: none;" name="driven_edriven_e_commerce_monthly_base_number_of_subscription_months" id="driven_edriven_e_commerce_monthly_base_number_of_subscription_months" value="{{ driven_edriven_e_commerce_monthly_base_number_of_subscription_months }}">
+<input class="form-check-input" type="number" style="display: none;" name="driven_edriven_e_commerce_monthly_base_number_of_users" id="driven_edriven_e_commerce_monthly_base_number_of_users" value="{{ driven_edriven_e_commerce_monthly_base_number_of_users }}">
+<input class="form-check-input" type="number" style="display: none;" name="driven_edriven_e_commerce_monthly_base_number_data_reloads" id="driven_edriven_e_commerce_monthly_base_number_data_reloads" value="{{ driven_edriven_e_commerce_monthly_base_number_data_reloads }}">
+<input class="form-check-input" type="number" style="display: none;" name="driven_edriven_e_commerce_monthly_saturation_coef" id="driven_edriven_e_commerce_monthly_saturation_coef" value="{{ driven_edriven_e_commerce_monthly_saturation_coef }}">
+
+
+
+
+
+
+
+
+
+      <div class="container mt-4">
+          <label for="exampleRanges1">Select number of month to access my analytics insights:</label></br>
+            <span class="">1</span>
+            <span class="" style="margin-left: 88%;">12</span>
+            <input type="range" class="custom-range" id="exampleRanges1" min="1" max="12" value="{{the_subcription.number_of_month_to_access}}" name="month_to_access" onchange="rangeChanged10(this)">
+            </br>selected <span class="range-values" id="rangeValues1">{{the_subcription.number_of_month_to_access}}</span>
+
+            </br>
+            </br>
+
+            <label for="exampleRanges2">Select number of times ERP and E-Commerce data is expected to
+            be reloadedper month:</label></br>
+            <span class="">1</span>
+            <span class="" style="margin-left: 88%;">24</span>
+            <input type="range" class="custom-range" id="exampleRanges2" min="1" max="24" value="{{the_subcription.number_of_times_ERP}}" name="number_of_times" onchange="rangeChanged10(this)">
+            </br>selected <span class="range-values" id="rangeValues2">{{the_subcription.number_of_times_ERP}}</span>
+
+            </br>
+            </br>
+
+            <label for="exampleRanges3">Select number of expected users of the platform:</label></br>
+            <span class="">2</span>
+            <span class="" style="margin-left: 88%;">50</span>
+            <input type="range" class="custom-range" id="exampleRanges3" min="2" max="50" value="{{the_subcription.number_of_expected_users_of_the_platform}}" name="expected_users" onchange="rangeChanged10(this)">
+            </br>selected <span class="range-values" id="rangeValues3">{{the_subcription.number_of_expected_users_of_the_platform}}</span>
+
+          </br>
+          </br>
+
+          </br>
+
+            <!-- For Training per month -->
+            <label for="trainingRanges">Training per month (hours):</label></br>
+            <span class="">0</span>
+            <span class="" style="margin-left: 88%;">60</span>
+            <input type="range" class="custom-range" id="trainingRanges" min="0" max="60" value="30" name="training_hours" onchange="rangeChanged(this)">
+            </br>selected <span class="range-values" id="trainingRangeValue">30</span>
+            </br>
+            <!-- For Support hours per month -->
+            <label for="supportRanges">Support hours per month:</label></br>
+            <span class="">0</span>
+            <span class="" style="margin-left: 88%;">40</span>
+            <input type="range" class="custom-range" id="supportRanges" min="0" max="40" value="20" name="support_hours" onchange="rangeChanged1(this)">
+            </br>selected <span class="range-values" id="supportRangeValue">20</span>
+
+
+
+<script>
+    // JavaScript function to handle changes in the training range input
+function rangeChanged(trainingRangeInput) {
+    document.getElementById("trainingRangeValue").textContent = trainingRangeInput.value;
+    // Add any additional logic you need here
+}
+
+// JavaScript function to handle changes in the support range input
+function rangeChanged1(supportRangeInput) {
+    document.getElementById("supportRangeValue").textContent = supportRangeInput.value;
+    // Add any additional logic you need here
+}
+</script>
+          </br>
+          </br>
+
+          <!-- ERP Dropdown -->
+    <div class="form-group">
+        <label for="selectERP">Select ERP</label>
+        <select class="form-control" id="selectERP">
+            {% for company_type in all_company_types %}
+                <option value="{{ company_type.fix_cost }}|{{ company_type.company_type_cost }}">{{ company_type.company_type_or_industry }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+
+<script>
+    function calculateMonthlyCostNew() {
+console.log('ho')
+     // Access the sup_cost and Train_cost from the context
+    var sup_cost = {{ sup_cost }};
+    var Train_cost = {{ Train_cost }};
+console.log('ho')
+console.log(sup_cost)
+
+    // Get the selected option from the dropdown
+    var selectedOption = document.getElementById("selectERP").value;
+
+    // Extract fix cost and company type cost from the selected option value
+    var selectedValues = selectedOption.split("|");
+    var fixCost = parseFloat(selectedValues[0]);
+    var companyTypeCost = parseFloat(selectedValues[1]);
+console.log('companyTypeCost')
+console.log(companyTypeCost)
+    // Get the values of the other input fields
+    var numUsers = parseInt(document.getElementById("exampleRanges3").value);
+    var numTrainingHours = parseInt(document.getElementById("trainingRanges").value);
+    var numSupportHours = parseInt(document.getElementById("supportRanges").value);
+console.log('numSupportHours')
+console.log(numSupportHours)
+    // Calculate the monthly cost
+    var monthlyCost = (companyTypeCost * numUsers) + (Train_cost * numTrainingHours) + (sup_cost * numSupportHours);
+    var planePrice = monthlyCost * 12 + fixCost;
+console.log('planePrice')
+console.log(planePrice)
+    // Update the plane price input field and span element
+    console.log('end111111')
+    l = document.getElementById("id_plane_price")
+    console.log('llll')
+    console.log(l)
+    document.getElementById("id_plane_price").value = planePrice.toFixed(2);
+    document.getElementById("id_plane_price_span").textContent = "TOTAL SELECTED ERP SERVICES PLAN COST $" + planePrice.toFixed(2);
+console.log('end')
+calculateSum();
+calculateMonthlyCost();
+
+}
+
+// Add event listener for the dropdown menu
+document.getElementById("selectERP").addEventListener("change", calculateMonthlyCostNew);
+
+// Add event listeners to update the plane price whenever any input changes
+document.getElementById("exampleRanges3").addEventListener("input", calculateMonthlyCostNew);
+document.getElementById("trainingRanges").addEventListener("input", calculateMonthlyCostNew);
+document.getElementById("supportRanges").addEventListener("input", calculateMonthlyCostNew);
+
+// Initial calculation when the page loads
+
+
+</script>
+
+
+
+
+
+
+          <div class="row">
+                <div class="col-auto">
+                    <input class="form-check-input" type="radio" name="payment_type_get" id="installmentsRadio" value="installments" checked>
+                    <label class="form-check-label" for="installmentsRadio">Enter Amount to pay now</label>
+                </div>
+                <div class="col">
+                    <div id="installmentsInput">
+                        <input class="form-control" type="number" name="installmentsCount" id="installmentsCount" placeholder="Amount of partial payment"  onkeyup="enable_submit_btn()">
+                    </div>
+                </div>
+            </div>
+<br>
+
+          Remain Balance to pay <span id="Remain_Balance_to_pay" style=" background-color: yellowgreen; padding: 10px; "></span>
+          <br/>
+          Balance to pay monthly
+installement <span id="monthly_cost" style=" background-color: yellowgreen; padding: 10px; "></span>
+          <input type="hidden" name="installment_amount" id="installment_amount_id">
+
+
+
+
+
+
+      </div>
+
+
+<button type="submit" class="btn btn-primary" id="submit_btn_id" disabled>Pay Now</button>
+  </div>
+
+</div>
+    <div class="col-4">
+
+        <div class="col-4">
+
+        <span style=" font-size: 28px; font-weight: bold; ">Payment $</span> <span id="show_payment" style=" font-size: 28px; font-weight: bold; "></span>
+              <input class="form-check-input hidden-input" type="text"  id="total_amount_info" name="total_amount" value="0">
+<br>
+        <br>
+        <span style=" font-size: 20px; font-weight: bold; " id="id_plane_price_span">TOTAL SELECTED ERP SERVICES PLAN
+            COST $ {{plane_price}}</span>
+
+        <input class="form-check-input hidden-input" type="text"  id="id_plane_price" name="plane_price" value="{{plane_price}}">
+
+    <br>
+    <br>
+        <span style=" font-size: 20px; font-weight: bold; ">
+            TOTAL SELECTED ERP SERVICES PLAN
+COST + ANALYTIC COST $</span> <span style=" font-size: 20px; font-weight: bold; " id="sum_result"></span>
+            <input class="form-check-input hidden-input" type="hidden"  id="all_amount_sum" name="all_amount_sum" >
+
+    </div>
+    </div>
+
+
+</div>
+</form>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+<script>
+
+function calculateSubscriptionPrice(base_price, saturation_coef, number_of_subscription_months, number_of_users, number_data_reloads, base_number_of_subscription_months, base_number_of_users, base_number_data_reloads) {
+    var actual_scale = number_of_subscription_months * number_of_users * number_data_reloads;
+    var base_scale = base_number_of_subscription_months * base_number_of_users * base_number_data_reloads;
+    var price = base_price * (1 + saturation_coef * (actual_scale - base_scale) / base_scale);
+
+    if (actual_scale - base_scale < 0) {
+        price = base_price;
+    }
+
+    var subscriptionPricePerMonth = price * number_of_subscription_months;
+    return subscriptionPricePerMonth;
+}
+</script>
+
+<script>
+        function calculateSum() {
+            // Get the values of the input fields
+            var planePrice = parseFloat(document.getElementById("id_plane_price").value);
+            var totalAmount = parseFloat(document.getElementById("total_amount_info").value);
+
+            // Calculate the sum
+            var sum = planePrice + totalAmount;
+
+            // Update the content of the span tag with the result
+            document.getElementById("sum_result").textContent = sum;
+            document.getElementById("all_amount_sum").value = sum;
+            document.getElementById("Remain_Balance_to_pay").textContent = sum;
+        }
+    </script>
+
+
+
+<script>
+        function calculateMonthlyCost() {
+            // Get the value of number of months from the range input
+            var month = parseInt(document.getElementById("exampleRanges1").value);
+
+            // Get the value of amount from the number input
+            var amount = parseFloat(document.getElementById("installmentsCount").value);
+
+            // Get the initial sum_result (if available)
+            var sumResult = parseFloat(document.getElementById("sum_result").textContent) || 0;
+
+            // Calculate the monthly cost based on initial sum_result and selected month
+            var initialMonthlyCost = sumResult / month;
+
+            // Calculate the remaining money after subtracting the input amount
+            var remainingMoney = sumResult - amount;
+
+            // Calculate the updated monthly cost based on remaining money and selected month
+            var updatedMonthlyCost = remainingMoney / month;
+
+            // Display the initial monthly cost if the input amount is empty
+            if (isNaN(amount) || amount === "") {
+                document.getElementById("monthly_cost").textContent = initialMonthlyCost.toFixed(2);
+                document.getElementById("installment_amount_id").value = initialMonthlyCost.toFixed(2);
+                document.getElementById("Remain_Balance_to_pay").textContent = sumResult.toFixed(2);
+            } else {
+                // Display the updated monthly cost if the input amount is provided
+                document.getElementById("monthly_cost").textContent = updatedMonthlyCost.toFixed(2);
+                document.getElementById("installment_amount_id").value = updatedMonthlyCost.toFixed(2);
+                document.getElementById("Remain_Balance_to_pay").textContent = remainingMoney.toFixed(2);
+            }
+        }
+
+        // Call calculateMonthlyCost() whenever there is a change in the inputs
+        function rangeChanged10(rangeInput) {
+            document.getElementById("rangeValues1").textContent = rangeInput.value;
+            calculateMonthlyCost(); // Call the function to update the monthly cost
+        }
+
+        // Call calculateMonthlyCost() whenever there is a change in the inputs
+        document.getElementById("installmentsCount").addEventListener("input", calculateMonthlyCost);
+    </script>
+
+
+
+
+<script>
+    function calculateSubscriptionPrice_not_used(NumberOfSelectedMonths, NumberOfDataReloads, NumberOfUsers, monthlyActivityFree, monthlyBaseCost, monthlyCoef) {
+      console.log('in calc part')
+      console.log(NumberOfSelectedMonths)
+      console.log(NumberOfDataReloads)
+      console.log(NumberOfUsers)
+      console.log(monthlyActivityFree)
+      console.log(monthlyBaseCost)
+      console.log(monthlyCoef)
+
+      let subscriptionPricePerMonth = 0.00;
+      let expectedMonthlyActivity = (NumberOfSelectedMonths + NumberOfDataReloads) * (1 + 0.77 * (NumberOfUsers - 10) / 10);
+        console.log('expectedMonthlyActivity')
+        console.log(expectedMonthlyActivity)
+      if (expectedMonthlyActivity - monthlyActivityFree <= 0) {
+      console.log(' if state ment')
+        subscriptionPricePerMonth = 0.00;
+      } else {
+      console.log(' else state ment')
+        subscriptionPricePerMonth = monthlyBaseCost * (1 + monthlyCoef * (expectedMonthlyActivity-monthlyActivityFree) / expectedMonthlyActivity);
+      }
+        console.log('subscriptionPricePerMonth')
+        console.log(subscriptionPricePerMonth)
+      return subscriptionPricePerMonth;
+    }
+
+
+
+
+
+    function rangeChanged10(){
+    console.log('go mna')
+    console.log('lo')
+
+      var exampleRanges1 = document.getElementById("exampleRanges1").value;
+      var exampleRanges2 = document.getElementById("exampleRanges2").value;
+      var exampleRanges3 = document.getElementById("exampleRanges3").value;
+
+      exampleRanges1 = parseInt(exampleRanges1);
+      exampleRanges2 = parseInt(exampleRanges2);
+      exampleRanges3 = parseInt(exampleRanges3);
+
+      var number_of_subscription_months = exampleRanges1
+      var number_of_users = exampleRanges3
+      var number_data_reloads = exampleRanges2
+
+      var demandscaled = document.getElementById("demandscaled").value;
+      var acquirescaled = document.getElementById("acquirescaled").value;
+      var Product_recommendations = document.getElementById("Product_recommendations").value;
+      console.log('lo111')
+      var campaignscaled = document.getElementById("campaignscaled").value;
+        console.log('lo22222')
+
+      var total_amount = 0;
+
+
+      document.getElementById("rangeValues1").innerHTML = exampleRanges1;
+      document.getElementById("rangeValues2").innerHTML = exampleRanges2;
+      document.getElementById("rangeValues3").innerHTML = exampleRanges3;
+
+
+      if (demandscaled === "on") {
+        const monthlyActivityFree = document.getElementById("demandscaled_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("demandscaled_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("demandscaled_monthly_coef").value;
+
+
+
+        // Retrieve values from HTML elements and parse as floats
+        const base_price = parseFloat(document.getElementById("package_price_demandscaled_base_price").value);
+        const base_number_of_subscription_months = parseFloat(document.getElementById("package_price_demandscaled_base_number_of_subscription_months").value);
+        const base_number_of_users = parseFloat(document.getElementById("package_price_demandscaled_base_number_of_users").value);
+        const base_number_data_reloads = parseFloat(document.getElementById("package_price_demandscaled_base_number_data_reloads").value);
+        const saturation_coef = parseFloat(document.getElementById("package_price_demandscaled_saturation_coef").value);
+
+
+
+
+        //const result = calculateSubscriptionPrice(exampleRanges1, exampleRanges2, exampleRanges3, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+
+        const result = calculateSubscriptionPrice(base_price, saturation_coef, number_of_subscription_months, number_of_users, number_data_reloads, base_number_of_subscription_months, base_number_of_users, base_number_data_reloads)
+
+
+        total_amount = total_amount+result;
+        }
+      if (acquirescaled === "on") {
+
+        const monthlyActivityFree = document.getElementById("acquirescaled_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("acquirescaled_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("acquirescaled_monthly_coef").value;
+
+         // Retrieve values from HTML elements and parse as floats
+        const base_price = parseFloat(document.getElementById("package_price_acquirescaled_base_price").value);
+        const base_number_of_subscription_months = parseFloat(document.getElementById("package_price_acquirescaled_base_number_of_subscription_months").value);
+        const base_number_of_users = parseFloat(document.getElementById("package_price_acquirescaled_base_number_of_users").value);
+        const base_number_data_reloads = parseFloat(document.getElementById("package_price_acquirescaled_base_number_data_reloads").value);
+        const saturation_coef = parseFloat(document.getElementById("package_price_acquirescaled_saturation_coef").value);
+
+
+
+
+
+        //const result = calculateSubscriptionPrice(exampleRanges1, exampleRanges2, exampleRanges3, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+
+        const result = calculateSubscriptionPrice(base_price, saturation_coef, number_of_subscription_months, number_of_users, number_data_reloads, base_number_of_subscription_months, base_number_of_users, base_number_data_reloads)
+
+
+        total_amount = total_amount+result;
+
+        }
+
+        if (Product_recommendations === "on") {
+            const monthlyActivityFree = document.getElementById("Product_recommendations_monthly_activity_free").value;
+            const monthlyBaseCost = document.getElementById("Product_recommendations_monthly_base_cost").value;
+            const monthlyCoef = document.getElementById("Product_recommendations_monthly_coef").value;
+
+
+            // Retrieve values from HTML elements and parse as floats
+            const base_price = parseFloat(document.getElementById("package_price_recommendscaled_base_price").value);
+            const base_number_of_subscription_months = parseFloat(document.getElementById("package_price_recommendscaled_base_number_of_subscription_months").value);
+            const base_number_of_users = parseFloat(document.getElementById("package_price_recommendscaled_base_number_of_users").value);
+            const base_number_data_reloads = parseFloat(document.getElementById("package_price_recommendscaled_base_number_data_reloads").value);
+            const saturation_coef = parseFloat(document.getElementById("package_price_recommendscaled_saturation_coef").value);
+
+
+
+            //const result = calculateSubscriptionPrice(exampleRanges1, exampleRanges2, exampleRanges3, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+
+            const result = calculateSubscriptionPrice(base_price, saturation_coef, number_of_subscription_months, number_of_users, number_data_reloads, base_number_of_subscription_months, base_number_of_users, base_number_data_reloads)
+
+
+            total_amount = total_amount+result;
+
+            }
+        var p =0
+        if (campaignscaled === "on") {
+
+        //for prescriptive_ai_monthly_base_cost
+        const monthlyActivityFree = document.getElementById("prescriptive_ai_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("prescriptive_ai_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("prescriptive_ai_monthly_coef").value;
+
+        // Retrieve values from HTML elements and parse as floats
+        const base_price = parseFloat(document.getElementById("prescriptive_ai_monthly_base_price").value);
+        const base_number_of_subscription_months = parseFloat(document.getElementById("prescriptive_ai_monthly_base_number_of_subscription_months").value);
+        const base_number_of_users = parseFloat(document.getElementById("prescriptive_ai_monthly_base_number_of_users").value);
+        const base_number_data_reloads = parseFloat(document.getElementById("prescriptive_ai_monthly_base_number_data_reloads").value);
+        const saturation_coef = parseFloat(document.getElementById("prescriptive_ai_monthly_saturation_coef").value);
+
+
+
+
+        //var result = calculateSubscriptionPrice(exampleRanges1, exampleRanges2, exampleRanges3, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+
+        const result = calculateSubscriptionPrice(base_price, saturation_coef, number_of_subscription_months, number_of_users, number_data_reloads, base_number_of_subscription_months, base_number_of_users, base_number_data_reloads)
+
+
+        total_amount = total_amount+result;
+        console.log('jo 1')
+        console.log(total_amount)
+
+        }
+        if (p==0){
+        // for metricscaled_monthly_activity_free
+        const monthlyActivityFree = document.getElementById("metricscaled_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("metricscaled_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("metricscaled_monthly_coef").value;
+
+
+         // Retrieve values from HTML elements and parse as floats
+        const base_price = parseFloat(document.getElementById("metricscaled_monthly_base_price").value);
+        const base_number_of_subscription_months = parseFloat(document.getElementById("metricscaled_monthly_base_number_of_subscription_months").value);
+        const base_number_of_users = parseFloat(document.getElementById("metricscaled_monthly_base_number_of_users").value);
+        const base_number_data_reloads = parseFloat(document.getElementById("metricscaled_monthly_base_number_data_reloads").value);
+        const saturation_coef = parseFloat(document.getElementById("metricscaled_monthly_saturation_coef").value);
+
+
+
+
+        //const result = calculateSubscriptionPrice(exampleRanges1, exampleRanges2, exampleRanges3, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+
+        const result = calculateSubscriptionPrice(base_price, saturation_coef, number_of_subscription_months, number_of_users, number_data_reloads, base_number_of_subscription_months, base_number_of_users, base_number_data_reloads)
+
+
+        total_amount = total_amount+result;
+        console.log('jo 2')
+        console.log(total_amount)
+        }
+        if (p==1){
+        //for driven_erp_monthly_activity_free
+        const monthlyActivityFree = document.getElementById("driven_erp_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("driven_erp_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("driven_erp_monthly_coef").value;
+
+
+
+
+        // Retrieve values from HTML elements and parse as floats
+        const base_price = parseFloat(document.getElementById("driven_erp_monthly_base_price").value);
+        const base_number_of_subscription_months = parseFloat(document.getElementById("driven_erp_monthly_base_number_of_subscription_months").value);
+        const base_number_of_users = parseFloat(document.getElementById("driven_erp_monthly_base_number_of_users").value);
+        const base_number_data_reloads = parseFloat(document.getElementById("driven_erp_monthly_base_number_data_reloads").value);
+        const saturation_coef = parseFloat(document.getElementById("driven_erp_monthly_saturation_coef").value);
+
+
+
+        //const result = calculateSubscriptionPrice(exampleRanges1, exampleRanges2, exampleRanges3, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+
+        const result = calculateSubscriptionPrice(base_price, saturation_coef, number_of_subscription_months, number_of_users, number_data_reloads, base_number_of_subscription_months, base_number_of_users, base_number_data_reloads)
+
+
+        total_amount = total_amount+result;
+        console.log('jo 3')
+        console.log(total_amount)
+        }
+
+
+        if (p==1){
+        const monthlyActivityFree = document.getElementById("driven_edriven_e_commerce_monthly_coef_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("driven_edriven_e_commerce_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("driven_edriven_e_commerce_monthly_coef").value;
+
+        // Retrieve values from HTML elements and parse as floats
+        const base_price = parseFloat(document.getElementById("driven_edriven_e_commerce_monthly_base_price").value);
+        const base_number_of_subscription_months = parseFloat(document.getElementById("driven_edriven_e_commerce_monthly_base_number_of_subscription_months").value);
+        const base_number_of_users = parseFloat(document.getElementById("driven_edriven_e_commerce_monthly_base_number_of_users").value);
+        const base_number_data_reloads = parseFloat(document.getElementById("driven_edriven_e_commerce_monthly_base_number_data_reloads").value);
+        const saturation_coef = parseFloat(document.getElementById("driven_edriven_e_commerce_monthly_saturation_coef").value);
+
+
+
+        //const result = calculateSubscriptionPrice(exampleRanges1, exampleRanges2, exampleRanges3, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+
+        const result = calculateSubscriptionPrice(base_price, saturation_coef, number_of_subscription_months, number_of_users, number_data_reloads, base_number_of_subscription_months, base_number_of_users, base_number_data_reloads)
+
+
+        total_amount = total_amount+result;
+        console.log('jo 4')
+        console.log(total_amount)
+        }
+    console.log('total_amount')
+    console.log(total_amount)
+    let total_amount_change = total_amount.toFixed(2);
+    document.getElementById("show_payment").innerHTML = total_amount_change;
+    document.getElementById("total_amount_info").value = total_amount_change;
+
+    calculateSum();
+    calculateMonthlyCost();
+
+    }
+
+</script>
+<script>
+//window.onload = rangeChanged10;
+
+  // Rest of your script...
+
+    window.onload = function() {
+    calculateMonthlyCostNew();
+    setTimeout(rangeChanged10, 100);
+
+  };
+</script>
+
+
+
+<script>
+    function enable_submit_btn(){
+
+    var total_amount = parseInt(document.getElementById('sum_result').innerHTML); // Example total_amount value
+
+        // Get the input field value
+        var input_value = parseInt(document.getElementById('installmentsCount').value);
+
+        var selectedOption = document.getElementById("selectERP").value;
+
+        // Extract fix cost and company type cost from the selected option value
+        var selectedValues = selectedOption.split("|");
+        var fixCost = parseFloat(selectedValues[0]);
+
+
+        // Calculate 20% of the total_amount and add fixcost
+        var twenty_percent = (total_amount * 0.2)+fixCost;
+
+        // Check if the input value is greater than or equal to 20% of the total_amount
+        if (input_value >= twenty_percent) {
+            // Enable the button
+            document.getElementById('submit_btn_id').disabled = false;
+        } else {
+            // Disable the button
+            document.getElementById('submit_btn_id').disabled = true;
+        }
+    }
+
+
+</script>
+
+
+{% endblock %}

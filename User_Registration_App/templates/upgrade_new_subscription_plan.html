@@ -1,0 +1,81 @@
+{% extends 'home_base2.html' %}
+{% block home_content %}
+
+<style>
+  /* Basic styling for the cards */
+  .card {
+    width: 220px; /* Calculate width with margin */
+    margin: 0 10px 20px; /* Add margin to space out the cards */
+    height: 1050px; /* Set a specific height for the card */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    text-align: left;
+    overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+
+  .card h2 {
+    color: #333;
+    margin-bottom: 15px;
+    background-color: #007bff;
+    padding: 10px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+  }
+
+  .card p {
+    color: #666;
+    margin-bottom: 20px;
+     /* Set max-height to create a scrollbar if content exceeds */
+     /* Enable vertical scrollbar if content exceeds */
+  }
+
+  .card button {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .card button:hover {
+    background-color: #0056b3;
+  }
+</style>
+
+
+    <div class="row">
+        {% for i in sp %}
+        <div class="col-md-4"> <!-- Adjusted to col-md-4 to occupy 33.33% width -->
+            <form action="{% url 'upgrade_subscription' company_info.id %}" method="POST"> {% csrf_token %}
+                <input type="hidden" name="CompanyRegistrationInformationId" value="{{company_info.id}}">
+                <input type="hidden" name="sub_id" value="{{subcription_pk.id}}">
+                <div class="card">
+                    <h2>{{i.heading}}</h2>
+                    <p>{{i.discription | safe}}</p>
+                    <input type="hidden" name="plane_price" value="{{i.price}}">
+                    {% if subcription_pk.services_plan_cost|floatformat:"2" == i.price|floatformat:"2" %}
+                        <button type="submit" class="btn btn-warning" style=" background: aqua; ">START</button>
+
+                    {% else %}
+                        <button type="submit" class="btn btn-primary">START</button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+
+
+
+
+
+<!-- billing_history.html -->
+<style>
+  .billing-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .billing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .billing-table th, .billing-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  .billing-table th {
+    background-color: #f2f2f2;
+    color: #333;
+  }
+
+  .billing-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .billing-table tbody tr:hover {
+    background-color: #f2f2f2;
+  }
+</style>
+<div class="billing-container">
+<table class="billing-table">
+  <thead>
+    <tr>
+      <th>Number Of Month To Access</th>
+      <th>Number Of Times ERP</th>
+      <th>Number Of Expected Users</th>
+      <th>Demandscaled</th>
+      <th>Acquirescaled</th>
+      <th>Product Recommendations</th>
+      <th>Total Amount</th>
+      <th>Paid Amount</th>
+      <th>Paid status</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for sub in subcription %}
+    <tr>
+      <td>{{ sub.number_of_month_to_access }}</td>
+      <td>{{ sub.number_of_times_ERP }}</td>
+      <td>{{ sub.number_of_expected_users_of_the_platform }}</td>
+        <td>{{ sub.demandscaled }}</td>
+        <td>{{ sub.acquirescaled }}</td>
+        <td>{{ sub.product_recommendations }}</td>
+        <td>{{ sub.platform_total_payment }}</td>
+        <td>{{ sub.paid_payment }}</td>
+        <td>{{ sub.payment_status }}</td>
+        <td>{{ sub.created_at }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+
+{% endblock %}
+
+

@@ -1,0 +1,11 @@
+all = [
+{'id': 52328, 'name': 'Coyah', 'state_id': 2701, 'state_code': 'D', 'state_name': 'Kindia Region', 'country_id': 92, 'country_code': 'GN', 'country_name': 'Guinea', 'latitude': '9.75000000', 'longitude': '-13.41667000', 'wikiDataId': 'Q616816'},
+{'id': 52330, 'name': 'Dubréka', 'state_id': 2701, 'state_code': 'D', 'state_name': 'Kindia Region', 'country_id': 92, 'country_code': 'GN', 'country_name': 'Guinea', 'latitude': '9.79111000', 'longitude': '-13.52333000', 'wikiDataId': 'Q985362'},
+{'id': 52331, 'name': 'Forécariah', 'state_id': 2701, 'state_code': 'D', 'state_name': 'Kindia Region', 'country_id': 92, 'country_code': 'GN', 'country_name': 'Guinea', 'latitude': '9.43056000', 'longitude': '-13.08806000', 'wikiDataId': 'Q3077142'},
+{'id': 52340, 'name': 'Kindia', 'state_id': 2701, 'state_code': 'D', 'state_name': 'Kindia Region', 'country_id': 92, 'country_code': 'GN', 'country_name': 'Guinea', 'latitude': '10.08333000', 'longitude': '-12.80000000', 'wikiDataId': 'Q1741960'},
+{'id': 52361, 'name': 'Préfecture de Dubréka', 'state_id': 2701, 'state_code': 'D', 'state_name': 'Kindia Region', 'country_id': 92, 'country_code': 'GN', 'country_name': 'Guinea', 'latitude': '10.25000000', 'longitude': '-13.41667000', 'wikiDataId': 'Q1263263'},
+{'id': 52362, 'name': 'Préfecture de Forécariah', 'state_id': 2701, 'state_code': 'D', 'state_name': 'Kindia Region', 'country_id': 92, 'country_code': 'GN', 'country_name': 'Guinea', 'latitude': '9.43333000', 'longitude': '-13.10000000', 'wikiDataId': 'Q1439329'},
+{'id': 52372, 'name': 'Télimélé', 'state_id': 2701, 'state_code': 'D', 'state_name': 'Kindia Region', 'country_id': 92, 'country_code': 'GN', 'country_name': 'Guinea', 'latitude': '10.90000000', 'longitude': '-13.03333000', 'wikiDataId': 'Q7862201'},
+{'id': 52367, 'name': 'Telimele Prefecture', 'state_id': 2701, 'state_code': 'D', 'state_name': 'Kindia Region', 'country_id': 92, 'country_code': 'GN', 'country_name': 'Guinea', 'latitude': '10.91667000', 'longitude': '-13.33333000', 'wikiDataId': 'Q922545'},
+{'id': 52369, 'name': 'Tondon', 'state_id': 2701, 'state_code': 'D', 'state_name': 'Kindia Region', 'country_id': 92, 'country_code': 'GN', 'country_name': 'Guinea', 'latitude': '10.36667000', 'longitude': '-13.35000000', 'wikiDataId': 'Q7820819'},
+]

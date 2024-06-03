@@ -1,0 +1,12 @@
+all = [
+{'id': 130238, 'name': 'Huyện Bắc Yên', 'state_id': 3812, 'state_code': '05', 'state_name': 'Sơn La', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.25042000', 'longitude': '104.38501000', 'wikiDataId': 'Q4838559'},
+{'id': 130356, 'name': 'Huyện Mai Sơn', 'state_id': 3812, 'state_code': '05', 'state_name': 'Sơn La', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.15884000', 'longitude': '104.04821000', 'wikiDataId': 'Q2226906'},
+{'id': 130367, 'name': 'Huyện Mộc Châu', 'state_id': 3812, 'state_code': '05', 'state_name': 'Sơn La', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.83333000', 'longitude': '104.75000000', 'wikiDataId': 'Q10796264'},
+{'id': 130363, 'name': 'Huyện Mường La', 'state_id': 3812, 'state_code': '05', 'state_name': 'Sơn La', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.52960000', 'longitude': '104.11113000', 'wikiDataId': 'Q10796264'},
+{'id': 130398, 'name': 'Huyện Phù Yên', 'state_id': 3812, 'state_code': '05', 'state_name': 'Sơn La', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.21412000', 'longitude': '104.68993000', 'wikiDataId': 'Q724739'},
+{'id': 130416, 'name': 'Huyện Quỳnh Nhai', 'state_id': 3812, 'state_code': '05', 'state_name': 'Sơn La', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.77224000', 'longitude': '103.64920000', 'wikiDataId': 'Q5370368'},
+{'id': 130422, 'name': 'Huyện Sông Mã', 'state_id': 3812, 'state_code': '05', 'state_name': 'Sơn La', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.06971000', 'longitude': '103.68727000', 'wikiDataId': 'Q7395483'},
+{'id': 130440, 'name': 'Huyện Thuận Châu', 'state_id': 3812, 'state_code': '05', 'state_name': 'Sơn La', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.42319000', 'longitude': '103.64408000', 'wikiDataId': 'Q3031911'},
+{'id': 130512, 'name': 'Huyện Yên Châu', 'state_id': 3812, 'state_code': '05', 'state_name': 'Sơn La', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.00500000', 'longitude': '104.33264000', 'wikiDataId': 'Q8052181'},
+{'id': 130594, 'name': 'Sơn La', 'state_id': 3812, 'state_code': '05', 'state_name': 'Sơn La', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '21.32560000', 'longitude': '103.91882000', 'wikiDataId': 'Q33415'},
+]

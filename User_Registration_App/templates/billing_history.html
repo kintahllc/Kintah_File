@@ -1,0 +1,62 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+
+
+
+
+
+<!-- billing_history.html -->
+<style>
+  .billing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .billing-table th, .billing-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  .billing-table th {
+    background-color: #f2f2f2;
+    color: #333;
+  }
+
+  .billing-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .billing-table tbody tr:hover {
+    background-color: #f2f2f2;
+  }
+</style>
+
+<table class="billing-table">
+  <thead>
+    <tr>
+      <th>Total amount</th>
+        <th>Paid Amount</th>
+        <th>Paid status</th>
+        <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for sub in subcription %}
+    <tr>
+      <td>{{ sub.platform_total_payment }}</td>
+      <td>{{ sub.paid_payment }}</td>
+      <td>{{ sub.payment_status }}</td>
+      <td>{{ sub.created_at }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+{% endblock %}
+
+

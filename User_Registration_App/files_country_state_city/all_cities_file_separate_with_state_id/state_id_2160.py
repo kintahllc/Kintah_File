@@ -1,0 +1,11 @@
+all = [
+{'id': 108806, 'name': 'Çayırlı', 'state_id': 2160, 'state_code': '24', 'state_name': 'Erzincan', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.80454000', 'longitude': '40.03724000', 'wikiDataId': 'Q272722'},
+{'id': 108890, 'name': 'İliç', 'state_id': 2160, 'state_code': '24', 'state_name': 'Erzincan', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.45587000', 'longitude': '38.56409000', 'wikiDataId': 'Q343776'},
+{'id': 107971, 'name': 'Kemah', 'state_id': 2160, 'state_code': '24', 'state_name': 'Erzincan', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.59606000', 'longitude': '39.02329000', 'wikiDataId': 'Q1023301'},
+{'id': 107973, 'name': 'Kemaliye', 'state_id': 2160, 'state_code': '24', 'state_name': 'Erzincan', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.26288000', 'longitude': '38.49674000', 'wikiDataId': 'Q1023301'},
+{'id': 107602, 'name': 'Merkez', 'state_id': 2160, 'state_code': '24', 'state_name': 'Erzincan', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.73919000', 'longitude': '39.49015000', 'wikiDataId': 'Q136217'},
+{'id': 108295, 'name': 'Otlukbeli', 'state_id': 2160, 'state_code': '24', 'state_name': 'Erzincan', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.97000000', 'longitude': '40.01872000', 'wikiDataId': 'Q181379'},
+{'id': 108365, 'name': 'Refahiye', 'state_id': 2160, 'state_code': '24', 'state_name': 'Erzincan', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.89315000', 'longitude': '38.76607000', 'wikiDataId': 'Q3056024'},
+{'id': 108570, 'name': 'Tercan', 'state_id': 2160, 'state_code': '24', 'state_name': 'Erzincan', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.77709000', 'longitude': '40.37783000', 'wikiDataId': 'Q7701250'},
+{'id': 108876, 'name': 'Üzümlü', 'state_id': 2160, 'state_code': '24', 'state_name': 'Erzincan', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.70943000', 'longitude': '39.70125000', 'wikiDataId': 'Q335204'},
+]

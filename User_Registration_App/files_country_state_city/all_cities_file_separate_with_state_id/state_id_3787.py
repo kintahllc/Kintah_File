@@ -1,0 +1,11 @@
+all = [
+{'id': 130233, 'name': 'Huyện Bắc Bình', 'state_id': 3787, 'state_code': '40', 'state_name': 'Bình Thuận', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '11.27571000', 'longitude': '108.38506000', 'wikiDataId': 'Q3710674'},
+{'id': 130304, 'name': 'Huyện Hàm Tân', 'state_id': 3787, 'state_code': '40', 'state_name': 'Bình Thuận', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.76856000', 'longitude': '107.64233000', 'wikiDataId': 'Q5643878'},
+{'id': 130302, 'name': 'Huyện Hàm Thuận Bắc', 'state_id': 3787, 'state_code': '40', 'state_name': 'Bình Thuận', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '11.14703000', 'longitude': '108.08172000', 'wikiDataId': 'Q3710927'},
+{'id': 130303, 'name': 'Huyện Hàm Thuận Nam', 'state_id': 3787, 'state_code': '40', 'state_name': 'Bình Thuận', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.92101000', 'longitude': '107.93325000', 'wikiDataId': 'Q3710927'},
+{'id': 130479, 'name': 'Huyện Tánh Linh', 'state_id': 3787, 'state_code': '40', 'state_name': 'Bình Thuận', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '11.11367000', 'longitude': '107.68427000', 'wikiDataId': 'Q2232329'},
+{'id': 130475, 'name': 'Huyện Tuy Phong', 'state_id': 3787, 'state_code': '40', 'state_name': 'Bình Thuận', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '11.34746000', 'longitude': '108.70466000', 'wikiDataId': 'Q286486'},
+{'id': 130567, 'name': 'La Gi', 'state_id': 3787, 'state_code': '40', 'state_name': 'Bình Thuận', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.65993000', 'longitude': '107.77206000', 'wikiDataId': 'Q6462754'},
+{'id': 130579, 'name': 'Phan Thiết', 'state_id': 3787, 'state_code': '40', 'state_name': 'Bình Thuận', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.92889000', 'longitude': '108.10208000', 'wikiDataId': 'Q19013'},
+{'id': 130601, 'name': 'Thành Phố Phan Thiết', 'state_id': 3787, 'state_code': '40', 'state_name': 'Bình Thuận', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.93700000', 'longitude': '108.15778000', 'wikiDataId': 'Q25315'},
+]

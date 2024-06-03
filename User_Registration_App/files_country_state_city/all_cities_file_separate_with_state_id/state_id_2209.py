@@ -1,0 +1,13 @@
+all = [
+{'id': 107241, 'name': 'Ağlasun', 'state_id': 2209, 'state_code': '15', 'state_name': 'Burdur', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '37.64944000', 'longitude': '30.53417000', 'wikiDataId': 'Q793383'},
+{'id': 107148, 'name': 'Altınyayla', 'state_id': 2209, 'state_code': '15', 'state_name': 'Burdur', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '36.99722000', 'longitude': '29.54579000', 'wikiDataId': 'Q2034360'},
+{'id': 107400, 'name': 'Bucak', 'state_id': 2209, 'state_code': '15', 'state_name': 'Burdur', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '37.45917000', 'longitude': '30.59500000', 'wikiDataId': 'Q581187'},
+{'id': 108793, 'name': 'Çavdır', 'state_id': 2209, 'state_code': '15', 'state_name': 'Burdur', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '37.16483000', 'longitude': '29.69937000', 'wikiDataId': 'Q272692'},
+{'id': 108817, 'name': 'Çeltikçi', 'state_id': 2209, 'state_code': '15', 'state_name': 'Burdur', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '37.53885000', 'longitude': '30.46823000', 'wikiDataId': 'Q272779'},
+{'id': 107695, 'name': 'Gölhisar', 'state_id': 2209, 'state_code': '15', 'state_name': 'Burdur', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '37.14590000', 'longitude': '29.50876000', 'wikiDataId': 'Q1614572'},
+{'id': 107906, 'name': 'Karamanlı', 'state_id': 2209, 'state_code': '15', 'state_name': 'Burdur', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '37.37301000', 'longitude': '29.82308000', 'wikiDataId': 'Q1014443'},
+{'id': 107977, 'name': 'Kemer', 'state_id': 2209, 'state_code': '15', 'state_name': 'Burdur', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '37.35222000', 'longitude': '30.06306000', 'wikiDataId': 'Q2527260'},
+{'id': 108180, 'name': 'Merkez', 'state_id': 2209, 'state_code': '15', 'state_name': 'Burdur', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '37.62762000', 'longitude': '30.20408000', 'wikiDataId': 'Q3055997'},
+{'id': 108556, 'name': 'Tefenni', 'state_id': 2209, 'state_code': '15', 'state_name': 'Burdur', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '37.30968000', 'longitude': '29.77538000', 'wikiDataId': 'Q1023307'},
+{'id': 108726, 'name': 'Yeşilova', 'state_id': 2209, 'state_code': '15', 'state_name': 'Burdur', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '37.50806000', 'longitude': '29.75472000', 'wikiDataId': 'Q1004602'},
+]

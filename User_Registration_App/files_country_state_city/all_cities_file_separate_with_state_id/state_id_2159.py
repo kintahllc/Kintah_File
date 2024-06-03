@@ -1,0 +1,13 @@
+all = [
+{'id': 107246, 'name': 'Ağın', 'state_id': 2159, 'state_code': '23', 'state_name': 'Elazığ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '38.93792000', 'longitude': '38.71155000', 'wikiDataId': 'Q199575'},
+{'id': 153354, 'name': 'Alacakaya', 'state_id': 2159, 'state_code': '23', 'state_name': 'Elazığ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '38.46269800', 'longitude': '39.86275800', 'wikiDataId': 'Q1019868'},
+{'id': 107197, 'name': 'Arıcak', 'state_id': 2159, 'state_code': '23', 'state_name': 'Elazığ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '38.56340000', 'longitude': '40.12480000', 'wikiDataId': 'Q193445'},
+{'id': 107288, 'name': 'Baskil', 'state_id': 2159, 'state_code': '23', 'state_name': 'Elazığ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '38.56866000', 'longitude': '38.81634000', 'wikiDataId': 'Q211805'},
+{'id': 107901, 'name': 'Karakoçan', 'state_id': 2159, 'state_code': '23', 'state_name': 'Elazığ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '38.95178000', 'longitude': '40.02706000', 'wikiDataId': 'Q990305'},
+{'id': 107964, 'name': 'Keban', 'state_id': 2159, 'state_code': '23', 'state_name': 'Elazığ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '38.79380000', 'longitude': '38.73517000', 'wikiDataId': 'Q1004438'},
+{'id': 108027, 'name': 'Kovancılar', 'state_id': 2159, 'state_code': '23', 'state_name': 'Elazığ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '38.71882000', 'longitude': '39.86268000', 'wikiDataId': 'Q6432728'},
+{'id': 108137, 'name': 'Maden', 'state_id': 2159, 'state_code': '23', 'state_name': 'Elazığ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '38.39354000', 'longitude': '39.67252000', 'wikiDataId': 'Q214670'},
+{'id': 108188, 'name': 'Merkez', 'state_id': 2159, 'state_code': '23', 'state_name': 'Elazığ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '38.66790000', 'longitude': '39.21567000', 'wikiDataId': 'Q3055997'},
+{'id': 108308, 'name': 'Palu', 'state_id': 2159, 'state_code': '23', 'state_name': 'Elazığ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '38.69135000', 'longitude': '39.91984000', 'wikiDataId': 'Q1022230'},
+{'id': 108479, 'name': 'Sivrice', 'state_id': 2159, 'state_code': '23', 'state_name': 'Elazığ', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '38.44223000', 'longitude': '39.30938000', 'wikiDataId': 'Q1022144'},
+]

@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% block active_home %}active{% endblock %}
+{% block title %}Kintah{% endblock %}
+{% block content %}
+
+
+
+<form method="POST" action="{% url 'user_registration' %}"> {% csrf_token %}
+  <div class="row mt-3">
+
+
+
+    <div class="col-md-6">
+      <label for="input1">Shop Name:</label>
+      <input type="text" class="form-control" id="file_number_id" name="file_number" placeholder="File Number"  onkeyup="enable_submit_button()">
+    </div>
+
+    <div class="col-md-6">
+      <label for="input2">Client Source:</label>
+      <input type="text" class="form-control" id="client_source_id" name="client_source" placeholder="Client Source"  onkeyup="enable_submit_button()">
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="input2">Agreed Upon Fee:</label>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="basic-addon1">$</span>
+        </div>
+        <input type="text" id="fee_amount_id" class="form-control" placeholder="Fee Amount" name="fee_amount" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()">
+      </div>
+    </div>
+
+
+    <div class="col-md-6">
+      <label for="Partner_client_company_name_id">Partner
+        Client
+        company name:</label>
+      <input type="text" class="form-control" id="Partner_client_company_name_id" name="Partner_client_company_name" placeholder="Partner Client Company Name"  onkeyup="enable_submit_button()">
+    </div>
+
+    <div class="col-md-6">
+      <label for="partner_client_contact_full_name_id">Partner client contact full name:</label>
+      <input type="text" class="form-control" id="partner_client_contact_full_name_id" name="partner_client_contact_full_name" placeholder="Partner Client Contact Full Name"  onkeyup="enable_submit_button()">
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="input2">Client Email Address:</label>
+      <input type="text"  id="client_email_address_id" class="form-control" placeholder="Client Email Address" name="client_email_address" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()">
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="input2">Client Phone Number:</label>
+      <input type="text" class="form-control" placeholder="client phone number" id="client_phone_number_id" name="client_phone_number" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()">
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="input2">Partner client company address:</label>
+      <input type="text" id="partner_client_company_address_id" class="form-control" placeholder="Partner client company address" name="partner_client_company_address" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()">
+    </div>
+
+
+    <div class="form-group col-md-12">
+      <label for="partner_client_company_country_id">Partner client company country</label>
+      <select class="form-control" id="partner_client_company_country_id" name="partner_client_company_country"  onchange="enable_submit_button()">
+        <option value="USA">USA</option>
+        <option value="Bangladesh">Bangladesh</option>
+      </select>
+    </div>
+
+
+    <div class="form-group col-md-12">
+      <label for="partner_client_company_state_or_province_id">Partner client company state or province</label>
+      <select class="form-control" id="partner_client_company_state_or_province_id" name="partner_client_company_state_or_province"  onchange="enable_submit_button()">
+        <option value="California">California</option>
+        <option value="Dhaka">Dhaka</option>
+      </select>
+    </div>
+
+
+
+    <div class="form-group col-md-12">
+      <label for="partner_client_company_city_id">Partner client company city</label>
+      <select class="form-control" id="partner_client_company_city_id" name="partner_client_company_city"  onchange="enable_submit_button()">
+        <option value="California">California</option>
+        <option value="Dhaka">Dhaka</option>
+      </select>
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="input2">Partner client company zip or postal code:</label>
+      <input type="text" id="partner_client_company_zip_or_postal_code_id" class="form-control"  name="partner_client_company_zip_or_postal_code" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()">
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="password">Password:</label>
+      <input type="password" class="form-control" id="password" name="password" onkeyup="enable_submit_button()">
+    </div>
+    <div class="col-md-12">
+      <label for="retype_password">Retype Password:</label>
+      <input type="password" class="form-control" id="retype_password" name="retype-password" onkeyup="enable_submit_button()">
+    </div>
+
+    <button type="submit" style=" margin-top: 12px; width: 20%; margin-left: 40%; " class="form-control btn btn-primary" id="submit_id" disabled>Submit</button>
+  </div>
+</form>
+
+
+<script>
+function enable_submit_button1(){
+  console.log('clicked');
+}
+
+</script>
+
+
+<script>
+
+function enable_submit_button(){
+  console.log('sasasasa')
+
+  const file_number_id = document.getElementById('file_number_id');
+  const client_source_id = document.getElementById('client_source_id');
+  const fee_amount_id = document.getElementById('fee_amount_id');
+  const Partner_client_company_name_id = document.getElementById('Partner_client_company_name_id');
+  const partner_client_contact_full_name_id = document.getElementById('partner_client_contact_full_name_id');
+  const client_email_address_id = document.getElementById('client_email_address_id');
+  const client_phone_number_id = document.getElementById('client_phone_number_id');
+  const partner_client_company_address_id = document.getElementById('partner_client_company_address_id');
+  const partner_client_company_country_id = document.getElementById('partner_client_company_country_id');
+  const partner_client_company_state_or_province_id = document.getElementById('partner_client_company_state_or_province_id');
+  const partner_client_company_city_id = document.getElementById('partner_client_company_city_id');
+  const partner_client_company_zip_or_postal_code_id = document.getElementById('partner_client_company_zip_or_postal_code_id');
+
+  const passwordInput = document.getElementById('password');
+  const retypePasswordInput = document.getElementById('retype_password');
+  const submitButton = document.getElementById('submit_id');
+
+  if (
+    file_number_id && file_number_id.value.trim() !== '' &&
+    client_source_id && client_source_id.value.trim() !== '' &&
+    fee_amount_id && fee_amount_id.value.trim() !== '' &&
+    Partner_client_company_name_id && Partner_client_company_name_id.value.trim() !== '' &&
+    partner_client_contact_full_name_id && partner_client_contact_full_name_id.value.trim() !== '' &&
+    client_email_address_id && client_email_address_id.value.trim() !== '' &&
+    client_phone_number_id && client_phone_number_id.value.trim() !== '' &&
+    partner_client_company_address_id && partner_client_company_address_id.value.trim() !== '' &&
+    partner_client_company_country_id && partner_client_company_country_id.value.trim() !== '' &&
+    partner_client_company_state_or_province_id && partner_client_company_state_or_province_id.value.trim() !== '' &&
+    partner_client_company_city_id && partner_client_company_city_id.value.trim() !== '' &&
+    partner_client_company_zip_or_postal_code_id && partner_client_company_zip_or_postal_code_id.value.trim() !== ''
+    )
+    
+      {
+        const password = passwordInput.value.trim();
+        const retypePassword = retypePasswordInput.value.trim();
+    
+        if (password !== '' && retypePassword !== '' && password === retypePassword) {
+                submitButton.disabled = false;
+                } 
+        else {
+              submitButton.disabled = true;
+            }
+      }
+
+
+}
+
+
+
+
+  </script>
+  {% endblock %}
+
+
+

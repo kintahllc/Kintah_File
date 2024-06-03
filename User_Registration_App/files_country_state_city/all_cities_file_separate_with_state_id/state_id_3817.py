@@ -1,0 +1,12 @@
+all = [
+{'id': 130234, 'name': 'Huyện Bắc Hà', 'state_id': 3817, 'state_code': '02', 'state_name': 'Lào Cai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.50998000', 'longitude': '104.30769000', 'wikiDataId': 'Q4838559'},
+{'id': 130232, 'name': 'Huyện Bảo Yên', 'state_id': 3817, 'state_code': '02', 'state_name': 'Lào Cai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.26109000', 'longitude': '104.46424000', 'wikiDataId': 'Q3710674'},
+{'id': 130219, 'name': 'Huyện Bát Xát', 'state_id': 3817, 'state_code': '02', 'state_name': 'Lào Cai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.56767000', 'longitude': '103.71339000', 'wikiDataId': 'Q3710671'},
+{'id': 130362, 'name': 'Huyện Mường Khương', 'state_id': 3817, 'state_code': '02', 'state_name': 'Lào Cai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.67111000', 'longitude': '104.11772000', 'wikiDataId': 'Q10796264'},
+{'id': 130418, 'name': 'Huyện Sa Pa', 'state_id': 3817, 'state_code': '02', 'state_name': 'Lào Cai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.33769000', 'longitude': '103.84037000', 'wikiDataId': 'Q7395483'},
+{'id': 130420, 'name': 'Huyện Si Ma Cai', 'state_id': 3817, 'state_code': '02', 'state_name': 'Lào Cai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.67161000', 'longitude': '104.27326000', 'wikiDataId': 'Q7395483'},
+{'id': 130495, 'name': 'Huyện Văn Bàn', 'state_id': 3817, 'state_code': '02', 'state_name': 'Lào Cai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.07002000', 'longitude': '104.18122000', 'wikiDataId': 'Q7484836'},
+{'id': 130571, 'name': 'Lào Cai', 'state_id': 3817, 'state_code': '02', 'state_name': 'Lào Cai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.48556000', 'longitude': '103.97066000', 'wikiDataId': 'Q33421'},
+{'id': 130568, 'name': 'Lao Chải', 'state_id': 3817, 'state_code': '02', 'state_name': 'Lào Cai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.31377000', 'longitude': '103.86844000', 'wikiDataId': 'Q31942265'},
+{'id': 130591, 'name': 'Sa Pa', 'state_id': 3817, 'state_code': '02', 'state_name': 'Lào Cai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '22.34023000', 'longitude': '103.84415000', 'wikiDataId': 'Q1000140'},
+]

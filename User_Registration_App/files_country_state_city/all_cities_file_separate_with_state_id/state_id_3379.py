@@ -1,0 +1,8 @@
+all = [
+{'id': 9848, 'name': 'Cobija', 'state_id': 3379, 'state_code': 'N', 'state_name': 'Pando Department', 'country_id': 27, 'country_code': 'BO', 'country_name': 'Bolivia', 'latitude': '-11.02671000', 'longitude': '-68.76918000', 'wikiDataId': 'Q34995'},
+{'id': 9899, 'name': 'Provincia Abuná', 'state_id': 3379, 'state_code': 'N', 'state_name': 'Pando Department', 'country_id': 27, 'country_code': 'BO', 'country_name': 'Bolivia', 'latitude': '-10.50000000', 'longitude': '-66.50000000', 'wikiDataId': 'Q1471235'},
+{'id': 9931, 'name': 'Provincia General Federico Román', 'state_id': 3379, 'state_code': 'N', 'state_name': 'Pando Department', 'country_id': 27, 'country_code': 'BO', 'country_name': 'Bolivia', 'latitude': '-10.33333000', 'longitude': '-65.88333000', 'wikiDataId': 'Q1473313'},
+{'id': 9948, 'name': 'Provincia Madre de Dios', 'state_id': 3379, 'state_code': 'N', 'state_name': 'Pando Department', 'country_id': 27, 'country_code': 'BO', 'country_name': 'Bolivia', 'latitude': '-11.58333000', 'longitude': '-67.00000000', 'wikiDataId': 'Q241217'},
+{'id': 9952, 'name': 'Provincia Manuripi', 'state_id': 3379, 'state_code': 'N', 'state_name': 'Pando Department', 'country_id': 27, 'country_code': 'BO', 'country_name': 'Bolivia', 'latitude': '-11.33333000', 'longitude': '-67.50000000', 'wikiDataId': 'Q1473356'},
+{'id': 9960, 'name': 'Provincia Nicolás Suárez', 'state_id': 3379, 'state_code': 'N', 'state_name': 'Pando Department', 'country_id': 27, 'country_code': 'BO', 'country_name': 'Bolivia', 'latitude': '-11.33333000', 'longitude': '-68.50000000', 'wikiDataId': 'Q1473307'},
+]

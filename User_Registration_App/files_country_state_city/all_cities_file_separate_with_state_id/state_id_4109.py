@@ -1,0 +1,8 @@
+all = [
+{'id': 31032, 'name': 'Boca de Yuma', 'state_id': 4109, 'state_code': '11', 'state_name': 'La Altagracia Province', 'country_id': 62, 'country_code': 'DO', 'country_name': 'Dominican Republic', 'latitude': '18.37825000', 'longitude': '-68.60900000', 'wikiDataId': 'Q4936128'},
+{'id': 31085, 'name': 'Higüey', 'state_id': 4109, 'state_code': '11', 'state_name': 'La Altagracia Province', 'country_id': 62, 'country_code': 'DO', 'country_name': 'Dominican Republic', 'latitude': '18.70000000', 'longitude': '-68.66667000', 'wikiDataId': 'Q2427660'},
+{'id': 31140, 'name': 'Otra Banda', 'state_id': 4109, 'state_code': '11', 'state_name': 'La Altagracia Province', 'country_id': 62, 'country_code': 'DO', 'country_name': 'Dominican Republic', 'latitude': '18.65017000', 'longitude': '-68.66281000', 'wikiDataId': 'Q7109031'},
+{'id': 31162, 'name': 'Punta Cana', 'state_id': 4109, 'state_code': '11', 'state_name': 'La Altagracia Province', 'country_id': 62, 'country_code': 'DO', 'country_name': 'Dominican Republic', 'latitude': '18.58182000', 'longitude': '-68.40431000', 'wikiDataId': 'Q1568095'},
+{'id': 31180, 'name': 'Salvaleón de Higüey', 'state_id': 4109, 'state_code': '11', 'state_name': 'La Altagracia Province', 'country_id': 62, 'country_code': 'DO', 'country_name': 'Dominican Republic', 'latitude': '18.61501000', 'longitude': '-68.70798000', 'wikiDataId': 'Q1020261'},
+{'id': 31192, 'name': 'San Rafael del Yuma', 'state_id': 4109, 'state_code': '11', 'state_name': 'La Altagracia Province', 'country_id': 62, 'country_code': 'DO', 'country_name': 'Dominican Republic', 'latitude': '18.42993000', 'longitude': '-68.67390000', 'wikiDataId': 'Q649483'},
+]

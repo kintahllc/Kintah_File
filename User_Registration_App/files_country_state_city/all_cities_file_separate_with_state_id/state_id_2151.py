@@ -1,0 +1,11 @@
+all = [
+{'id': 107580, 'name': 'Enez', 'state_id': 2151, 'state_code': '22', 'state_name': 'Edirne', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '40.72472000', 'longitude': '26.08250000', 'wikiDataId': 'Q2218549'},
+{'id': 107807, 'name': 'Havsa', 'state_id': 2151, 'state_code': '22', 'state_name': 'Edirne', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.54898000', 'longitude': '26.82207000', 'wikiDataId': 'Q2416719'},
+{'id': 108909, 'name': 'İpsala', 'state_id': 2151, 'state_code': '22', 'state_name': 'Edirne', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '40.92115000', 'longitude': '26.38273000', 'wikiDataId': 'Q344021'},
+{'id': 107992, 'name': 'Keşan', 'state_id': 2151, 'state_code': '22', 'state_name': 'Edirne', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '40.85583000', 'longitude': '26.63028000', 'wikiDataId': 'Q1004516'},
+{'id': 108133, 'name': 'Lâlapaşa', 'state_id': 2151, 'state_code': '22', 'state_name': 'Edirne', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.83951000', 'longitude': '26.73561000', 'wikiDataId': 'Q1012828'},
+{'id': 108176, 'name': 'Meriç', 'state_id': 2151, 'state_code': '22', 'state_name': 'Edirne', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.19183000', 'longitude': '26.42097000', 'wikiDataId': 'Q3055997'},
+{'id': 107549, 'name': 'Merkez', 'state_id': 2151, 'state_code': '22', 'state_name': 'Edirne', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.67719000', 'longitude': '26.55597000', 'wikiDataId': 'Q43387'},
+{'id': 108523, 'name': 'Süloğlu', 'state_id': 2151, 'state_code': '22', 'state_name': 'Edirne', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.77956000', 'longitude': '26.92602000', 'wikiDataId': 'Q1019897'},
+{'id': 108640, 'name': 'Uzunköprü', 'state_id': 2151, 'state_code': '22', 'state_name': 'Edirne', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.26597000', 'longitude': '26.68850000', 'wikiDataId': 'Q1843445'},
+]

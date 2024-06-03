@@ -1,0 +1,12 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+<h2>Upload Suppliers CSV File</h2>
+    <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+
+        <input type="hidden" value="{{erp_active.id}}" name="erp_active_id">
+        <input type="file" name="file" id="file">
+        <input type="submit" value="Upload File" name="submit">
+    </form>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+all = [
+{'id': 65184, 'name': 'Ayang-ni', 'state_id': 4003, 'state_code': '05', 'state_name': 'South Hwanghae Province', 'country_id': 115, 'country_code': 'KP', 'country_name': 'North Korea', 'latitude': '38.24306000', 'longitude': '125.78000000', 'wikiDataId': 'Q196236'},
+{'id': 65185, 'name': 'Chaeryŏng-ŭp', 'state_id': 4003, 'state_code': '05', 'state_name': 'South Hwanghae Province', 'country_id': 115, 'country_code': 'KP', 'country_name': 'North Korea', 'latitude': '38.39917000', 'longitude': '125.61556000', 'wikiDataId': 'Q196236'},
+{'id': 65187, 'name': 'Changyŏn', 'state_id': 4003, 'state_code': '05', 'state_name': 'South Hwanghae Province', 'country_id': 115, 'country_code': 'KP', 'country_name': 'North Korea', 'latitude': '38.25083000', 'longitude': '125.09611000', 'wikiDataId': 'Q707395'},
+{'id': 65193, 'name': 'Haeju', 'state_id': 4003, 'state_code': '05', 'state_name': 'South Hwanghae Province', 'country_id': 115, 'country_code': 'KP', 'country_name': 'North Korea', 'latitude': '38.04056000', 'longitude': '125.71472000', 'wikiDataId': 'Q714865'},
+{'id': 65206, 'name': 'Kaesŏng', 'state_id': 4003, 'state_code': '05', 'state_name': 'South Hwanghae Province', 'country_id': 115, 'country_code': 'KP', 'country_name': 'North Korea', 'latitude': '37.97083000', 'longitude': '126.55444000', 'wikiDataId': 'Q489829'},
+{'id': 65226, 'name': 'Ongjin', 'state_id': 4003, 'state_code': '05', 'state_name': 'South Hwanghae Province', 'country_id': 115, 'country_code': 'KP', 'country_name': 'North Korea', 'latitude': '37.93472000', 'longitude': '125.36194000', 'wikiDataId': 'Q109386'},
+{'id': 65232, 'name': 'Pyŏksŏng-ŭp', 'state_id': 4003, 'state_code': '05', 'state_name': 'South Hwanghae Province', 'country_id': 115, 'country_code': 'KP', 'country_name': 'North Korea', 'latitude': '38.04750000', 'longitude': '125.55667000', 'wikiDataId': 'Q109386'},
+{'id': 65256, 'name': 'Yŏnan-ŭp', 'state_id': 4003, 'state_code': '05', 'state_name': 'South Hwanghae Province', 'country_id': 115, 'country_code': 'KP', 'country_name': 'North Korea', 'latitude': '37.90889000', 'longitude': '126.16111000', 'wikiDataId': 'Q109374'},
+]

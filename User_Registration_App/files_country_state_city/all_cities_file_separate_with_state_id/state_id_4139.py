@@ -1,0 +1,9 @@
+all = [
+{'id': 104842, 'name': 'Ahuachapán', 'state_id': 4139, 'state_code': 'AH', 'state_name': 'Ahuachapán Department', 'country_id': 66, 'country_code': 'SV', 'country_name': 'El Salvador', 'latitude': '13.92139000', 'longitude': '-89.84500000', 'wikiDataId': 'Q186935'},
+{'id': 104848, 'name': 'Atiquizaya', 'state_id': 4139, 'state_code': 'AH', 'state_name': 'Ahuachapán Department', 'country_id': 66, 'country_code': 'SV', 'country_name': 'El Salvador', 'latitude': '13.97694000', 'longitude': '-89.75250000', 'wikiDataId': 'Q2779447'},
+{'id': 104863, 'name': 'Concepción de Ataco', 'state_id': 4139, 'state_code': 'AH', 'state_name': 'Ahuachapán Department', 'country_id': 66, 'country_code': 'SV', 'country_name': 'El Salvador', 'latitude': '13.87028000', 'longitude': '-89.84861000', 'wikiDataId': 'Q1123798'},
+{'id': 104873, 'name': 'Guaymango', 'state_id': 4139, 'state_code': 'AH', 'state_name': 'Ahuachapán Department', 'country_id': 66, 'country_code': 'SV', 'country_name': 'El Salvador', 'latitude': '13.75028000', 'longitude': '-89.84222000', 'wikiDataId': 'Q2779410'},
+{'id': 104883, 'name': 'Jujutla', 'state_id': 4139, 'state_code': 'AH', 'state_name': 'Ahuachapán Department', 'country_id': 66, 'country_code': 'SV', 'country_name': 'El Salvador', 'latitude': '13.78694000', 'longitude': '-89.85722000', 'wikiDataId': 'Q2779408'},
+{'id': 104906, 'name': 'San Francisco Menéndez', 'state_id': 4139, 'state_code': 'AH', 'state_name': 'Ahuachapán Department', 'country_id': 66, 'country_code': 'SV', 'country_name': 'El Salvador', 'latitude': '13.84306000', 'longitude': '-90.01583000', 'wikiDataId': 'Q766174'},
+{'id': 104931, 'name': 'Tacuba', 'state_id': 4139, 'state_code': 'AH', 'state_name': 'Ahuachapán Department', 'country_id': 66, 'country_code': 'SV', 'country_name': 'El Salvador', 'latitude': '13.90111000', 'longitude': '-89.92972000', 'wikiDataId': 'Q1283898'},
+]

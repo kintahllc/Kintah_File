@@ -1,0 +1,269 @@
+<!-- erp_info_form.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kintah Platform</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    textarea,
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>ERP Info Form</h2>
+
+  <form method="post" action="{% url 'erp_info_check' %}">
+    {% csrf_token %}
+
+    <label for="erp_name">ERP Name:</label>
+    <input type="text" id="erp_name" name="erp_name" onkeyup="erp_name_check()" required>
+<span id="email-validation-result"></span><br>
+
+    <input type="hidden" id="" name="sub_id" value="{{sub_id}}"><br>
+
+
+    <label for="erp_site_name">ERP Site Name:</label>
+    <input type="text" id="erp_site_name" name="erp_site_name" onkeyup="erp_site_name_check()" required>
+<span id="email-validation-result2"></span><br>
+
+
+
+
+
+
+
+    <label for="erp_admin_user_name">ERP Admin User Name:</label>
+    <input type="text" id="erp_admin_user_name" name="erp_admin_user_name" required>
+
+    <label for="erp_admin_pw_encrypted">ERP Admin Password (Encrypted):</label>
+    <input type="password" id="erp_admin_pw_encrypted" name="erp_admin_pw_encrypted" required>
+
+    <label for="erp_api_key_encrypted">ERP API Key (Encrypted):</label>
+    <input type="password" id="erp_api_key_encrypted" name="erp_api_key" required>
+
+    <label for="erp_api_secret_encrypted">ERP API Secret (Encrypted):</label>
+    <input type="password" id="erp_api_secret_encrypted" name="erp_api_secret" required>
+
+    <label for="erp_page_about_us_content">About Us Content:</label>
+    <textarea id="erp_page_about_us_content" name="erp_page_about_us_content" rows="4" required></textarea>
+
+    <label for="erp_page_contact_us_content">Contact Us Content:</label>
+    <textarea id="erp_page_contact_us_content" name="erp_page_contact_us_content" rows="4" required></textarea>
+
+    <label for="erp_pages_root_email">Root Email:</label>
+    <input type="password" id="erp_pages_root_email" name="erp_pages_root_email" required autocomplete="new-password">
+
+    <label for="erp_pages_root_email_pw_encrypted">Root Email Password (Encrypted):</label>
+    <input type="password" id="erp_pages_root_email_pw_encrypted" name="erp_pages_root_email_pw" required>
+
+    <label for="erp_country">Country:</label>
+    <input type="text" id="erp_country" name="erp_country" required>
+
+    <label for="erp_timezone">Timezone:</label>
+<!--    <input type="text" id="erp_timezone" name="erp_timezone" required>-->
+
+    <select id="erp_timezone" name="erp_timezone" required>
+      {% for timezone in timezone_all %}
+        <option value="{{ timezone.utc.0 }}">{{ timezone.text }}</option>
+      {% endfor %}
+    </select>
+
+
+    <label for="erp_contact_phone">Contact Phone:</label>
+    <input type="text" id="erp_contact_phone" name="erp_contact_phone" required>
+
+    <label for="erp_contact_email">Contact Email:</label>
+    <input type="email" id="erp_contact_email" name="erp_contact_email" required>
+
+    <label for="erp_whatsapp_phone">WhatsApp Phone:</label>
+    <input type="text" id="erp_whatsapp_phone" name="erp_whatsapp_phone" required>
+
+    <label for="erp_email_account_name">Email Account Name:</label>
+    <input type="text" id="erp_email_account_name" name="erp_email_account_name" required>
+
+    <label for="erp_email_id">Email ID:</label>
+    <input type="email" id="erp_email_id" name="erp_email_id" required>
+
+    <label for="erp_email_account_password">Email Account Password:</label>
+    <input type="password" id="erp_email_account_password" name="erp_email_account_password" required>
+
+    <label for="erp_smtp_server">SMTP Server:</label>
+    <input type="text" id="erp_smtp_server" name="erp_smtp_server" required>
+
+    <label for="erp_smtp_port">SMTP Port:</label>
+    <input type="number" id="erp_smtp_port" name="erp_smtp_port" required>
+<br>
+    <label for="erp_use_tls">Use TLS:</label>
+    <input type="checkbox" id="erp_use_tls" name="erp_use_tls">
+
+    <label for="erp_use_ssl">Use SSL:</label>
+    <input type="checkbox" id="erp_use_ssl" name="erp_use_ssl">
+
+    <label for="erp_imap_server">IMAP Server:</label>
+    <input type="text" id="erp_imap_server" name="erp_imap_server" required>
+
+    <label for="erp_imap_port">IMAP Port:</label>
+    <input type="number" id="erp_imap_port" name="erp_imap_port" required>
+<br>
+    <label for="erp_stripe_account_id_encrypted">Stripe Account ID (Encrypted):</label>
+    <input type="password" id="erp_stripe_account_id_encrypted" name="erp_stripe_account_id" required>
+
+    <label for="erp_stripe_access_key_encrypted">Stripe Access Key (Encrypted):</label>
+    <input type="password" id="erp_stripe_access_key_encrypted" name="erp_stripe_access_key" required>
+
+    <label for="erp_stripe_api_secret_encrypted">Stripe API Secret (Encrypted):</label>
+    <input type="password" id="erp_stripe_api_secret_encrypted" name="erp_stripe_api_secret" required>
+
+    <label for="erp_shipper_name">Shipper Name:</label>
+    <input type="text" id="erp_shipper_name" name="erp_shipper_name" required>
+
+    <label for="erp_shipper_api_key_encrypted">Shipper API Key (Encrypted):</label>
+    <input type="password" id="erp_shipper_api_key_encrypted" name="erp_shipper_api_key" required>
+
+    <label for="erp_shipper_api_secret_encrypted">Shipper API Secret (Encrypted):</label>
+    <input type="password" id="erp_shipper_api_secret_encrypted" name="erp_shipper_api_secret" required>
+
+    <label for="erp_whatsup_api_url">WhatsApp API URL:</label>
+    <input type="text" id="erp_whatsup_api_url" name="erp_whatsup_api_url" required>
+
+    <label for="erp_whatsup_api_token_encrypted">WhatsApp API Token (Encrypted):</label>
+    <input type="password" id="erp_whatsup_api_token_encrypted" name="erp_whatsup_api_token" required>
+
+    <label for="erp_whatsup_version">WhatsApp Version:</label>
+    <input type="text" id="erp_whatsup_version" name="erp_whatsup_version" required>
+
+    <label for="erp_whatsup_phone_id">WhatsApp Phone ID:</label>
+    <input type="text" id="erp_whatsup_phone_id" name="erp_whatsup_phone_id" required>
+
+    <label for="erp_whatsup_business_id">WhatsApp Business ID:</label>
+    <input type="text" id="erp_whatsup_business_id" name="erp_whatsup_business_id" required>
+
+    <!-- Add more fields as needed -->
+
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+
+
+
+
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Select2 JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+
+
+<script>
+function erp_name_check() {
+    var erp_name = document.getElementById('erp_name').value;
+
+
+    // Send an AJAX request to your Django view
+    $.ajax({
+        type: 'POST',
+        url: '{% url "erp_name_ajax" %}',
+        data: {
+            'erp_name': erp_name,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            // Display the validation result
+            var validationSpan = document.getElementById('email-validation-result');
+            console.log('response.valid')
+            console.log(response.valid)
+            if (response.valid == 'not exist') {
+
+               validationSpan.innerHTML = '<span style="color: red;"></span>';
+
+            } else {
+                console.log('in else')
+                validationSpan.innerHTML = '<span style="color: red;">Please give a uniq  name</span>';
+            }
+        }
+    });
+}
+</script>
+
+
+<script>
+function erp_site_name_check() {
+    var erp_site_name = document.getElementById('erp_site_name').value;
+
+
+    // Send an AJAX request to your Django view
+    $.ajax({
+        type: 'POST',
+        url: '{% url "erp_site_name_ajax" %}',
+        data: {
+            'erp_site_name': erp_site_name,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            // Display the validation result
+            var validationSpan = document.getElementById('email-validation-result2');
+            console.log('response.valid')
+            console.log(response.valid)
+            if (response.valid == 'not exist') {
+
+               validationSpan.innerHTML = '<span style="color: red;"></span>';
+
+            } else {
+                console.log('in else')
+                validationSpan.innerHTML = '<span style="color: red;">Please give a uniq  name</span>';
+            }
+        }
+    });
+}
+</script>
+
+
+
+</body>
+</html>

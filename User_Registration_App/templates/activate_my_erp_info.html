@@ -1,0 +1,102 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+
+
+
+
+
+<!-- billing_history.html -->
+<style>
+  .billing-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .billing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .billing-table th, .billing-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  .billing-table th {
+    background-color: #f2f2f2;
+    color: #333;
+  }
+
+  .billing-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .billing-table tbody tr:hover {
+    background-color: #f2f2f2;
+  }
+</style>
+<div class="billing-container">
+<table class="billing-table">
+  <thead>
+    <tr>
+      <th>Erp Name</th>
+      <th>Website name</th>
+<!--      <th>Domain</th>-->
+
+      <th>Domain</th>
+
+
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td>{{ erp.erp_name }}</td>
+      <td>{{ erp.erp_site_name }}</td>
+<!--      <td>{{ erp.erp_smtp_server }}</td>-->
+
+
+
+      <td>
+        <span id="domain-text">{{erp_active.domain}}</span>
+    <button id="copy-button">Copy to Clipboard</button>
+        </td>
+
+
+    </tr>
+
+  </tbody>
+</table>
+
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    // Get the button and the text elements
+    const copyButton = document.getElementById('copy-button');
+    const domainText = document.getElementById('domain-text').innerText;
+
+    // Add a click event listener to the button
+    copyButton.addEventListener('click', () => {
+        // Create a temporary input element
+        const tempInput = document.createElement('input');
+        tempInput.value = domainText;
+        document.body.appendChild(tempInput);
+
+        // Select the text and copy it to the clipboard
+        tempInput.select();
+        document.execCommand('copy');
+
+        // Remove the temporary input element
+        document.body.removeChild(tempInput);
+
+        // Optional: Provide feedback to the user
+        alert('Copied to clipboard: ' + domainText);
+    });
+});
+
+</script>
+{% endblock %}
+
+

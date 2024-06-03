@@ -1,0 +1,76 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+<style>
+
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+
+<h1>Add Expected Users for Company</h1>
+        <form method="POST" action="{% url 'add_expected_users' company_info.id %}">
+            {% csrf_token %}
+<!--            <div>-->
+<!--                <label for="name">Name:</label>-->
+<!--                <input type="text" id="name" name="name" required>-->
+<!--            </div>-->
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" minlength="8" required>
+            </div>
+            <div>
+                <label for="role">Role:</label>
+                <select id="role" name="role">
+                    <option value="Sales Management">Sales Management</option>
+                    <option value="Point of Sales (PoS)">Point of Sales (PoS)</option>
+                    <option value="WebShop(e-commerce)">WebShop (e-commerce)</option>
+                    <option value="Customer Relationship Management (CRM)">Customer Relationship Management (CRM)</option>
+                    <option value="Purchasing">Purchasing</option>
+                    <option value="Human Resource Management (HRM)">Human Resource Management (HRM)</option>
+                    <option value="Asset Management">Asset Management</option>
+                    <option value="Accounting">Accounting</option>
+                    <option value="Warehouse Management System">Warehouse Management System</option>
+                    <option value="Project Management">Project Management</option>
+                </select>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+
+
+{% endblock %}
+
+

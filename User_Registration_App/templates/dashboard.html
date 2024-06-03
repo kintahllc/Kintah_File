@@ -1,0 +1,92 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+<style>
+    .container-border {
+        border: 2px solid #007bff; /* Border color */
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        border: none; /* Remove card's default border */
+    }
+
+    .card-title {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .card-subtitle {
+        color: #666;
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .card-text {
+        color: #888;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .btn-agree {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        margin-right: 10px;
+    }
+
+    .btn-disagree {
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+    }
+</style>
+
+<div class="col-md-12">
+    <div class="container container-border">
+        <div class="row">
+            <div class="col-md-12">
+                <label for="areaAnalysis">Select an area of analysis of your business:</label>
+                <select id="areaAnalysis" class="form-control">
+                    <option value="sales">Sales</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="operations">Operations</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            <div class="col-md-12">
+                <label for="question">Enter a question based on selected area of analysis:</label>
+                <input type="text" id="question" class="form-control" placeholder="Enter your question">
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12" style="text-align: right;">
+                <button id="getRecommendation" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Dashboard</h5>
+                        <h6 class="card-subtitle mb-2 text-muted"></h6>
+                        <p class="card-text"></p>
+                        <button class="btn btn-agree float-left">I Agree with advice</button>
+                        <button class="btn btn-disagree float-right">Disagree with advice</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

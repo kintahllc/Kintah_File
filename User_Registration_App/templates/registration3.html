@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kintah Platform</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <!-- Include Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+
+<select id="countrySelect" class="form-control">
+</select>
+
+<select id="stateSelect" class="form-control mt-2">
+</select>
+
+<!-- Include jQuery Slim -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Select2 JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Initialize Select2 for country dropdown
+    $('#countrySelect').select2({
+        ajax: {
+
+            url: '/country_list_from_ajax/',  // URL of your Django view to fetch country list
+            dataType: 'json',
+            delay: 250,  // Delay in milliseconds before the request is sent
+            processResults: function(data) {
+                return {
+                    results: data.results.map(function(item) {
+                        return {id: item.id, text: item.name};
+                    })
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 1,  // Minimum number of characters before the search is performed
+        placeholder: 'Search for a country...',
+    });
+
+    // Initialize empty Select2 for state dropdown
+    $('#stateSelect').select2({
+        minimumResultsForSearch: -1, // Hide the search input
+        placeholder: 'Select a country first...',
+        disabled: true // Disable the dropdown initially
+    });
+
+    // Handle change event of country dropdown
+    $('#countrySelect').on('change', function() {
+        var countryId = $(this).val();
+        // Enable state dropdown
+        $('#stateSelect').prop('disabled', false);
+        // Clear existing options
+        $('#stateSelect').empty();
+        // Fetch and populate state options based on selected country
+        $.ajax({
+            url: '/states_list_from_ajax/',  // URL of your Django view to fetch state list
+            method: 'GET',
+            data: {'country_id': countryId},
+            success: function(response) {
+                // Populate state options
+                response.forEach(function(state) {
+                    $('#stateSelect').append('<option value="' + state.id + '">' + state.text + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

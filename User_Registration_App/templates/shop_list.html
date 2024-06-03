@@ -1,0 +1,115 @@
+{% extends 'eShopAnalytics/base.html' %}
+{% block title %}Kintah Platform{% endblock %}
+{% block content %}
+
+<!--<h3 class="text-center" style="margin-top:55px;">Save your external store info</h3>-->
+<!--<hr>-->
+<!--<a href="{% url 'storeconnect:see_store_list' %}">See My Store</a>-->
+<a href="/eShopAnalytics/" class="btn btn-warning btn-sm">Back</a>
+<!--<form method="POST" enctype="multipart/form-data"  style="margin-top:35px;" action="">-->
+<!--  {% csrf_token %}-->
+<div class="form-group row">
+
+<!--  <div class="col">-->
+<!--    <label for="upload_files_name">File Name</label>-->
+<!--    <input class="form-control" id="upload_files_name" type="text" name="file_name">-->
+<!--    <small id="" class="form-text text-muted"></small>-->
+<!--  </div>-->
+
+
+
+
+
+
+
+
+
+
+  <div class="container mt-5">
+
+
+    <div class="container mt-4">
+      <h3>Shopify</h3>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+
+<!--        <th scope="col">Access Token</th>-->
+        <th scope="col">Shop Name</th>
+        <th scope="col">App Version</th>
+        <th scope="col">Dashboard</th>
+<!--        <th scope="col">Delete</th>-->
+<!--        <th scope="col">Export</th>-->
+<!--        <th scope="col">Schedule</th>-->
+      </tr>
+    </thead>
+    <tbody>
+    {% for i in list_of_store %}
+
+
+
+      <tr>
+
+<!--        <td>{{i.external_store_info_table.external_store_info_table.access_token}}</td>-->
+        <td>{{i.external_store_info_table.external_store_info_table.shop_name}}</td>
+        <td>{{i.external_store_info_table.external_store_info_table.app_versions}}</td>
+        <td><a href="{% url 'eShopAnalytics:shop_dashboard' i.id  %}">Dashboard</a></td>
+<!--        <td><a href="{% url 'storeconnect:store_delete' i.id %}">Delete</a></td>-->
+<!--        <td><a href="{% url 'storeconnect:store_export' i.id %}">Export</a></td>-->
+<!--        <td><a href="{% url 'storeconnect:store_schedule' i.id %}">Schedule</a></td>-->
+      </tr>
+
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
+
+
+</div>
+
+
+
+<!--  -->
+<!--  <div class="col">-->
+<!--    <label for="upload_files">Choose file</label>-->
+<!--    <input class="form-control" id="upload_files" type="file" name="file">-->
+<!--    <small id="" class="form-text text-muted"></small>-->
+<!--  </div>-->
+</div>
+
+
+
+
+</form>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var selectElement = document.getElementById("exampleSelect");
+  var inputFieldsContainer = document.getElementById("inputFields");
+
+  selectElement.addEventListener("change", function() {
+    if (selectElement.value === "shopify") {
+      inputFieldsContainer.style.display = "block";
+    } else {
+      inputFieldsContainer.style.display = "none";
+    }
+  });
+});
+</script>
+
+
+
+{% endblock %}

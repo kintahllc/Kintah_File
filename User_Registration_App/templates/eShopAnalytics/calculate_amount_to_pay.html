@@ -1,0 +1,303 @@
+{% extends 'eShopAnalytics/base.html' %}
+{% block title %}store connect apis save{% endblock %}
+{% block content %}
+
+
+<style>
+    .hidden-input {
+  display: none;
+}
+</style>
+
+<h3 class="text-center" style="margin-top:55px;">Authorize the following connected services</h3>
+<hr>
+
+
+<form method="POST" enctype="multipart/form-data"  style="margin-top:35px;" action="{% url 'eShopAnalytics:connect_shop' %}">
+  {% csrf_token %}
+
+    <input type="hidden" name="from_back" value="coming_back">
+    <input class="form-check-input" type="hidden" name="external_shop_info_table_of_shop_pk" value="{{ExternalShopInfoTableOfShop_pk}}">
+      <input class="form-check-input" type="hidden" name="external_csv_file_store_table_of_shop_pk" value="{{ExternalCsvFileStoreTableOfShop_pk}}">
+    <button type="submit" class="btn btn-primary">BACK</button>
+</form>
+
+
+<form method="POST" enctype="multipart/form-data"  style="margin-top:35px;" action="{% url 'eShopAnalytics:save_info' %}">
+  {% csrf_token %}
+<div class="form-group row">
+<div class="col-8">
+  <div class="form-check">
+
+      <input class="form-check-input" type="hidden" name="external_shop_info_table_of_shop_pk" value="{{external_shop_info_table_of_shop_pk}}">
+      <input class="form-check-input" type="hidden" name="external_csv_file_store_table_of_shop_pk" value="{{external_csv_file_store_table_of_shop_pk}}">
+
+      <input class="form-check-input" type="text" style=" display: none; " name="metricscaled" id="metricscaled" value="{{metricscaled}}">
+      <input class="form-check-input" type="number" style=" display: none; " name="metricscaled_monthly_base_cost" id="metricscaled_monthly_base_cost" value="{{metricscaled_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; " name="metricscaled_monthly_coef" id="metricscaled_monthly_coef" value="{{metricscaled_monthly_coef}}">
+      <input class="form-check-input" type="number"  style=" display: none; " name="metricscaled_monthly_activity_free" id="metricscaled_monthly_activity_free" value="{{metricscaled_monthly_activity_free}}">
+
+
+      <input class="form-check-input" type="text" style=" display: none; " name="campaignscaled" id="campaignscaled" value="{{campaignscaled}}">
+      <input class="form-check-input" type="number" style=" display: none; " name="campaignscaled_monthly_base_cost" id="campaignscaled_monthly_base_cost" value="{{campaignscaled_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; " name="campaignscaled_monthly_coef" id="campaignscaled_monthly_coef" value="{{campaignscaled_monthly_coef}}">
+      <input class="form-check-input" type="number"  style=" display: none; " name="campaignscaled_monthly_activity_free" id="campaignscaled_monthly_activity_free" value="{{campaignscaled_monthly_activity_free}}">
+
+
+      <input class="form-check-input" type="text" style=" display: none; " name="demandscaled" id="demandscaled" value="{{demandscaled}}">
+      <input class="form-check-input" type="number" style=" display: none; " name="demandscaled_monthly_base_cost" id="demandscaled_monthly_base_cost" value="{{demandscaled_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; " name="demandscaled_monthly_coef" id="demandscaled_monthly_coef" value="{{demandscaled_monthly_coef}}">
+      <input class="form-check-input" type="number"  style=" display: none; " name="demandscaled_monthly_activity_free" id="demandscaled_monthly_activity_free" value="{{demandscaled_monthly_activity_free}}">
+
+
+      <input class="form-check-input" type="text" style=" display: none; "  id="mixscaled" name="mixscaled" value="{{mixscaled}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="mixscaled_monthly_base_cost" name="mixscaled_monthly_base_cost" value="{{mixscaled_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="mixscaled_monthly_coef" name="mixscaled_monthly_coef" value="{{mixscaled_monthly_coef}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="mixscaled_monthly_activity_free" name="mixscaled_monthly_activity_free" value="{{mixscaled_monthly_activity_free}}">
+
+
+      <input class="form-check-input" type="text" style=" display: none; "  id="simscaled" name="simscaled" value="{{simscaled}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="simscaled_monthly_base_cost" name="simscaled_monthly_base_cost" value="{{simscaled_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="simscaled_monthly_coef" name="simscaled_monthly_coef" value="{{simscaled_monthly_coef}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="simscaled_monthly_activity_free" name="simscaled_monthly_activity_free" value="{{simscaled_monthly_activity_free}}">
+
+
+      <input class="form-check-input" type="text" style=" display: none; "  id="acquirescaled" name="acquirescaled" value="{{acquirescaled}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="acquirescaled_monthly_base_cost" name="acquirescaled_monthly_base_cost" value="{{acquirescaled_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="acquirescaled_monthly_coef" name="acquirescaled_monthly_coef" value="{{acquirescaled_monthly_coef}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="acquirescaled_monthly_activity_free" name="acquirescaled_monthly_activity_free" value="{{acquirescaled_monthly_activity_free}}">
+
+
+
+      <input class="form-check-input" type="text" style=" display: none; "  id="retainscaled" name="retainscaled" value="{{retainscaled}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="retainscaled_monthly_base_cost" name="retainscaled_monthly_base_cost" value="{{retainscaled_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="retainscaled_monthly_coef" name="retainscaled_monthly_coef" value="{{retainscaled_monthly_coef}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="retainscaled_monthly_activity_free" name="retainscaled_monthly_activity_free" value="{{retainscaled_monthly_activity_free}}">
+
+
+      <input class="form-check-input" type="text" style=" display: none; "  id="Product_recommendations" name="Product_recommendations" value="{{Product_recommendations}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="Product_recommendations_monthly_base_cost" name="Product_recommendations_monthly_base_cost" value="{{Product_recommendations_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="Product_recommendations_monthly_coef" name="Product_recommendations_monthly_coef" value="{{Product_recommendations_monthly_coef}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="Product_recommendations_monthly_activity_free" name="Product_recommendations_monthly_activity_free" value="{{Product_recommendations_monthly_activity_free}}">
+
+      <input class="form-check-input" type="text" style=" display: none; "  id="Marketing_attribution" name="Marketing_attribution" value="{{Marketing_attribution}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="Marketing_attribution_monthly_base_cost" name="Marketing_attribution_monthly_base_cost" value="{{Marketing_attribution_monthly_base_cost}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="Marketing_attribution_monthly_coef" name="Marketing_attribution_monthly_coef" value="{{Marketing_attribution_monthly_coef}}">
+      <input class="form-check-input" type="number" style=" display: none; "  id="Marketing_attribution_monthly_activity_free" name="Marketing_attribution_monthly_activity_free" value="{{Marketing_attribution_monthly_activity_free}}">
+
+
+
+      <div class="container mt-4">
+          <label for="exampleRanges1">Select number of months to access my analytics insights:</label></br>
+           <span class="">1</span>
+          <span class="" style=" margin-left: 88%; ">24</span>
+  <input type="range" class="custom-range" id="exampleRanges1" min="1" max="24" value="12" name="month_to_access" onchange="rangeChanged(this)">
+  </br>selected <span class="range-values" id="rangeValues1">12</span>
+
+  </br>
+  </br>
+
+  <label for="exampleRanges2">Select number of times Shopify data is expected to be reloaded per month:</label></br>
+          <span class="">1</span>
+          <span class="" style=" margin-left: 88%; ">60</span>
+    <input type="range" class="custom-range" id="exampleRanges2" min="1" max="60" value="30" name="number_of_times_shopify_data_is_expected" onchange="rangeChanged(this)">
+         </br>selected <span class="range-values" id="rangeValues2">30</span>
+
+          </br>
+          </br>
+          <input class="form-check-input" type="radio" name="payment_type_get" id="maleRadio" value="Pay_all_now" checked>
+      <label class="form-check-label" for="maleRadio">
+        Pay all now
+      </label>
+          </br>
+          <input class="form-check-input" type="radio" name="payment_type_get" id="maleRadio1" value="Pay_monthly_for_12_months" checked>
+      <label class="form-check-label" for="maleRadio1">
+        Pay monthly for 12 months
+      </label>
+          </br>
+          <input class="form-check-input" type="radio" name="payment_type_get" id="installmentsRadio" value="installments">
+      <label class="form-check-label" for="installmentsRadio">
+        Pay in installments
+      </label>
+      <div id="installmentsInput" >
+        <input class="form-control" type="number" name="installmentsCount" id="installmentsCount" placeholder="Number of Installments">
+      </div>
+
+
+
+
+        </div>
+
+
+<button type="submit" class="btn btn-primary">Pay Now</button>
+  </div>
+
+</div>
+    <div class="col-4">
+
+        <span style=" font-size: 28px; font-weight: bold; ">Payment $</span> <span id="show_payment" style=" font-size: 28px; font-weight: bold; "></span>
+              <input class="form-check-input hidden-input" type="text"  id="total_amount_info" name="total_amount" value="0">
+
+    </div>
+
+
+</div>
+</form>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+
+
+<script>
+function calculateSubscriptionPrice(expectedMonthlyActivity, monthlyActivityFree, monthlyBaseCost, monthlyCoef) {
+  let subscriptionPricePerMonth = 0.00;
+
+  if (expectedMonthlyActivity - monthlyActivityFree <= 0) {
+    subscriptionPricePerMonth = 0.00;
+  } else if (expectedMonthlyActivity - monthlyActivityFree > 0) {
+    subscriptionPricePerMonth =
+      monthlyBaseCost * (1 + monthlyCoef * (expectedMonthlyActivity - monthlyActivityFree)) / monthlyActivityFree;
+  }
+
+  return subscriptionPricePerMonth;
+}
+</script>
+
+
+
+
+<script>
+  window.onload = rangeChanged;
+  function rangeChanged() {
+
+
+  var exampleRanges1 = document.getElementById("exampleRanges1").value;
+  var exampleRanges2 = document.getElementById("exampleRanges2").value;
+
+  var demandscaled = document.getElementById("demandscaled").value;
+  var mixscaled = document.getElementById("mixscaled").value;
+  var simscaled = document.getElementById("simscaled").value;
+  var acquirescaled = document.getElementById("acquirescaled").value;
+  var retainscaled = document.getElementById("retainscaled").value;
+  var Product_recommendations = document.getElementById("Product_recommendations").value;
+  var Marketing_attribution = document.getElementById("Marketing_attribution").value;
+
+  var metricscaled = document.getElementById("metricscaled").value;
+  var campaignscaled = document.getElementById("campaignscaled").value;
+
+  var total_amount = 0;
+
+
+  document.getElementById("rangeValues1").innerHTML = exampleRanges1;
+  document.getElementById("rangeValues2").innerHTML = exampleRanges2;
+
+    if (metricscaled === "on") {
+        const expectedMonthlyActivity = exampleRanges1*exampleRanges2;
+        const monthlyActivityFree = document.getElementById("metricscaled_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("metricscaled_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("metricscaled_monthly_coef").value;
+
+        const result = calculateSubscriptionPrice(expectedMonthlyActivity, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+        total_amount = total_amount+result;
+        }
+    if (campaignscaled === "on") {
+        const expectedMonthlyActivity = exampleRanges1*exampleRanges2;
+        const monthlyActivityFree = document.getElementById("campaignscaled_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("campaignscaled_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("campaignscaled_monthly_coef").value;
+
+        const result = calculateSubscriptionPrice(expectedMonthlyActivity, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+        total_amount = total_amount+result;
+        }
+    if (demandscaled === "on") {
+        const expectedMonthlyActivity = exampleRanges1*exampleRanges2;
+        const monthlyActivityFree = document.getElementById("demandscaled_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("demandscaled_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("demandscaled_monthly_coef").value;
+
+        const result = calculateSubscriptionPrice(expectedMonthlyActivity, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+        total_amount = total_amount+result;
+        }
+
+    if (mixscaled === "on") {
+        const expectedMonthlyActivity = exampleRanges1*exampleRanges2;
+        const monthlyActivityFree = document.getElementById("mixscaled_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("mixscaled_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("mixscaled_monthly_coef").value;
+
+        const result = calculateSubscriptionPrice(expectedMonthlyActivity, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+        total_amount = total_amount+result;
+
+        }
+    if (simscaled === "on") {
+        const expectedMonthlyActivity = exampleRanges1*exampleRanges2;
+        const monthlyActivityFree = document.getElementById("simscaled_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("simscaled_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("simscaled_monthly_coef").value;
+
+        const result = calculateSubscriptionPrice(expectedMonthlyActivity, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+        total_amount = total_amount+result;
+
+        }
+    if (acquirescaled === "on") {
+        const expectedMonthlyActivity = exampleRanges1*exampleRanges2;
+        const monthlyActivityFree = document.getElementById("acquirescaled_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("acquirescaled_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("acquirescaled_monthly_coef").value;
+
+        const result = calculateSubscriptionPrice(expectedMonthlyActivity, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+        total_amount = total_amount+result;
+
+        }
+    if (retainscaled === "on") {
+        const expectedMonthlyActivity = exampleRanges1*exampleRanges2;
+        const monthlyActivityFree = document.getElementById("retainscaled_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("retainscaled_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("retainscaled_monthly_coef").value;
+
+        const result = calculateSubscriptionPrice(expectedMonthlyActivity, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+        total_amount = total_amount+result;
+
+        }
+    if (Product_recommendations === "on") {
+        const expectedMonthlyActivity = exampleRanges1*exampleRanges2;
+        const monthlyActivityFree = document.getElementById("Product_recommendations_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("Product_recommendations_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("Product_recommendations_monthly_coef").value;
+
+        const result = calculateSubscriptionPrice(expectedMonthlyActivity, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+        total_amount = total_amount+result;
+
+        }
+    if (Marketing_attribution === "on") {
+        const expectedMonthlyActivity = exampleRanges1*exampleRanges2;
+        const monthlyActivityFree = document.getElementById("Marketing_attribution_monthly_activity_free").value;
+        const monthlyBaseCost = document.getElementById("Marketing_attribution_monthly_base_cost").value;
+        const monthlyCoef = document.getElementById("Marketing_attribution_monthly_coef").value;
+
+        const result = calculateSubscriptionPrice(expectedMonthlyActivity, monthlyActivityFree, monthlyBaseCost, monthlyCoef);
+        total_amount = total_amount+result;
+
+        }
+
+    console.log('total_amount')
+    console.log(total_amount)
+    let total_amount_change = total_amount.toFixed(2);
+    document.getElementById("show_payment").innerHTML = total_amount_change;
+    document.getElementById("total_amount_info").value = total_amount_change;
+
+
+
+  }
+</script>
+
+
+
+{% endblock %}

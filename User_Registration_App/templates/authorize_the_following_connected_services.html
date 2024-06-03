@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block title %}Kintah Platform{% endblock %}
+{% block content %}
+
+<h3 class="text-center" style="margin-top:55px;">Authorize the following connected services</h3>
+<hr>
+<!--<form method="POST" enctype="multipart/form-data"  style="margin-top:35px;" >-->
+<!--  {% csrf_token %}-->
+
+
+<!--    <input class="form-check-input" type="hidden" name="external_shop_info_table_of_shop_pk" value="{{external_shop_info_table_of_shop_pk}}">-->
+<!--      <input class="form-check-input" type="hidden" name="external_csv_file_store_table_of_shop_pk" value="{{external_csv_file_store_table_of_shop_pk}}">-->
+<!--    <button type="submit" class="btn btn-primary">BACK</button>-->
+<!--</form>-->
+
+
+
+
+<form method="POST" enctype="multipart/form-data"  style="margin-top:35px;" action="{% url 'calculate_amount_to_pay' %}">
+  {% csrf_token %}
+<div class="form-group row">
+
+  <div class="form-check">
+
+      <input class="form-check-input" type="hidden" name="external_shop_info_table_of_shop_pk" value="{{external_shop_info_table_of_shop_pk}}">
+      <input class="form-check-input" type="hidden" name="external_csv_file_store_table_of_shop_pk" value="{{external_csv_file_store_table_of_shop_pk}}">
+
+      <input class="form-check-input" type="hidden" name="plane_price" value="{{plane_price}}">
+
+      {% if demandscaled == 'on' %}
+          <input class="form-check-input" type="checkbox" name="demandscaled" id="exampleCheckbox1" checked>
+        {% else %}
+          <input class="form-check-input" type="checkbox" name="demandscaled" id="exampleCheckbox1">
+        {% endif %}
+
+
+      <label class="form-check-label" for="exampleCheckbox1">
+<!--        Demandscaled - demand forecast-->
+          Demandscaled - demand forecast (demandscaled)
+      </label>
+
+    </br>
+    {% if acquirescaled == 'on' %}
+    <input class="form-check-input" type="checkbox" id="exampleCheckbox4" name="acquirescaled" checked>
+      {% else %}
+    <input class="form-check-input" type="checkbox" id="exampleCheckbox4" name="acquirescaled">
+      {% endif %}
+
+      <label class="form-check-label" for="exampleCheckbox4">
+<!--        Acquirescaled - ai driven campaign recommendation-->
+          Acquirescaled and retention - ai driven campaign recommendation (acquirescaled, retainscaled)
+      </label>
+    </br>
+
+
+
+        {% if Product_recommendations == 'on' %}
+      <input class="form-check-input" type="checkbox" id="exampleCheckbox6" name="Product_recommendations" checked>
+      {% else %}
+      <input class="form-check-input" type="checkbox" id="exampleCheckbox6" name="Product_recommendations">
+      {% endif %}
+      <label class="form-check-label" for="exampleCheckbox6">
+<!--        Product recommendations-->
+          Product recommendations (recommendscaled)
+      </label>
+
+</br>
+
+      {% if campaignscaled == 'on' %}
+      <input class="form-check-input" type="checkbox" id="exampleCheckbox8" name="campaignscaled" checked>
+      {% else %}
+      <input class="form-check-input" type="checkbox" id="exampleCheckbox8" name="campaignscaled">
+      {% endif %}
+
+      <label class="form-check-label" for="exampleCheckbox8">
+        Automated - AI driven acquisition and retention email or SMS campaigns (prescriptive AI)
+      </label>
+    </br>
+      <input class="form-check-input" type="checkbox" id="exampleCheckbox9" name="metricscaled" checked readonly>
+      <label class="form-check-label" for="exampleCheckbox9">
+        Analytics dashboards (metricscaled included by default)
+      </label>
+    </br>
+<!--        <input class="form-check-input" type="checkbox" id="exampleCheckbox7" name="Marketing_attribution"  checked readonly>-->
+<!--      <label class="form-check-label" for="exampleCheckbox7">-->
+<!--        Data and AI driven ERP( included by default)-->
+<!--      </label>-->
+<!--    </br>-->
+<!--      <input class="form-check-input" type="checkbox" id="exampleCheckbox5" name="retainscaled" checked readonly>-->
+<!--      <label class="form-check-label" for="exampleCheckbox5">-->
+<!--        Data and AI driven e-commerce( included by default)-->
+<!--      </label>-->
+<!--    </br>-->
+
+      <input type="hidden" name="CompanyRegistrationInformationId" value="{{CompanyRegistrationInformationId}}">
+
+<button type="submit" class="btn btn-primary">NEXT</button>
+  </div>
+
+
+
+
+</div>
+</form>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var selectElement = document.getElementById("exampleSelect");
+  var inputFieldsContainer = document.getElementById("inputFields");
+
+  selectElement.addEventListener("change", function() {
+    if (selectElement.value === "shopify") {
+      inputFieldsContainer.style.display = "block";
+    } else {
+      inputFieldsContainer.style.display = "none";
+    }
+  });
+});
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var selectElement = document.getElementById("exampleSelect");
+  var inputFieldsContainer = document.getElementById("inputFieldsWix");
+
+  selectElement.addEventListener("change", function() {
+    if (selectElement.value === "wix") {
+      inputFieldsContainer.style.display = "block";
+    } else {
+      inputFieldsContainer.style.display = "none";
+    }
+  });
+});
+</script>
+
+
+
+
+
+
+<script>
+// Disable the checkbox
+document.getElementById("exampleCheckbox9").disabled = true;
+
+// Prevent changes to the checkbox state
+document.getElementById("exampleCheckbox9").addEventListener("click", function(event) {
+  event.preventDefault();
+});
+</script>
+
+<script>
+// Disable the checkbox
+document.getElementById("exampleCheckbox7").disabled = true;
+
+// Prevent changes to the checkbox state
+document.getElementById("exampleCheckbox7").addEventListener("click", function(event) {
+  event.preventDefault();
+});
+</script>
+
+<script>
+// Disable the checkbox
+document.getElementById("exampleCheckbox5").disabled = true;
+
+// Prevent changes to the checkbox state
+document.getElementById("exampleCheckbox5").addEventListener("click", function(event) {
+  event.preventDefault();
+});
+</script>
+
+{% endblock %}

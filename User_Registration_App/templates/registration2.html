@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kintah Platform</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+
+<select id="countrySelect" class="form-control">
+</select>
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Select2 JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Initialize Select2
+    $('#countrySelect').select2({
+        ajax: {
+            url: '/country_list_from_ajax/',  // URL of your Django view
+            dataType: 'json',
+            delay: 250,  // Delay in milliseconds before the request is sent
+            processResults: function(data) {
+                return {
+                    results: data.results.map(function(item) {
+                        return {id: item.id, text: item.text};
+                    })
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 1,  // Minimum number of characters before the search is performed
+        placeholder: 'Search for a country...',
+    });
+});
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+all = [
+{'id': 64977, 'name': 'Sangkom Thmei', 'state_id': 3973, 'state_code': '13', 'state_name': 'Preah Vihear', 'country_id': 37, 'country_code': 'KH', 'country_name': 'Cambodia', 'latitude': '13.47395000', 'longitude': '104.77051000', 'wikiDataId': 'Q4929184'},
+{'id': 64999, 'name': 'Srŏk Ch’êh Sên', 'state_id': 3973, 'state_code': '13', 'state_name': 'Preah Vihear', 'country_id': 37, 'country_code': 'KH', 'country_name': 'Cambodia', 'latitude': '13.58215000', 'longitude': '105.34533000', 'wikiDataId': 'Q4929136'},
+{'id': 64996, 'name': 'Srŏk Chhêb', 'state_id': 3973, 'state_code': '13', 'state_name': 'Preah Vihear', 'country_id': 37, 'country_code': 'KH', 'country_name': 'Cambodia', 'latitude': '13.91077000', 'longitude': '105.46180000', 'wikiDataId': 'Q4929159'},
+{'id': 65005, 'name': 'Srŏk Kulén', 'state_id': 3973, 'state_code': '13', 'state_name': 'Preah Vihear', 'country_id': 37, 'country_code': 'KH', 'country_name': 'Cambodia', 'latitude': '13.78597000', 'longitude': '104.61052000', 'wikiDataId': 'Q4929210'},
+{'id': 65018, 'name': 'Srŏk Rôviĕng', 'state_id': 3973, 'state_code': '13', 'state_name': 'Preah Vihear', 'country_id': 37, 'country_code': 'KH', 'country_name': 'Cambodia', 'latitude': '13.35105000', 'longitude': '105.09956000', 'wikiDataId': 'Q4929033'},
+{'id': 65025, 'name': 'Srŏk Tbêng Méanchey', 'state_id': 3973, 'state_code': '13', 'state_name': 'Preah Vihear', 'country_id': 37, 'country_code': 'KH', 'country_name': 'Cambodia', 'latitude': '13.78622000', 'longitude': '105.01586000', 'wikiDataId': 'Q1883679'},
+{'id': 65039, 'name': 'Tbeng Meanchey', 'state_id': 3973, 'state_code': '13', 'state_name': 'Preah Vihear', 'country_id': 37, 'country_code': 'KH', 'country_name': 'Cambodia', 'latitude': '13.80731000', 'longitude': '104.98046000', 'wikiDataId': 'Q2428308'},
+]

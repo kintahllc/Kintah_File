@@ -1,0 +1,112 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    input[type="text"], input[type="number"], input[type="date"], input[type="password"], input[type="email"], select {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<h1>Accounting Configuration</h1>
+<form method="POST" id="accounting_form">
+    {% csrf_token %}
+
+    <input type="hidden" value="{{erp_active.id}}" name="erp_active_id">
+
+    <div class="form-group">
+        <label for="fiscal_year_name">Fiscal Year Name:</label>
+        <select id="fiscal_year_name" name="fiscal_year_name" required>
+            {% for year in years %}
+                <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="fiscal_year_start">Fiscal Year Start:</label>
+        <input type="date" id="fiscal_year_start" name="fiscal_year_start" required>
+    </div>
+    <div class="form-group">
+        <label for="fiscal_year_end">Fiscal Year End:</label>
+        <input type="date" id="fiscal_year_end" name="fiscal_year_end" required>
+    </div>
+    <div class="form-group">
+        <label for="income_tax_name">Income Tax Name:</label>
+        <input type="text" id="income_tax_name" name="income_tax_name" required>
+    </div>
+    <div class="form-group">
+        <label for="income_tax_rate">Income Tax Rate (%):</label>
+        <input type="number" step="0.01" id="income_tax_rate" name="income_tax_rate" required>
+    </div>
+    <div class="form-group">
+        <label for="bank_name">Bank Name:</label>
+        <input type="text" id="bank_name" name="bank_name" required>
+    </div>
+    <div class="form-group">
+        <label for="bank_street">Bank Street:</label>
+        <input type="text" id="bank_street" name="bank_street" required>
+    </div>
+    <div class="form-group">
+        <label for="bank_city">Bank City:</label>
+        <input type="text" id="bank_city" name="bank_city" required>
+    </div>
+    <div class="form-group">
+        <label for="bank_state">Bank State:</label>
+        <input type="text" id="bank_state" name="bank_state" required>
+    </div>
+    <div class="form-group">
+        <label for="bank_zip">Bank ZIP:</label>
+        <input type="text" id="bank_zip" name="bank_zip" required>
+    </div>
+    <div class="form-group">
+        <label for="bank_country">Bank Country:</label>
+        <input type="text" id="bank_country" name="bank_country" required>
+    </div>
+    <div class="form-group">
+        <label for="bank_phone">Bank Phone:</label>
+        <input type="text" id="bank_phone" name="bank_phone" required>
+    </div>
+    <div class="form-group">
+        <label for="bank_account_number">Bank Account Number:</label>
+        <input type="text" id="bank_account_number" name="bank_account_number" required>
+    </div>
+    <div class="form-group">
+        <label for="sales_tax_name">Sales Tax Name:</label>
+        <input type="text" id="sales_tax_name" name="sales_tax_name" required>
+    </div>
+    <div class="form-group">
+        <label for="sales_tax_rate">Sales Tax Rate (%):</label>
+        <input type="number" step="0.01" id="sales_tax_rate" name="sales_tax_rate" required>
+    </div>
+    <div class="form-group">
+        <label for="chart_template_name">Chart Template Name:</label>
+        <input type="text" id="chart_template_name" name="chart_template_name" required>
+    </div>
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock %}

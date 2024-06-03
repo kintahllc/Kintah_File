@@ -1,0 +1,33 @@
+{% extends 'eShopAnalytics/base.html' %}
+{% block active_home %}active{% endblock %}
+{% block title %}Kintah Platform{% endblock %}
+{% block content %}
+<h4>Connect My External Shop (Shopify, Woocommerce or Bigcommerce)</h4>
+<hr>
+<div class="row mt-3">
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Save My APIs of External Stores </h5><hr>
+        <h6 class="card-subtitle mb-2 text-muted">Before connect your external stores, kindly add your apis of that stores.</h6>
+        <div class="text-center mt-4">
+          <a href="/storeconnect/save-api-external-store/" class="btn btn-warning btn-sm">Go & Save</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Extract My Info to my s3 now</h5><hr>
+        <h6 class="card-subtitle mb-2 text-muted">Extract My Info to my s3 now. Click here!<br><br></h6>
+        <div class="text-center mt-4">
+          <a href="/storeconnect/see_store_list/" class="btn btn-warning btn-sm">Go & Export</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

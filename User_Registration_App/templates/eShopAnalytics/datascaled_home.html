@@ -1,0 +1,44 @@
+{% extends 'eShopAnalytics/base.html' %}
+{% block active_home %}active{% endblock %}
+{% block title %}Datascaled Home{% endblock %}
+{% block content %}
+<h2>File Transfer to S3</h2>
+<hr>
+<div class="row mt-3">
+<!--  <div class="col-md-3">-->
+<!--    <div class="card">-->
+<!--      <div class="card-body">-->
+<!--        <h5 class="card-title">Your PC to crunchscaled S3</h5><hr>-->
+<!--        <h6 class="card-subtitle mb-2 text-muted">Transfer files from your local computer to crunchscaled S3 location</h6>-->
+<!--        <div class="text-center mt-4">-->
+<!--          <a href="/datascaled/PC-to-S3/" class="btn btn-warning btn-sm">Go & Transfer</a>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Your S3 to Crunchscaled S3</h5><hr>
+        <h6 class="card-subtitle mb-2 text-muted">Transfer files from your AWS S3 to crunchscaled S3 location</h6>
+        <div class="text-center mt-4">
+          <a href="/datascaled/user-S3-to-crunchscaled-S3/" class="btn btn-warning btn-sm">Go & Transfer</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">AI Output Export Back to Client Management</h5><hr>
+        <h6 class="card-subtitle mb-2 text-muted">AI Output Export Back to Client Management<br><br></h6>
+        <div class="text-center mt-4">
+          <a href="/datascaled/client-export-back/" class="btn btn-warning btn-sm">Go & Export</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

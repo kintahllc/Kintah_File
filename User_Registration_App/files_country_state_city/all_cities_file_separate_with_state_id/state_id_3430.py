@@ -1,0 +1,8 @@
+all = [
+{'id': 135182, 'name': 'Garður', 'state_id': 3430, 'state_code': '2', 'state_name': 'Southern Peninsula Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.06558000', 'longitude': '-22.64656000', 'wikiDataId': 'Q1495025'},
+{'id': 135183, 'name': 'Grindavík', 'state_id': 3430, 'state_code': '2', 'state_name': 'Southern Peninsula Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '63.83849000', 'longitude': '-22.43931000', 'wikiDataId': 'Q472822'},
+{'id': 135195, 'name': 'Keflavík', 'state_id': 3430, 'state_code': '2', 'state_name': 'Southern Peninsula Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.00492000', 'longitude': '-22.56242000', 'wikiDataId': 'Q170693'},
+{'id': 135205, 'name': 'Reykjanesbær', 'state_id': 3430, 'state_code': '2', 'state_name': 'Southern Peninsula Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '63.99813000', 'longitude': '-22.56111000', 'wikiDataId': 'Q1727215'},
+{'id': 135208, 'name': 'Sandgerði', 'state_id': 3430, 'state_code': '2', 'state_name': 'Southern Peninsula Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '64.03762000', 'longitude': '-22.70799000', 'wikiDataId': 'Q1019466'},
+{'id': 135227, 'name': 'Vogar', 'state_id': 3430, 'state_code': '2', 'state_name': 'Southern Peninsula Region', 'country_id': 100, 'country_code': 'IS', 'country_name': 'Iceland', 'latitude': '63.98160000', 'longitude': '-22.38473000', 'wikiDataId': 'Q1019448'},
+]

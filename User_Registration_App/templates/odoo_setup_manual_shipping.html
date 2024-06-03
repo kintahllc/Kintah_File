@@ -1,0 +1,66 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    input, select {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    input[type="submit"] {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<h1>Configure Manual Shipping</h1>
+<form method="POST" >
+    {% csrf_token %}
+    
+    <input type="hidden" value="{{erp_active.id}}" name="erp_active_id">
+    
+    <div class="form-group">
+        <label for="shipping_name">Shipping Name:</label>
+        <input type="text" id="shipping_name" name="shipping_name" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="product_id">Product ID:</label>
+        <input type="number" id="product_id" name="product_id" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="fixed_price">Fixed Price:</label>
+        <input type="number" step="0.01" id="fixed_price" name="fixed_price" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="margin">Margin:</label>
+        <input type="number" step="0.01" id="margin" name="margin" required>
+    </div>
+
+    
+    <div class="form-group">
+        <label for="sequence">Sequence:</label>
+        <input type="number" id="sequence" name="sequence" required>
+    </div>
+    
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock %}

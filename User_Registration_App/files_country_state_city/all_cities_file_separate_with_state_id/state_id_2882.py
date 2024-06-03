@@ -1,0 +1,11 @@
+all = [
+{'id': 20572, 'name': 'Barranco Minas', 'state_id': 2882, 'state_code': 'GUA', 'state_name': 'Guainía', 'country_id': 48, 'country_code': 'CO', 'country_name': 'Colombia', 'latitude': '3.09899000', 'longitude': '-69.58297000', 'wikiDataId': 'Q786529'},
+{'id': 20618, 'name': 'Cacahual', 'state_id': 2882, 'state_code': 'GUA', 'state_name': 'Guainía', 'country_id': 48, 'country_code': 'CO', 'country_name': 'Colombia', 'latitude': '3.32533000', 'longitude': '-67.62397000', 'wikiDataId': 'Q517693'},
+{'id': 20949, 'name': 'Inírida', 'state_id': 2882, 'state_code': 'GUA', 'state_name': 'Guainía', 'country_id': 48, 'country_code': 'CO', 'country_name': 'Colombia', 'latitude': '3.86528000', 'longitude': '-67.92389000', 'wikiDataId': 'Q130281'},
+{'id': 20986, 'name': 'La Guadalupe', 'state_id': 2882, 'state_code': 'GUA', 'state_name': 'Guainía', 'country_id': 48, 'country_code': 'CO', 'country_name': 'Colombia', 'latitude': '1.39579000', 'longitude': '-67.00150000', 'wikiDataId': 'Q1526106'},
+{'id': 21063, 'name': 'Mapiripana', 'state_id': 2882, 'state_code': 'GUA', 'state_name': 'Guainía', 'country_id': 48, 'country_code': 'CO', 'country_name': 'Colombia', 'latitude': '2.81003000', 'longitude': '-70.28568000', 'wikiDataId': 'Q1579380'},
+{'id': 21106, 'name': 'Morichal', 'state_id': 2882, 'state_code': 'GUA', 'state_name': 'Guainía', 'country_id': 48, 'country_code': 'CO', 'country_name': 'Colombia', 'latitude': '2.42980000', 'longitude': '-69.83284000', 'wikiDataId': 'Q1654632'},
+{'id': 21178, 'name': 'Pana Pana', 'state_id': 2882, 'state_code': 'GUA', 'state_name': 'Guainía', 'country_id': 48, 'country_code': 'CO', 'country_name': 'Colombia', 'latitude': '1.96249000', 'longitude': '-69.12600000', 'wikiDataId': 'Q1655477'},
+{'id': 21239, 'name': 'Puerto Colombia', 'state_id': 2882, 'state_code': 'GUA', 'state_name': 'Guainía', 'country_id': 48, 'country_code': 'CO', 'country_name': 'Colombia', 'latitude': '2.43903000', 'longitude': '-68.16419000', 'wikiDataId': 'Q2186176'},
+{'id': 21354, 'name': 'San Felipe', 'state_id': 2882, 'state_code': 'GUA', 'state_name': 'Guainía', 'country_id': 48, 'country_code': 'CO', 'country_name': 'Colombia', 'latitude': '2.14321000', 'longitude': '-67.34122000', 'wikiDataId': 'Q1525416'},
+]

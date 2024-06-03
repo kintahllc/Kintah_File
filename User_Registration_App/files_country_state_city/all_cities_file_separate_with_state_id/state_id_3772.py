@@ -1,0 +1,10 @@
+all = [
+{'id': 130542, 'name': 'Huyện Đắk Glei', 'state_id': 3772, 'state_code': '28', 'state_name': 'Kon Tum', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '15.11358000', 'longitude': '107.75093000', 'wikiDataId': 'Q3593897'},
+{'id': 130543, 'name': 'Huyện Đắk Hà', 'state_id': 3772, 'state_code': '28', 'state_name': 'Kon Tum', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '14.60326000', 'longitude': '107.98547000', 'wikiDataId': 'Q3593897'},
+{'id': 130545, 'name': 'Huyện Đắk Tô', 'state_id': 3772, 'state_code': '28', 'state_name': 'Kon Tum', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '14.70087000', 'longitude': '107.80816000', 'wikiDataId': 'Q3593897'},
+{'id': 130321, 'name': "Huyện Ia H'Drai", 'state_id': 3772, 'state_code': '28', 'state_name': 'Kon Tum', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '14.06032000', 'longitude': '107.46243000', 'wikiDataId': 'Q20025812'},
+{'id': 130332, 'name': 'Huyện Kon Plông', 'state_id': 3772, 'state_code': '28', 'state_name': 'Kon Tum', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '14.75620000', 'longitude': '108.32057000', 'wikiDataId': 'Q6405298'},
+{'id': 130388, 'name': 'Huyện Ngọc Hồi', 'state_id': 3772, 'state_code': '28', 'state_name': 'Kon Tum', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '14.71940000', 'longitude': '107.62636000', 'wikiDataId': 'Q3711242'},
+{'id': 130419, 'name': 'Huyện Sa Thầy', 'state_id': 3772, 'state_code': '28', 'state_name': 'Kon Tum', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '14.32050000', 'longitude': '107.59862000', 'wikiDataId': 'Q7395483'},
+{'id': 130565, 'name': 'Kon Tum', 'state_id': 3772, 'state_code': '28', 'state_name': 'Kon Tum', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '14.35451000', 'longitude': '108.00759000', 'wikiDataId': 'Q36160'},
+]

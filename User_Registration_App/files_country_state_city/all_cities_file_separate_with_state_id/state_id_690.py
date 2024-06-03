@@ -1,0 +1,8 @@
+all = [
+{'id': 67440, 'name': 'Ilinden', 'state_id': 690, 'state_code': '34', 'state_name': 'Ilinden Municipality', 'country_id': 129, 'country_code': 'MK', 'country_name': 'North Macedonia', 'latitude': '41.99451000', 'longitude': '21.58002000', 'wikiDataId': 'Q3044844'},
+{'id': 67446, 'name': 'Kadino', 'state_id': 690, 'state_code': '34', 'state_name': 'Ilinden Municipality', 'country_id': 129, 'country_code': 'MK', 'country_name': 'North Macedonia', 'latitude': '41.96889000', 'longitude': '21.60139000', 'wikiDataId': 'Q20932216'},
+{'id': 67478, 'name': 'Marino', 'state_id': 690, 'state_code': '34', 'state_name': 'Ilinden Municipality', 'country_id': 129, 'country_code': 'MK', 'country_name': 'North Macedonia', 'latitude': '41.98776000', 'longitude': '21.59148000', 'wikiDataId': 'Q21052605'},
+{'id': 67482, 'name': 'Miladinovci', 'state_id': 690, 'state_code': '34', 'state_name': 'Ilinden Municipality', 'country_id': 129, 'country_code': 'MK', 'country_name': 'North Macedonia', 'latitude': '41.98029000', 'longitude': '21.64982000', 'wikiDataId': 'Q20932441'},
+{'id': 67575, 'name': 'Идризово', 'state_id': 690, 'state_code': '34', 'state_name': 'Ilinden Municipality', 'country_id': 129, 'country_code': 'MK', 'country_name': 'North Macedonia', 'latitude': '41.96083000', 'longitude': '21.57556000', 'wikiDataId': 'Q1027709'},
+{'id': 67573, 'name': 'Јурумлери', 'state_id': 690, 'state_code': '34', 'state_name': 'Ilinden Municipality', 'country_id': 129, 'country_code': 'MK', 'country_name': 'North Macedonia', 'latitude': '41.96722000', 'longitude': '21.55694000', 'wikiDataId': 'Q3070894'},
+]

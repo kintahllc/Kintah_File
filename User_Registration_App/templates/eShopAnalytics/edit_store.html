@@ -1,0 +1,93 @@
+{% extends 'eShopAnalytics/base.html' %}
+{% block title %}store connect apis save{% endblock %}
+{% block content %}
+
+<h3 class="text-center" style="margin-top:55px;">Edit your external store info</h3>
+<hr>
+<a href="{% url 'storeconnect:see_store_list' %}">See My Store</a>
+<form method="POST" enctype="multipart/form-data"  style="margin-top:35px;" action="">
+  {% csrf_token %}
+<div class="form-group row">
+
+
+  <div class="container mt-5">
+
+<input type="hidden" class="form-control" id="inss" name="external_store_name" value="{{list_of_store.platform_name}}">
+    {% if list_of_store.platform_name == "shopify" %}
+  <div id="inputFields" >
+    <label for="input1">Shop Name:</label>
+
+
+    <input type="text" class="form-control" id="input1" name="shopify_shop_name" value="{{list_of_store.shop_name}}">
+
+    <label for="input2">Access Token:</label>
+    <input type="text" class="form-control" id="input2" name="shopify_access_token" value="{{list_of_store.access_token}}">
+
+    <label for="input3">App Version:</label>
+    <input type="text" class="form-control" id="input3" name="shopify_app_version" value="{{list_of_store.app_version}}">
+    <input type="hidden" class="form-control" id="" name="pk", value="{{pk}}">
+
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+    {% elif list_of_store.platform_name == "wix" %}
+    <div id="inputFields" >
+    <label for="input1">Oath:</label>
+
+
+    <input type="text" class="form-control" id="input1" name="wix_oath" value="{{list_of_store.c}}">
+
+    <label for="input2">Secret Key:</label>
+    <input type="text" class="form-control" id="input2" name="wix_secrete_key" value="{{list_of_store.secrete_key}}">
+
+    <label for="input3">App Id:</label>
+    <input type="text" class="form-control" id="input3" name="wix_api_key" value="{{list_of_store.api_key}}">
+    <input type="hidden" class="form-control" id="" name="pk", value="{{pk}}">
+
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+    {% else %}
+    {% endif %}
+</div>
+
+
+
+<!--  -->
+<!--  <div class="col">-->
+<!--    <label for="upload_files">Choose file</label>-->
+<!--    <input class="form-control" id="upload_files" type="file" name="file">-->
+<!--    <small id="" class="form-text text-muted"></small>-->
+<!--  </div>-->
+</div>
+
+
+
+
+</form>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var selectElement = document.getElementById("exampleSelect");
+  var inputFieldsContainer = document.getElementById("inputFields");
+
+  selectElement.addEventListener("change", function() {
+    if (selectElement.value === "shopify") {
+      inputFieldsContainer.style.display = "block";
+    } else {
+      inputFieldsContainer.style.display = "none";
+    }
+  });
+});
+</script>
+
+
+
+{% endblock %}

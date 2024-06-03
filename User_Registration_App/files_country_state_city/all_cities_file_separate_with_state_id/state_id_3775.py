@@ -1,0 +1,10 @@
+all = [
+{'id': 130524, 'name': 'Huyện Ðông Hưng', 'state_id': 3775, 'state_code': '20', 'state_name': 'Thái Bình', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.54388000', 'longitude': '106.34090000', 'wikiDataId': 'Q5295738'},
+{'id': 130309, 'name': 'Huyện Hưng Hà', 'state_id': 3775, 'state_code': '20', 'state_name': 'Thái Bình', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.59464000', 'longitude': '106.21230000', 'wikiDataId': 'Q5874252'},
+{'id': 130331, 'name': 'Huyện Kiến Xương', 'state_id': 3775, 'state_code': '20', 'state_name': 'Thái Bình', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.40081000', 'longitude': '106.42032000', 'wikiDataId': 'Q6405298'},
+{'id': 130417, 'name': 'Huyện Quỳnh Phụ', 'state_id': 3775, 'state_code': '20', 'state_name': 'Thái Bình', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.65095000', 'longitude': '106.36359000', 'wikiDataId': 'Q5370368'},
+{'id': 130442, 'name': 'Huyện Thái Thụy', 'state_id': 3775, 'state_code': '20', 'state_name': 'Thái Bình', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.53916000', 'longitude': '106.51688000', 'wikiDataId': 'Q3711534'},
+{'id': 130459, 'name': 'Huyện Tiền Hải', 'state_id': 3775, 'state_code': '20', 'state_name': 'Thái Bình', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.38465000', 'longitude': '106.52882000', 'wikiDataId': 'Q3711538'},
+{'id': 130504, 'name': 'Huyện Vũ Thư', 'state_id': 3775, 'state_code': '20', 'state_name': 'Thái Bình', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.43732000', 'longitude': '106.26529000', 'wikiDataId': 'Q7932536'},
+{'id': 130605, 'name': 'Thái Bình', 'state_id': 3775, 'state_code': '20', 'state_name': 'Thái Bình', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.45000000', 'longitude': '106.34002000', 'wikiDataId': 'Q36497'},
+]

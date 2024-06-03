@@ -1,0 +1,11 @@
+all = [
+{'id': 107264, 'name': 'Bahşılı', 'state_id': 2178, 'state_code': '71', 'state_name': 'Kırıkkale', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.80979000', 'longitude': '33.44080000', 'wikiDataId': 'Q2671055'},
+{'id': 107279, 'name': 'Balışeyh', 'state_id': 2178, 'state_code': '71', 'state_name': 'Kırıkkale', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.91411000', 'longitude': '33.72333000', 'wikiDataId': 'Q199723'},
+{'id': 108813, 'name': 'Çelebi', 'state_id': 2178, 'state_code': '71', 'state_name': 'Kırıkkale', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.47470000', 'longitude': '33.52895000', 'wikiDataId': 'Q122320'},
+{'id': 107459, 'name': 'Delice', 'state_id': 2178, 'state_code': '71', 'state_name': 'Kırıkkale', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.95371000', 'longitude': '34.02587000', 'wikiDataId': 'Q2499402'},
+{'id': 107897, 'name': 'Karakeçili', 'state_id': 2178, 'state_code': '71', 'state_name': 'Kırıkkale', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.59417000', 'longitude': '33.37778000', 'wikiDataId': 'Q533294'},
+{'id': 107985, 'name': 'Keskin', 'state_id': 2178, 'state_code': '71', 'state_name': 'Kırıkkale', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.67306000', 'longitude': '33.61361000', 'wikiDataId': 'Q2447988'},
+{'id': 108109, 'name': 'Merkez', 'state_id': 2178, 'state_code': '71', 'state_name': 'Kırıkkale', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.84528000', 'longitude': '33.50639000', 'wikiDataId': 'Q206891'},
+{'id': 108490, 'name': 'Sulakyurt', 'state_id': 2178, 'state_code': '71', 'state_name': 'Kırıkkale', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '40.15733000', 'longitude': '33.71600000', 'wikiDataId': 'Q13124930'},
+{'id': 108659, 'name': 'Yahşihan', 'state_id': 2178, 'state_code': '71', 'state_name': 'Kırıkkale', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '39.85992000', 'longitude': '33.45615000', 'wikiDataId': 'Q1980493'},
+]

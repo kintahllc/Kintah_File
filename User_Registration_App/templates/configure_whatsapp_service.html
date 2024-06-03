@@ -1,0 +1,52 @@
+{% extends 'home_base.html' %}
+{% block home_content %}
+
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    input, select {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    input[type="submit"] {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<h1>Configure Twilio WhatsApp Service</h1>
+
+<form method="POST" >
+    {% csrf_token %}
+    <input type="hidden" value="{{erp_active.id}}" name="erp_active_id">
+    <div class="form-group">
+        <label for="twilio_account_sid">Twilio Account SID:</label>
+        <input type="text" id="twilio_account_sid" name="twilio_account_sid" required>
+    </div>
+    <div class="form-group">
+        <label for="twilio_auth_token">Twilio Auth Token:</label>
+        <input type="text" id="twilio_auth_token" name="twilio_auth_token" required>
+    </div>
+    <div class="form-group">
+        <label for="twilio_whatsapp_number">Twilio WhatsApp Number:</label>
+        <input type="text" id="twilio_whatsapp_number" name="twilio_whatsapp_number" required>
+    </div>
+
+    <input type="submit" value="Configure Service">
+</form>
+
+{% endblock %}

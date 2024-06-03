@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kintah Platform</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+
+
+
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<div class="container" style="margin-bottom:25px; margin-top:25px;">
+<form method="POST" action="{% url 'user_registration' %}"> {% csrf_token %}
+<!--    subscription_plan in form-->
+  <div class="row mt-3">
+
+
+
+    <div class="col-md-6">
+      <label for="input1">Company 6-8 Characters Short Name:</label>
+      <input type="text" class="form-control" id="file_number_id" name="file_number" placeholder="only A-Z, a-z, 0-9 is allow" pattern="[A-Za-z0-9]{6,8}"  onkeyup="enable_submit_button()">
+    </div>
+
+    <div class="col-md-6">
+      <label for="input2">Parent company Name:</label>
+      <input type="text" class="form-control" id="client_source_id" name="client_source" placeholder="Parent company Name"  onkeyup="enable_submit_button()">
+    </div>
+
+
+<!--    <div class="col-md-12">-->
+<!--      <label for="input2">Agreed Upon Fee sohel:</label>-->
+<!--      <div class="input-group mb-3">-->
+<!--        <div class="input-group-prepend">-->
+<!--          <span class="input-group-text" id="basic-addon1">$</span>-->
+<!--        </div>-->
+<!--        <input type="text" id="fee_amount_id" class="form-control" placeholder="Fee Amount" name="fee_amount" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()">-->
+<!--      </div>-->
+<!--    </div>-->
+
+
+      <input type="hidden" id="fee_amount_id" class="form-control" placeholder="Fee Amount" name="fee_amount" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()"   value="0">
+
+
+    <div class="col-md-6">
+      <label for="Partner_client_company_name_id">Partner
+        Client
+        company name:</label>
+      <input type="text" class="form-control" id="Partner_client_company_name_id" name="Partner_client_company_name" placeholder="Partner Client Company Name"  onkeyup="enable_submit_button()">
+    </div>
+
+    <div class="col-md-6">
+      <label for="partner_client_contact_full_name_id">Partner client contact full name:</label>
+      <input type="text" class="form-control" id="partner_client_contact_full_name_id" name="partner_client_contact_full_name" placeholder="Partner Client Contact Full Name"  onkeyup="enable_submit_button()">
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="input2">Client Email Address:</label>
+      <input type="text"  id="client_email_address_id" class="form-control" placeholder="Client Email Address" name="client_email_address" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="check_email()">
+      <span id="email-validation-result"></span>
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="input2">Client Phone Number:</label>
+<!--      <input type="text" class="form-control" placeholder="client phone number" id="client_phone_number_id" name="client_phone_number" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()">-->
+    </div>
+
+    <div class="col-md-3">
+        <label for="countryCode">Country Code</label>
+                            <select id="countryCode" class="form-control" name="countryCode" required>
+                                {% for code in phone_codes %}
+                                    <option value="{{ code.dial_code }}">{{ code.name }} ({{ code.dial_code }})</option>
+                                {% endfor %}
+                            </select>
+    </div>
+      <div class="col-md-9">
+          <label for="phoneNumber">Phone Number</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Phone Number</span>
+                                </div>
+                                <input type="tel" maxlength="12" class="form-control" placeholder="client phone number" id="client_phone_number_id" name="client_phone_number" required>
+                            </div>
+                            <small class="form-text text-muted">Please enter the phone number without the country code.</small>
+
+    </div>
+
+
+
+
+
+    <div class="col-md-12">
+      <label for="input2">Partner client company address:</label>
+      <input type="text" id="partner_client_company_address_id" class="form-control" placeholder="Partner client company address" name="partner_client_company_address" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()">
+    </div>
+
+
+
+<div class="form-group col-md-12">
+      <label for="countrySelect">Partner client company country</label>
+<!--    <select id="countrySelect" class="form-group col-md-12" name="partner_client_company_country" >-->
+<select id="countrySelect" class="form-control" name="partner_client_company_country">
+</select>
+
+</div>
+
+
+<!--    <div class="form-group col-md-12">-->
+<!--      <label for="partner_client_company_country_id">Partner client company country</label>-->
+<!--      <select class="form-control" id="partner_client_company_country_id" name="partner_client_company_country"  onchange="enable_submit_button()">-->
+<!--        <option value="USA">USA</option>-->
+<!--        <option value="Bangladesh">Bangladesh</option>-->
+<!--      </select>-->
+<!--    </div>-->
+
+
+
+
+
+
+
+    <div class="form-group col-md-12">
+      <label for="stateSelect">Partner client company state or province</label>
+<!--      <select class="form-control" id="partner_client_company_state_or_province_id" name="partner_client_company_state_or_province"  onchange="enable_submit_button()">-->
+<!--        <option value="California">California</option>-->
+<!--        <option value="Dhaka">Dhaka</option>-->
+<!--      </select>-->
+        <select id="stateSelect" class="form-control mt-2" name="partner_client_company_state_or_province">
+</select>
+    </div>
+
+
+
+    <div class="form-group col-md-12">
+      <label for="citySelect">Partner client company city</label>
+<!--      <select class="form-control" id="partner_client_company_city_id" name="partner_client_company_city"  onchange="enable_submit_button()">-->
+<!--        <option value="California">California</option>-->
+<!--        <option value="Dhaka">Dhaka</option>-->
+<!--      </select>-->
+
+<select id="citySelect" class="form-control mt-2" name="partner_client_company_city">
+</select>
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="input2">Partner client company zip or postal code:</label>
+      <input type="text" id="partner_client_company_zip_or_postal_code_id" class="form-control"  name="partner_client_company_zip_or_postal_code" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()">
+    </div>
+
+
+    <div class="col-md-12">
+      <label for="password">Password:</label>
+      <input type="password" class="form-control" id="password" name="password" minlength="8" onkeyup="enable_submit_button()">
+    </div>
+    <div class="col-md-12">
+      <label for="retype_password">Retype Password:</label>
+      <input type="password" class="form-control" id="retype_password" name="retype-password" onkeyup="enable_submit_button()">
+    </div>
+
+    <button type="submit" style=" margin-top: 12px; width: 20%; margin-left: 40%; " class="form-control btn btn-primary" id="submit_id" disabled>Submit</button>
+  </div>
+</form>
+</div>
+
+
+<script>
+function enable_submit_button1(){
+  console.log('clicked');
+}
+
+</script>
+
+
+<script>
+
+function enable_submit_button(){
+  console.log('sasasasa')
+
+  const file_number_id = document.getElementById('file_number_id');
+  const client_source_id = document.getElementById('client_source_id');
+  const fee_amount_id = document.getElementById('fee_amount_id');
+  const Partner_client_company_name_id = document.getElementById('Partner_client_company_name_id');
+  const partner_client_contact_full_name_id = document.getElementById('partner_client_contact_full_name_id');
+  const client_email_address_id = document.getElementById('client_email_address_id');
+  const client_phone_number_id = document.getElementById('client_phone_number_id');
+  const partner_client_company_address_id = document.getElementById('partner_client_company_address_id');
+  const countrySelect = document.getElementById('countrySelect');
+  const stateSelect = document.getElementById('stateSelect');
+  const citySelect = document.getElementById('citySelect');
+  const partner_client_company_zip_or_postal_code_id = document.getElementById('partner_client_company_zip_or_postal_code_id');
+
+  const passwordInput = document.getElementById('password');
+  const retypePasswordInput = document.getElementById('retype_password');
+  const submitButton = document.getElementById('submit_id');
+
+  if (
+    file_number_id && file_number_id.value.trim() !== '' &&
+    client_source_id && client_source_id.value.trim() !== '' &&
+    fee_amount_id && fee_amount_id.value.trim() !== '' &&
+    Partner_client_company_name_id && Partner_client_company_name_id.value.trim() !== '' &&
+    partner_client_contact_full_name_id && partner_client_contact_full_name_id.value.trim() !== '' &&
+    client_email_address_id && client_email_address_id.value.trim() !== '' &&
+    client_phone_number_id && client_phone_number_id.value.trim() !== '' &&
+    partner_client_company_address_id && partner_client_company_address_id.value.trim() !== '' &&
+    countrySelect && countrySelect.value.trim() !== '' &&
+    stateSelect && stateSelect.value.trim() !== '' &&
+    citySelect && citySelect.value.trim() !== '' &&
+    partner_client_company_zip_or_postal_code_id && partner_client_company_zip_or_postal_code_id.value.trim() !== ''
+    )
+
+      {
+        const password = passwordInput.value.trim();
+        const retypePassword = retypePasswordInput.value.trim();
+
+        if (password !== '' && retypePassword !== '' && password === retypePassword) {
+                submitButton.disabled = false;
+                }
+        else {
+              submitButton.disabled = true;
+            }
+      }
+
+
+}
+
+
+
+
+  </script>
+
+
+
+
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Select2 JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Initialize Select2 for country dropdown
+    $('#countrySelect').select2({
+        ajax: {
+            url: '/country_list_from_ajax/',  // URL of your Django view to fetch country list
+            dataType: 'json',
+            delay: 250,  // Delay in milliseconds before the request is sent
+            processResults: function(data) {
+                return {
+                    results: data.results.map(function(item) {
+                        return {id: item.id, text: item.name};
+                    })
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 1,  // Minimum number of characters before the search is performed
+        placeholder: 'Search for a country...',
+    });
+
+    // Initialize empty Select2 for state dropdown
+    $('#stateSelect').select2({
+        minimumResultsForSearch: -1, // Hide the search input
+        placeholder: 'Select a country first...',
+        disabled: true // Disable the dropdown initially
+    });
+
+    // Initialize empty Select2 for city dropdown
+    $('#citySelect').select2({
+        minimumResultsForSearch: -1, // Hide the search input
+        placeholder: 'Select a state first...',
+        disabled: true // Disable the dropdown initially
+    });
+
+    // Handle change event of country dropdown
+    $('#countrySelect').on('change', function() {
+        var countryId = $(this).val();
+        // Enable state dropdown
+        $('#stateSelect').prop('disabled', false);
+        // Clear existing options
+        $('#stateSelect').empty();
+        // Disable city dropdown
+        $('#citySelect').prop('disabled', true);
+        // Clear existing options
+        $('#citySelect').empty();
+        // Fetch and populate state options based on selected country
+        $.ajax({
+            url: '/states_list_from_ajax/',  // URL of your Django view to fetch state list
+            method: 'GET',
+            data: {'country_id': countryId},
+            success: function(response) {
+                // Populate state options
+                response.forEach(function(state) {
+                    $('#stateSelect').append('<option value="' + state.id + '">' + state.text + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    // Handle change event of state dropdown
+    $('#stateSelect').on('change', function() {
+        var stateId = $(this).val();
+        // Enable city dropdown
+        $('#citySelect').prop('disabled', false);
+        // Clear existing options
+        $('#citySelect').empty();
+        // Fetch and populate city options based on selected state
+        $.ajax({
+            url: '/cities_list_from_ajax/',  // URL of your Django view to fetch city list
+            method: 'GET',
+            data: {'state_id': stateId},
+            success: function(response) {
+                // Populate city options
+                response.forEach(function(city) {
+                    $('#citySelect').append('<option value="' + city + '">' + city + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+});
+</script>
+
+
+
+<script>
+function check_email() {
+    var email = document.getElementById('client_email_address_id').value;
+    console.log('email')
+    console.log(email)
+
+    // Send an AJAX request to your Django view
+    $.ajax({
+        type: 'POST',
+        url: '{% url "validate_email" %}',
+        data: {
+            'email': email,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            // Display the validation result
+            var validationSpan = document.getElementById('email-validation-result');
+            console.log('response.valid')
+            console.log(response.valid)
+            if (response.valid == 'not exist') {
+
+               validationSpan.innerHTML = '<span style="color: red;"></span>';
+
+            } else {
+                console.log('in else')
+                validationSpan.innerHTML = '<span style="color: red;">Please give a uniq correct email</span>';
+            }
+        }
+    });
+}
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,3 @@
+name,company_name,parent_id,type,email,phone,mobile,street,street2,city,state_id,zip,country_id,title,function,website,comment,customer_rank,supplier_rank,is_company,vat,lang,active,category_id,bank_account,bank_id
+John Doe,Acme Inc.,1,contact,john.doe@example.com,1234567890,0987654321,123 Main St,Suite 100,Anytown,1,12345,1,1,CEO,http://example.com,Important client,0,0,True,AB1234567890,en_US,True,1,123456789,1
+Jane Smith,,2,invoice,jane.smith@example.com,2345678901,8765432109,456 Elm St,,Othertown,2,67890,2,2,CFO,http://example.org,New client,1,1,False,,es_ES,True,2,234567890,2

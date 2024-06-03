@@ -1,0 +1,364 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kintah Platform</title>
+
+
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+
+
+
+
+
+<div class="container-fluid" style="width: 82%; margin-top: 25px;">
+  <!-- Top Menu Bar -->
+  <div class="row">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark w-100" style=" height: 101px; ">
+      <img src="{% static 'img/logo.png' %}" alt="Icon" style="width: 60px;height: 60px;margin-right: 10px;">
+      <a class="navbar-brand" href="#" style=" font-size: 40px; margin-left: 14px; ">Kintah Platform</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+<!--          <li class="nav-item">-->
+<!--            <a class="nav-link" href="#">Profile</a>-->
+<!--          </li>-->
+<!--          <li class="nav-item">-->
+<!--            <a class="nav-link" href="#">Billing</a>-->
+<!--          </li>-->
+<!--          <li class="nav-item">-->
+<!--            <a class="nav-link" href="#">Subscriptions</a>-->
+<!--          </li>-->
+<!--          <li class="nav-item">-->
+<!--            <a class="nav-link" href="#">Partners</a>-->
+<!--          </li>-->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'user_logout' %}">logout</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Side Menu and Content -->
+  <div class="row">
+    <!-- Side Menu -->
+    <!-- Side Menu -->
+<!-- Side Menu -->
+<div class="col-md-3 bg-light">
+
+  <!-- Profile Section -->
+  <div class="border border-primary rounded p-3 mb-3">
+    <h3 class="text-primary">Profile</h3>
+    <ul class="nav flex-column">
+      {% if user_info.first_name == '' %}
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'update_company_info' company_info.id %}">Update Company Info</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'change_password' company_info.id %}">Change Password</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'add_company_users' company_info.id %}">Add Company Users</a>
+      </li>
+      {% else %}
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'change_password' company_info.id %}">Change Password</a>
+      </li>
+      {% endif %}
+
+    </ul>
+  </div>
+{% if user_info.first_name == '' %}
+  <div class="border border-primary rounded p-3 mb-3">
+    <h3 class="text-warning">Billing</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'billing_history' company_info.id %}">View billing history</a>
+      </li>
+<!--      <li class="nav-item">-->
+<!--        <a class="nav-link btn btn-light" href="#">Add/edit payment information</a>-->
+<!--      </li>-->
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'ask_billing_question' company_info.id %}">Ask billing question</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Subscriptions Section -->
+  <div class="border border-success rounded p-3 mb-3">
+    <h3 class="text-success">Subscriptions</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'new_subscriptions' company_info.id %}">New Subscriptions</a>
+<!--        new_subscription_plan-->
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'subscription_history' company_info.id %}">View Subscription History</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'upgrade_subscription' company_info.id %}">Upgrade Subscription</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'cancel_subscription' company_info.id %}">Cancel Subscription</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Partners Section -->
+<!--  <div class="border border-info rounded p-3 mb-3">-->
+<!--    <h3 class="text-info">Partners</h3>-->
+<!--    <ul class="nav flex-column">-->
+<!--      <li class="nav-item">-->
+<!--        <a class="nav-link btn btn-light" href="#">Register/Login as Partner</a>-->
+<!--      </li>-->
+<!--      <li class="nav-item">-->
+<!--        <a class="nav-link btn btn-light" href="#">View My Client Subscriptions</a>-->
+<!--      </li>-->
+<!--      <li class="nav-item">-->
+<!--        <a class="nav-link btn btn-light" href="#">Add a New Client Subscription</a>-->
+<!--      </li>-->
+<!--      <li class="nav-item">-->
+<!--        <a class="nav-link btn btn-light" href="#">Cancel Client Subscription</a>-->
+<!--      </li>-->
+<!--      <li class="nav-item">-->
+<!--        <a class="nav-link btn btn-light" href="#">Set Customer Subscription Price</a>-->
+<!--      </li>-->
+<!--    </ul>-->
+<!--  </div>-->
+
+  <!-- My ERP Section -->
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-warning">My AI Assistant Dashboard</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'activate_my_erp' company_info.id %}">Activate My ERP</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{{erp_active.domain}}" target="_blank">Go to My ERP Site</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'activate_my_erp_info' company_info.id %}">Get My ERP Access Info</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="#">Process Data for Reporting</a>
+      </li>
+    </ul>
+  </div>
+
+
+  <!-- My AI Assistant Dashboard Section -->
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-success">My AI Assistant Dashboard</h3>
+    <ul class="nav flex-column">
+
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'dashboard' company_info.id %}">Dashboard</a>
+      </li>
+    </ul>
+  </div>
+
+
+  <!-- My ERP Section -->
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-warning">Manage ERP User</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'add_user_with_manager_role' company_info.id %}">Add User with Manager Role</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'add_user_without_manager_role' company_info.id %}">Add User with Non Manager Role</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'remove_user' company_info.id %}">Remove User</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'update_user_role' company_info.id %}">Update User Role</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- My ERP Section -->
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-success">Manage Products</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'export_product_and_image' company_info.id %}">Export Products & Images to ERP</a>
+      </li>
+
+    </ul>
+  </div>
+
+
+  <!-- My ERP Section -->
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-info">Migration</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'import_contacts_record' company_info.id %}">Import Contacts Record</a>
+        <a class="nav-link btn btn-light" href="{% url 'import_employees_record' company_info.id %}">Import Employees Record</a>
+        <a class="nav-link btn btn-light" href="{% url 'import_suppliers_record' company_info.id %}">Import Suppliers</a>
+        <a class="nav-link btn btn-light" href="{% url 'import_fleet_assets_record' company_info.id %}">Import Fleet Assests</a>
+      </li>
+
+    </ul>
+  </div>
+
+
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-warning">Advanced Setup</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'odoo_account_accountant' company_info.id %}">Setup Accounting</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_setup_manual_shipping' company_info.id %}">Setup Manual delivery</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_configure_stripe_payment' company_info.id %}">Setup Stripe Payment</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_configure_paypal_payment' company_info.id %}">Setup Paypal Payment</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_twilio_sms_config' company_info.id %}">Setup Twilio for Messaging</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_configure_whatsapp_service' company_info.id %}">Setup Twilio Whatsapp</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_set_website_languages' company_info.id %}">Setup Company/Website Languages</a>
+      </li>
+
+    </ul>
+  </div>
+
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-info">ERP Documentation</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="https://www.odoo.com/documentation/17.0/applications.html"  target="_blank">Learn ODOO ERP</a>
+        <a class="nav-link btn btn-light" href="{% url 'get_training' company_info.id %}">Get Training</a>
+        </li>
+
+    </ul>
+  </div>
+
+  {% endif %}
+
+</div>
+
+
+    <!-- Content -->
+    <div class="col-md-9">
+
+      <div class="mt-4">
+
+
+{% block home_content %}
+          {% endblock %}
+
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+      <div class="col-md-12 text-center bg-dark" style="height: 60px;">
+        <p class="navbar-brand" style="font-size: 20px;margin-top: 10px;color: white;">(C) Copywrite Kintah Platform LLC</p>
+      </div>
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Select2 JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Initialize Select2 for country dropdown
+    $('#countrySelect').select2({
+        ajax: {
+            url: '/country_list_from_ajax/',  // URL of your Django view to fetch country list
+            dataType: 'json',
+            delay: 250,  // Delay in milliseconds before the request is sent
+            processResults: function(data) {
+                return {
+                    results: data.results.map(function(item) {
+                        return {id: item.id, text: item.name};
+                    })
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 1,  // Minimum number of characters before the search is performed
+        placeholder: 'Search for a country...',
+    });
+
+    // Initialize empty Select2 for state dropdown
+    $('#stateSelect').select2({
+        minimumResultsForSearch: -1, // Hide the search input
+        placeholder: 'Select a country first...',
+        disabled: true // Disable the dropdown initially
+    });
+
+    // Initialize empty Select2 for city dropdown
+    $('#citySelect').select2({
+        minimumResultsForSearch: -1, // Hide the search input
+        placeholder: 'Select a state first...',
+        disabled: true // Disable the dropdown initially
+    });
+
+    // Handle change event of country dropdown
+    $('#countrySelect').on('change', function() {
+        var countryId = $(this).val();
+        // Enable state dropdown
+        $('#stateSelect').prop('disabled', false);
+        // Clear existing options
+        $('#stateSelect').empty();
+        // Disable city dropdown
+        $('#citySelect').prop('disabled', true);
+        // Clear existing options
+        $('#citySelect').empty();
+        // Fetch and populate state options based on selected country
+        $.ajax({
+            url: '/states_list_from_ajax/',  // URL of your Django view to fetch state list
+            method: 'GET',
+            data: {'country_id': countryId},
+            success: function(response) {
+                // Populate state options
+                response.forEach(function(state) {
+                    $('#stateSelect').append('<option value="' + state.id + '">' + state.text + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    // Handle change event of state dropdown
+    $('#stateSelect').on('change', function() {
+        var stateId = $(this).val();
+        // Enable city dropdown
+        $('#citySelect').prop('disabled', false);
+        // Clear existing options
+        $('#citySelect').empty();
+        // Fetch and populate city options based on selected state
+        $.ajax({
+            url: '/cities_list_from_ajax/',  // URL of your Django view to fetch city list
+            method: 'GET',
+            data: {'state_id': stateId},
+            success: function(response) {
+                // Populate city options
+                response.forEach(function(city) {
+                    $('#citySelect').append('<option value="' + city + '">' + city + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+});
+</script>
+
+
+</body>
+</html>

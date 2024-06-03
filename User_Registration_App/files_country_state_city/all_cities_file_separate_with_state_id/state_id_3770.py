@@ -1,0 +1,10 @@
+all = [
+{'id': 130189, 'name': 'Côn Sơn', 'state_id': 3770, 'state_code': '43', 'state_name': 'Bà Rịa-Vũng Tàu', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '8.68641000', 'longitude': '106.60824000', 'wikiDataId': 'Q25262'},
+{'id': 130255, 'name': 'Huyện Châu Đức', 'state_id': 3770, 'state_code': '43', 'state_name': 'Bà Rịa-Vũng Tàu', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.65805000', 'longitude': '107.25098000', 'wikiDataId': 'Q1319826'},
+{'id': 130539, 'name': 'Huyện Đất Đỏ', 'state_id': 3770, 'state_code': '43', 'state_name': 'Bà Rịa-Vũng Tàu', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.48025000', 'longitude': '107.27879000', 'wikiDataId': 'Q2414015'},
+{'id': 130487, 'name': 'Huyện Tân Thành', 'state_id': 3770, 'state_code': '43', 'state_name': 'Bà Rịa-Vũng Tàu', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.57381000', 'longitude': '107.10189000', 'wikiDataId': 'Q3711512'},
+{'id': 130510, 'name': 'Huyện Xuyên Mộc', 'state_id': 3770, 'state_code': '43', 'state_name': 'Bà Rịa-Vũng Tàu', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.63048000', 'longitude': '107.46568000', 'wikiDataId': 'Q1758257'},
+{'id': 130604, 'name': 'Thành Phố Vũng Tàu', 'state_id': 3770, 'state_code': '43', 'state_name': 'Bà Rịa-Vũng Tàu', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.40239000', 'longitude': '107.14239000', 'wikiDataId': 'Q21194'},
+{'id': 130613, 'name': 'Thị Xã Phú Mỹ', 'state_id': 3770, 'state_code': '43', 'state_name': 'Bà Rịa-Vũng Tàu', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.56815000', 'longitude': '107.12999000', 'wikiDataId': 'Q1320204'},
+{'id': 130626, 'name': 'Vũng Tàu', 'state_id': 3770, 'state_code': '43', 'state_name': 'Bà Rịa-Vũng Tàu', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '10.34599000', 'longitude': '107.08426000', 'wikiDataId': 'Q36088'},
+]

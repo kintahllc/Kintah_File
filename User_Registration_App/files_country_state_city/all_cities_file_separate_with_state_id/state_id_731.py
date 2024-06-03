@@ -1,0 +1,12 @@
+all = [
+{'id': 54422, 'name': 'Brinje', 'state_id': 731, 'state_code': '09', 'state_name': 'Lika-Senj', 'country_id': 55, 'country_code': 'HR', 'country_name': 'Croatia', 'latitude': '45.00250000', 'longitude': '15.13389000', 'wikiDataId': 'Q283566'},
+{'id': 54501, 'name': 'Gospić', 'state_id': 731, 'state_code': '09', 'state_name': 'Lika-Senj', 'country_id': 55, 'country_code': 'HR', 'country_name': 'Croatia', 'latitude': '44.54611000', 'longitude': '15.37472000', 'wikiDataId': 'Q319276'},
+{'id': 54633, 'name': 'Karlobag', 'state_id': 731, 'state_code': '09', 'state_name': 'Lika-Senj', 'country_id': 55, 'country_code': 'HR', 'country_name': 'Croatia', 'latitude': '44.52750000', 'longitude': '15.07389000', 'wikiDataId': 'Q775393'},
+{'id': 54690, 'name': 'Lički Osik', 'state_id': 731, 'state_code': '09', 'state_name': 'Lika-Senj', 'country_id': 55, 'country_code': 'HR', 'country_name': 'Croatia', 'latitude': '44.60389000', 'longitude': '15.42472000', 'wikiDataId': 'Q3443459'},
+{'id': 54758, 'name': 'Novalja', 'state_id': 731, 'state_code': '09', 'state_name': 'Lika-Senj', 'country_id': 55, 'country_code': 'HR', 'country_name': 'Croatia', 'latitude': '44.55778000', 'longitude': '14.88667000', 'wikiDataId': 'Q396613'},
+{'id': 54796, 'name': 'Otočac', 'state_id': 731, 'state_code': '09', 'state_name': 'Lika-Senj', 'country_id': 55, 'country_code': 'HR', 'country_name': 'Croatia', 'latitude': '44.86944000', 'longitude': '15.23750000', 'wikiDataId': 'Q399109'},
+{'id': 54802, 'name': 'Perušić', 'state_id': 731, 'state_code': '09', 'state_name': 'Lika-Senj', 'country_id': 55, 'country_code': 'HR', 'country_name': 'Croatia', 'latitude': '44.64944000', 'longitude': '15.38333000', 'wikiDataId': 'Q1008121'},
+{'id': 54812, 'name': 'Plitvička Jezera', 'state_id': 731, 'state_code': '09', 'state_name': 'Lika-Senj', 'country_id': 55, 'country_code': 'HR', 'country_name': 'Croatia', 'latitude': '44.88053000', 'longitude': '15.62123000', 'wikiDataId': 'Q397633'},
+{'id': 54824, 'name': 'Popovača', 'state_id': 731, 'state_code': '09', 'state_name': 'Lika-Senj', 'country_id': 55, 'country_code': 'HR', 'country_name': 'Croatia', 'latitude': '44.63917000', 'longitude': '15.17917000', 'wikiDataId': 'Q664872'},
+{'id': 54884, 'name': 'Senj', 'state_id': 731, 'state_code': '09', 'state_name': 'Lika-Senj', 'country_id': 55, 'country_code': 'HR', 'country_name': 'Croatia', 'latitude': '44.98944000', 'longitude': '14.90583000', 'wikiDataId': 'Q259466'},
+]

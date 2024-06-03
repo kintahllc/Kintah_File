@@ -1,0 +1,267 @@
+{% extends 'eShopAnalytics/base.html' %}
+{% block title %}store connect apis save{% endblock %}
+{% block content %}
+
+
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="reload-data-tab" data-toggle="tab" href="#reload-data" role="tab" aria-controls="reload-data" aria-selected="false">Reload data</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="auto-campaign-tab" data-toggle="tab" href="#auto-campaign" role="tab" aria-controls="auto-campaign" aria-selected="false">Auto-campaign</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="export-output-tab" data-toggle="tab" href="#export-output" role="tab" aria-controls="export-output" aria-selected="false">Export output</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="dashboard-tab" data-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false">Dashboard</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="my-account-tab" data-toggle="tab" href="#my-account" role="tab" aria-controls="my-account" aria-selected="false">My Account</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+<!--      Home content goes here   start-->
+
+
+
+<button type="button" class="btn btn-primary btn-block">Products Recommendations</button>
+              <button type="button" class="btn btn-primary btn-block">Demand Forecast Data</button>
+
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<form action="{% url 'eShopAnalytics:extracting_settings' %}" method="POST">{% csrf_token %}
+    <input type="hidden" name="pk" value="{{pk}}">
+<!--    <input type="hidden" name="Select_data_version" value="{{Select_data_version}}">-->
+    <button  type="submit" class="btn btn-info my-3 my-sm-2 mr-3" style=" width: 100%; ">Extracting Settings</button>
+</form>
+
+<hr>
+
+
+
+<h3 class="text-center" style="margin-top:55px;">Authorize the following connected services</h3>
+<hr>
+
+
+
+
+<div class="form-group row">
+<div class="col-6">
+<a href="{{ceoscaled_analytics_dashboard_url}}" type="submit" class="btn btn-info my-3 my-sm-2 mr-3" style=" width: 46%; ">CEOScaed Dashboard</a>
+<a href="{{metricscaled_analytics_dashboard_url}}" type="submit" class="btn btn-info my-3 my-sm-2 mr-3" style=" width: 45%; ">Metricscaled Dashboard</a>
+<form action="{% url 'eShopAnalytics:shop_connect_dashbord_client_export_back' %}" method="POST">{% csrf_token %}
+    <input type="hidden" name="Select_app" value="acquirescaled">
+    <input type="hidden" name="Select_data_version" value="{{Select_data_version}}">
+    <button  type="submit" class="btn btn-info my-3 my-sm-2 mr-3" style=" width: 100%; ">Import acquisition campaign recommendations</button>
+</form>
+
+
+<form action="{% url 'eShopAnalytics:shop_connect_dashbord_client_export_back' %}" method="POST">{% csrf_token %}
+    <input type="hidden" name="Select_app" value="recommendscaled">
+    <input type="hidden" name="Select_data_version" value="{{Select_data_version}}">
+    <button  type="submit" class="btn btn-info my-3 my-sm-2 mr-3" style=" width: 100%; ">Import products recommendations</button>
+</form>
+
+
+</div>
+<div class="col-6">
+<a href="{{simscaled_analytics_dashboard_url}}" type="submit" class="btn btn-info my-3 my-sm-2 mr-3" style=" width: 46%; ">SimScaled Dashboard</a>
+<a href="{{mixscaled_analytics_dashboard_url}}" type="submit" class="btn btn-info my-3 my-sm-2 mr-3" style=" width: 45%; ">Mixcaled Dashboard</a>
+
+<form action="{% url 'eShopAnalytics:shop_connect_dashbord_client_export_back' %}" method="POST">{% csrf_token %}
+    <input type="hidden" name="Select_app" value="retainscaled">
+    <input type="hidden" name="Select_data_version" value="{{Select_data_version}}">
+    <button  type="submit" class="btn btn-info my-3 my-sm-2 mr-3" style=" width: 100%; ">Import retention campaign recommendations</button>
+</form>
+
+<!--<form action="{% url 'eShopAnalytics:shop_connect_dashbord_client_export_back' %}" method="POST">{% csrf_token %}-->
+<!--    <input type="hidden" name="Select_app" value="retainscaled">-->
+<!--    <input type="hidden" name="Select_data_version" value="{{Select_data_version}}">-->
+<!--    <button  type="submit" class="btn btn-info my-3 my-sm-2 mr-3" style=" width: 100%; ">Execute Acquisition or Retention campaign</button>-->
+<!--</form>-->
+
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!--      Home content goes here   end-->
+    </div>
+
+
+    <div class="tab-pane fade" id="reload-data" role="tabpanel" aria-labelledby="reload-data-tab">Reload data content goes here</div>
+  <div class="tab-pane fade" id="auto-campaign" role="tabpanel" aria-labelledby="auto-campaign-tab">Auto-campaign content goes here</div>
+  <div class="tab-pane fade" id="export-output" role="tabpanel" aria-labelledby="export-output-tab">
+<!--      Export output content goes here start-->
+
+<div class="row">
+  <div class="col-md-7">
+
+
+      <h3 class="text-center" style="margin-top:55px;">Export AI Output data</h3>
+
+      <div class="progress">
+          <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+
+
+
+      <div class="form-group">
+        <label for="destinationBucket">Destination Bucket Name</label>
+        <input type="text" class="form-control" id="destinationBucket" name="destinationBucket">
+      </div>
+      <div class="form-group">
+        <label for="destinationFolder">Destination Folder Name</label>
+        <input type="text" class="form-control" id="destinationFolder" name="destinationFolder">
+      </div>
+      <div class="form-group">
+        <label for="awsAccessKey">Destination AWS Access Key</label>
+        <input type="text" class="form-control" id="awsAccessKey" name="awsAccessKey">
+      </div>
+      <div class="form-group">
+        <label for="awsSecretKey">Destination AWS Secret Key</label>
+        <input type="password" class="form-control" id="awsSecretKey" name="awsSecretKey">
+      </div>
+      <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="saveForNextTime" name="saveForNextTime">
+        <label class="form-check-label" for="saveForNextTime">Check to save for next time</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Transfer Now</button>
+
+</div>
+          <div class="col-md-5">
+              <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="downloadCheckbox" name="downloadCheckbox">
+                    <label class="form-check-label" for="downloadCheckbox">Download (small data only)</label>
+                </div>
+
+
+              <button type="button" class="btn btn-primary btn-block">Churn Analysis Data</button>
+              <button type="button" class="btn btn-primary btn-block">Elasticity Analysis Data</button>
+              <button type="button" class="btn btn-primary btn-block">Customer Segmentation</button>
+              <button type="button" class="btn btn-primary btn-block">Products Recommendations</button>
+              <button type="button" class="btn btn-primary btn-block">Demand Forecast Data</button>
+
+
+        </div>
+
+
+
+
+<!--      Export output content goes here end-->
+
+
+
+  </div>
+
+
+  <div class="tab-pane fade" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">Dashboard content goes here</div>
+  <div class="tab-pane fade" id="my-account" role="tabpanel" aria-labelledby="my-account-tab">My Account content goes here</div>
+</div>
+
+
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+
+
+{% endblock %}

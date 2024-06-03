@@ -1,0 +1,10 @@
+all = [
+{'id': 107254, 'name': 'Babaeski', 'state_id': 2176, 'state_code': '39', 'state_name': 'Kırklareli', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.43250000', 'longitude': '27.09306000', 'wikiDataId': 'Q797558'},
+{'id': 107463, 'name': 'Demirköy', 'state_id': 2176, 'state_code': '39', 'state_name': 'Kırklareli', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.83567000', 'longitude': '27.77137000', 'wikiDataId': 'Q1023149'},
+{'id': 108011, 'name': 'Kofçaz', 'state_id': 2176, 'state_code': '39', 'state_name': 'Kırklareli', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.94481000', 'longitude': '27.15829000', 'wikiDataId': 'Q2355838'},
+{'id': 108136, 'name': 'Lüleburgaz', 'state_id': 2176, 'state_code': '39', 'state_name': 'Kırklareli', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.41495000', 'longitude': '27.37325000', 'wikiDataId': 'Q214670'},
+{'id': 108106, 'name': 'Merkez', 'state_id': 2176, 'state_code': '39', 'state_name': 'Kırklareli', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.73508000', 'longitude': '27.22521000', 'wikiDataId': 'Q206903'},
+{'id': 108333, 'name': 'Pehlivanköy', 'state_id': 2176, 'state_code': '39', 'state_name': 'Kırklareli', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.34812000', 'longitude': '26.92522000', 'wikiDataId': 'Q3056115'},
+{'id': 108362, 'name': 'Pınarhisar', 'state_id': 2176, 'state_code': '39', 'state_name': 'Kırklareli', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.62417000', 'longitude': '27.52000000', 'wikiDataId': 'Q3056024'},
+{'id': 108655, 'name': 'Vize', 'state_id': 2176, 'state_code': '39', 'state_name': 'Kırklareli', 'country_id': 225, 'country_code': 'TR', 'country_name': 'Turkey', 'latitude': '41.57250000', 'longitude': '27.76583000', 'wikiDataId': 'Q497731'},
+]

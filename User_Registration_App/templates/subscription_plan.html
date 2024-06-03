@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kintah Platform</title>
+    <style>
+        /* Container for the cards */
+        .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: stretch; /* Stretch items to equal height */
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        /* Basic styling for the cards */
+        .card {
+            width: 300px;
+            height: 650px; /* Set a specific height for the card */
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            text-align: left;
+            overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            background-color: #007bff; /* Background color for heading */
+            padding: 10px; /* Add some padding for better visual */
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .card p {
+            color: #666;
+            margin-bottom: 20px;
+            flex-grow: 1; /* Allow the description to grow to fill remaining space */
+        }
+        .card button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .card button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+
+        {% for i in sp %}
+        <form action="{% url 'user_registration' %}" method="POST"> {% csrf_token %}
+            <input type="hidden" name="CompanyRegistrationInformationId" value="{{CompanyRegistrationInformationId}}">
+            <div class="card">
+                <h2>{{i.heading}}</h2>
+                <p>{{i.discription | safe}}</p>
+                <input type="hidden" name="plane_price" value="{{i.price}}">
+
+                <button type="submit">START</button>
+            </div>
+         </form>
+        {% endfor %}
+    </div>
+
+</body>
+</html>

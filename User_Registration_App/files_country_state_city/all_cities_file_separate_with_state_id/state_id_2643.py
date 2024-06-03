@@ -1,0 +1,7 @@
+all = [
+{'id': 18901, 'name': 'Gbôklé', 'state_id': 2643, 'state_code': 'BS', 'state_name': 'Bas-Sassandra District', 'country_id': 54, 'country_code': 'CI', 'country_name': "Cote D'Ivoire (Ivory Coast)", 'latitude': '4.95712000', 'longitude': '-6.09372000', 'wikiDataId': 'Q1268139'},
+{'id': 18924, 'name': 'Nawa', 'state_id': 2643, 'state_code': 'BS', 'state_name': 'Bas-Sassandra District', 'country_id': 54, 'country_code': 'CI', 'country_name': "Cote D'Ivoire (Ivory Coast)", 'latitude': '5.80112000', 'longitude': '-6.60313000', 'wikiDataId': 'Q1191011'},
+{'id': 18928, 'name': 'San-Pédro', 'state_id': 2643, 'state_code': 'BS', 'state_name': 'Bas-Sassandra District', 'country_id': 54, 'country_code': 'CI', 'country_name': "Cote D'Ivoire (Ivory Coast)", 'latitude': '4.76768000', 'longitude': '-6.65033000', 'wikiDataId': 'Q1102546'},
+{'id': 18929, 'name': 'Sassandra', 'state_id': 2643, 'state_code': 'BS', 'state_name': 'Bas-Sassandra District', 'country_id': 54, 'country_code': 'CI', 'country_name': "Cote D'Ivoire (Ivory Coast)", 'latitude': '4.95384000', 'longitude': '-6.08531000', 'wikiDataId': 'Q1102546'},
+{'id': 18933, 'name': 'Tabou', 'state_id': 2643, 'state_code': 'BS', 'state_name': 'Bas-Sassandra District', 'country_id': 54, 'country_code': 'CI', 'country_name': "Cote D'Ivoire (Ivory Coast)", 'latitude': '4.42295000', 'longitude': '-7.35280000', 'wikiDataId': 'Q952665'},
+]

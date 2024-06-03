@@ -1,0 +1,11 @@
+all = [
+{'id': 130287, 'name': 'Huyện Giao Thủy', 'state_id': 3789, 'state_code': '67', 'state_name': 'Nam Định', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.25706000', 'longitude': '106.46245000', 'wikiDataId': 'Q3031261'},
+{'id': 130315, 'name': 'Huyện Hải Hậu', 'state_id': 3789, 'state_code': '67', 'state_name': 'Nam Định', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.15057000', 'longitude': '106.27161000', 'wikiDataId': 'Q5942590'},
+{'id': 130370, 'name': 'Huyện Mỹ Lộc', 'state_id': 3789, 'state_code': '67', 'state_name': 'Nam Định', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.46079000', 'longitude': '106.12319000', 'wikiDataId': 'Q10796264'},
+{'id': 130377, 'name': 'Huyện Nam Trực', 'state_id': 3789, 'state_code': '67', 'state_name': 'Nam Định', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.34106000', 'longitude': '106.20821000', 'wikiDataId': 'Q3031601'},
+{'id': 130384, 'name': 'Huyện Nghĩa Hưng', 'state_id': 3789, 'state_code': '67', 'state_name': 'Nam Định', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.10598000', 'longitude': '106.17345000', 'wikiDataId': 'Q3031601'},
+{'id': 130474, 'name': 'Huyện Trực Ninh', 'state_id': 3789, 'state_code': '67', 'state_name': 'Nam Định', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.25690000', 'longitude': '106.24582000', 'wikiDataId': 'Q286486'},
+{'id': 130509, 'name': 'Huyện Vụ Bản', 'state_id': 3789, 'state_code': '67', 'state_name': 'Nam Định', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.37705000', 'longitude': '106.09707000', 'wikiDataId': 'Q7932536'},
+{'id': 130526, 'name': 'Huyện Ý Yên', 'state_id': 3789, 'state_code': '67', 'state_name': 'Nam Định', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.31669000', 'longitude': '106.02327000', 'wikiDataId': 'Q5295738'},
+{'id': 130575, 'name': 'Nam Định', 'state_id': 3789, 'state_code': '67', 'state_name': 'Nam Định', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '20.43389000', 'longitude': '106.17729000', 'wikiDataId': 'Q33682'},
+]

@@ -1,0 +1,12 @@
+all = [
+{'id': 130258, 'name': 'Huyện Chư Păh', 'state_id': 3813, 'state_code': '30', 'state_name': 'Gia Lai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '14.15941000', 'longitude': '107.98411000', 'wikiDataId': 'Q1319826'},
+{'id': 130257, 'name': 'Huyện Chư Prông', 'state_id': 3813, 'state_code': '30', 'state_name': 'Gia Lai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '13.59976000', 'longitude': '107.81099000', 'wikiDataId': 'Q1319826'},
+{'id': 130259, 'name': 'Huyện Chư Sê', 'state_id': 3813, 'state_code': '30', 'state_name': 'Gia Lai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '13.74254000', 'longitude': '108.08663000', 'wikiDataId': 'Q1319826'},
+{'id': 130549, 'name': 'Huyện Đức Cơ', 'state_id': 3813, 'state_code': '30', 'state_name': 'Gia Lai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '13.78454000', 'longitude': '107.66970000', 'wikiDataId': 'Q5295775'},
+{'id': 130320, 'name': 'Huyện Ia Grai', 'state_id': 3813, 'state_code': '30', 'state_name': 'Gia Lai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '13.98937000', 'longitude': '107.73740000', 'wikiDataId': 'Q5942590'},
+{'id': 130322, 'name': 'Huyện KBang', 'state_id': 3813, 'state_code': '30', 'state_name': 'Gia Lai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '14.30506000', 'longitude': '108.49779000', 'wikiDataId': 'Q20025812'},
+{'id': 130335, 'name': 'Huyện Kông Chro', 'state_id': 3813, 'state_code': '30', 'state_name': 'Gia Lai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '13.73519000', 'longitude': '108.59697000', 'wikiDataId': 'Q6405298'},
+{'id': 130334, 'name': 'Huyện Krông Pa', 'state_id': 3813, 'state_code': '30', 'state_name': 'Gia Lai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '13.23152000', 'longitude': '108.65494000', 'wikiDataId': 'Q6405298'},
+{'id': 130358, 'name': 'Huyện Mang Yang', 'state_id': 3813, 'state_code': '30', 'state_name': 'Gia Lai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '13.92840000', 'longitude': '108.30246000', 'wikiDataId': 'Q2226906'},
+{'id': 130583, 'name': 'Pleiku', 'state_id': 3813, 'state_code': '30', 'state_name': 'Gia Lai', 'country_id': 240, 'country_code': 'VN', 'country_name': 'Vietnam', 'latitude': '13.98333000', 'longitude': '108.00000000', 'wikiDataId': 'Q30599'},
+]
