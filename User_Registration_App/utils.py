@@ -525,6 +525,7 @@ def get_user_roles_info(url, db, username, password, user_id):
 
 
 def update_user_roles(user_id, group_ids):
+
     ODOO_URL = settings.ODOO_URL
     DB_NAME = settings.DB_NAME
     ADMIN_USERNAME = settings.ADMIN_USERNAME
