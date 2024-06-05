@@ -264,6 +264,7 @@ def subscription_history(request, pk):
 def add_company_users(request, pk):
     if request.user.is_authenticated:
 
+
         user_info = request.user
         company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
         subcription = SubscriptionInformation.objects.filter(company_info=company_info)
@@ -826,6 +827,8 @@ def upgrade_calculate_subscriptions(request, pk):
                 return render(request, "upgrade_calculate_subscriptions.html", contex)
             except Exception as e:
                 d = str(e)
+                messages.warning(request, str(e))
+
                 return render(request, "upgrade_calculate_subscriptions.html")
     else:
         return redirect('login_info')
@@ -836,91 +839,95 @@ def upgrade_calculate_subscriptions(request, pk):
 
 def upgrade_submit_subscription_inside_home(request, pk):
     if request.user.is_authenticated:
-        CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
-        sub_id = request.POST.get('sub_id')
-        demandscaled = request.POST.get('demandscaled')
-        if demandscaled == 'on':
-            demandscaled = True
-        else:
+        try:
+            CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
+            sub_id = request.POST.get('sub_id')
+            demandscaled = request.POST.get('demandscaled')
+            if demandscaled == 'on':
+                demandscaled = True
+            else:
 
-            demandscaled = False
-        acquirescaled = request.POST.get('acquirescaled')
-        if acquirescaled == 'on':
-            acquirescaled = True
-        else:
-            acquirescaled = False
-        Product_recommendations = request.POST.get('Product_recommendations')
-        if Product_recommendations == 'on':
-            Product_recommendations = True
-        else:
-            Product_recommendations = False
-        campaignscaled = request.POST.get('campaignscaled')
-        if campaignscaled == 'on':
-            campaignscaled = True
-        else:
-            campaignscaled = False
+                demandscaled = False
+            acquirescaled = request.POST.get('acquirescaled')
+            if acquirescaled == 'on':
+                acquirescaled = True
+            else:
+                acquirescaled = False
+            Product_recommendations = request.POST.get('Product_recommendations')
+            if Product_recommendations == 'on':
+                Product_recommendations = True
+            else:
+                Product_recommendations = False
+            campaignscaled = request.POST.get('campaignscaled')
+            if campaignscaled == 'on':
+                campaignscaled = True
+            else:
+                campaignscaled = False
 
-        plane_price = request.POST.get('plane_price')
-        month_to_access = request.POST.get('month_to_access')
-        number_of_times = request.POST.get('number_of_times')
-        expected_users = request.POST.get('expected_users')
+            plane_price = request.POST.get('plane_price')
+            month_to_access = request.POST.get('month_to_access')
+            number_of_times = request.POST.get('number_of_times')
+            expected_users = request.POST.get('expected_users')
 
-        training_hours = request.POST.get('training_hours')
-        support_hours = request.POST.get('support_hours')
+            training_hours = request.POST.get('training_hours')
+            support_hours = request.POST.get('support_hours')
 
-        payment_type_get = request.POST.get('payment_type_get')
-        total_amount = request.POST.get('total_amount')
+            payment_type_get = request.POST.get('payment_type_get')
+            total_amount = request.POST.get('total_amount')
 
-        installment_amount = request.POST.get('installment_amount')
-        all_amount_sum = request.POST.get('all_amount_sum')
-        installmentsCount = request.POST.get('installmentsCount')
-        if payment_type_get == "installments":
-            total = float(installmentsCount)
-        else:
-            total = float(installmentsCount)
+            installment_amount = request.POST.get('installment_amount')
+            all_amount_sum = request.POST.get('all_amount_sum')
+            installmentsCount = request.POST.get('installmentsCount')
+            if payment_type_get == "installments":
+                total = float(installmentsCount)
+            else:
+                total = float(installmentsCount)
 
-        com_id = CompanyRegistrationInformation.objects.get(id=CompanyRegistrationInformationId)
-
-
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-
-        publishable_key = settings.STRIPE_PUBLIC_KEY
-
-        context = {
-            'training_hours': training_hours,
-            'support_hours': support_hours,
-
-            'subcription_one': subcription_one,
-            'erp': erp,
-            'erp_active': erp_active,
-            'demandscaled': demandscaled,
-            'acquirescaled': acquirescaled,
-            'Product_recommendations': Product_recommendations,
-            'campaignscaled': campaignscaled,
-            'plane_price': plane_price,
-            'month_to_access': month_to_access,
-            'number_of_times': number_of_times,
-            'expected_users': expected_users,
+            com_id = CompanyRegistrationInformation.objects.get(id=CompanyRegistrationInformationId)
 
 
-            'analytics_services_info_id': sub_id,
-            'publishable_key': publishable_key,
-            'total_amount': total,
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
+            user_info = request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
 
-            'services_plan_cost_and_platform_total_payment': all_amount_sum,
-            'installment_amount': installment_amount,
-            'now_pay': total,
+            publishable_key = settings.STRIPE_PUBLIC_KEY
 
-        }
-        return render(request, 'payment_home_for_home_for_upgrade.html', context)
+            context = {
+                'training_hours': training_hours,
+                'support_hours': support_hours,
+
+                'subcription_one': subcription_one,
+                'erp': erp,
+                'erp_active': erp_active,
+                'demandscaled': demandscaled,
+                'acquirescaled': acquirescaled,
+                'Product_recommendations': Product_recommendations,
+                'campaignscaled': campaignscaled,
+                'plane_price': plane_price,
+                'month_to_access': month_to_access,
+                'number_of_times': number_of_times,
+                'expected_users': expected_users,
+
+
+                'analytics_services_info_id': sub_id,
+                'publishable_key': publishable_key,
+                'total_amount': total,
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
+
+                'services_plan_cost_and_platform_total_payment': all_amount_sum,
+                'installment_amount': installment_amount,
+                'now_pay': total,
+
+            }
+            return render(request, 'payment_home_for_home_for_upgrade.html', context)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -1239,34 +1246,38 @@ def activate_my_erp_info(request, pk):
 def add_user_with_manager_role(request, pk):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            erp_active_id = request.POST.get('erp_active_id')
-            user_name = request.POST.get('user_name')
-            user_login = request.POST.get('user_login')
-            user_email = request.POST.get('user_email')
-            new_password = request.POST.get('new_password')
+            try:
+                erp_active_id = request.POST.get('erp_active_id')
+                user_name = request.POST.get('user_name')
+                user_login = request.POST.get('user_login')
+                user_email = request.POST.get('user_email')
+                new_password = request.POST.get('new_password')
 
-            erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
-            if erp_active_info.user_count > 0 :
-                remain = erp_active_info.user_count
-                erp_active_info.user_count = remain-1
-                company_id = erp_active_info.company_id
-                website_id = erp_active_info.website_id
-
-                erp_active_info.save()
-                GROUP_NAME = 'Manager'
-
-                res = create_user_manager_role(user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
-
-                if res == None:
+                erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
+                if erp_active_info.user_count > 0 :
                     remain = erp_active_info.user_count
-                    erp_active_info.user_count = remain + 1
-                    erp_active_info.save()
-                    messages.warning(request,'Manager is  not created ! change your email and login and try again !')
+                    erp_active_info.user_count = remain-1
+                    company_id = erp_active_info.company_id
+                    website_id = erp_active_info.website_id
 
+                    erp_active_info.save()
+                    GROUP_NAME = 'Manager'
+
+                    res = create_user_manager_role(user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
+
+                    if res == None:
+                        remain = erp_active_info.user_count
+                        erp_active_info.user_count = remain + 1
+                        erp_active_info.save()
+                        messages.warning(request,'Manager is  not created ! change your email and login and try again !')
+
+                    else:
+                        messages.warning(request,'Manager is created !')
                 else:
-                    messages.warning(request,'Manager is created !')
-            else:
-                messages.warning(request,'your user create limit is over !')
+                    messages.warning(request,'your user create limit is over !')
+            except Exception as e:
+                messages.warning(request, str(e))
+
 
 
 
@@ -1293,34 +1304,37 @@ def add_user_with_manager_role(request, pk):
 def add_user_without_manager_role(request, pk):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            erp_active_id = request.POST.get('erp_active_id')
-            user_name = request.POST.get('user_name')
-            user_login = request.POST.get('user_login')
-            user_email = request.POST.get('user_email')
-            new_password = request.POST.get('new_password')
+            try:
+                erp_active_id = request.POST.get('erp_active_id')
+                user_name = request.POST.get('user_name')
+                user_login = request.POST.get('user_login')
+                user_email = request.POST.get('user_email')
+                new_password = request.POST.get('new_password')
 
-            erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
-            if erp_active_info.user_count > 0 :
-                remain = erp_active_info.user_count
-                erp_active_info.user_count = remain-1
-                company_id = erp_active_info.company_id
-                website_id = erp_active_info.website_id
-
-                erp_active_info.save()
-                GROUP_NAME = 'User'
-
-                res = create_user_manager_role(user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
-
-                if res == None:
+                erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
+                if erp_active_info.user_count > 0 :
                     remain = erp_active_info.user_count
-                    erp_active_info.user_count = remain + 1
-                    erp_active_info.save()
-                    messages.warning(request,'User is  not created ! change your email and login and try again !')
+                    erp_active_info.user_count = remain-1
+                    company_id = erp_active_info.company_id
+                    website_id = erp_active_info.website_id
 
+                    erp_active_info.save()
+                    GROUP_NAME = 'User'
+
+                    res = create_user_manager_role(user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
+
+                    if res == None:
+                        remain = erp_active_info.user_count
+                        erp_active_info.user_count = remain + 1
+                        erp_active_info.save()
+                        messages.warning(request,'User is  not created ! change your email and login and try again !')
+
+                    else:
+                        messages.warning(request,'User is created !')
                 else:
-                    messages.warning(request,'User is created !')
-            else:
-                messages.warning(request,'your user create limit is over !')
+                    messages.warning(request,'your user create limit is over !')
+            except Exception as e:
+                messages.warning(request, str(e))
 
 
 
@@ -1348,6 +1362,7 @@ def remove_user(request, pk):
     if request.user.is_authenticated:
         try:
             if request.method == 'POST':
+                try:
                     erp_active_id = request.POST.get('erp_active_id')
                     user_id = int(request.POST.get('user_id'))
 
@@ -1361,6 +1376,8 @@ def remove_user(request, pk):
 
                     else:
                         messages.warning(request,'try again !')
+                except Exception as e:
+                    messages.warning(request, str(e))
 
 
             user_info = request.user
@@ -1380,9 +1397,9 @@ def remove_user(request, pk):
                 'u_list': u_list,
             }
             return render(request, 'remove_user.html', contex)
-        except:
-            return HttpResponse('Active your ERP first and then a company will create after that you can try this!')
-
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -1412,7 +1429,9 @@ def update_user_role(request, pk):
             }
             return render(request, 'update_user_role.html', contex)
         except:
-            return HttpResponse('Active your ERP first and then a company will create after that you can try this!')
+            messages.warning(request, 'Active your ERP first and then a company will create after that you can try this!')
+
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -1474,7 +1493,8 @@ def update_user_roles_view(request):
                         messages.warning(request, 'Failed to update user roles !')
                         return redirect('update_user_role', pk=1)
         except:
-            return HttpResponse('Active your ERP first and then a company will create after that you can try this!')
+            messages.warning(request, str(e))
+            return redirect('home')
 
 
     else:
@@ -1485,38 +1505,249 @@ def update_user_roles_view(request):
 def encode_image_to_base64(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
+
+#
+# def export_product_and_image(request, pk):
+#     if request.user.is_authenticated:
+#         if request.method == 'POST':
+#             try:
+#                 # Handle file uploads
+#                 csv_file = request.FILES['csv_file']
+#                 image_folder = request.FILES.getlist('image_folder')
+#
+#                 # Save files to media folder
+#                 fs = FileSystemStorage()
+#                 csv_file_path = fs.save(csv_file.name, csv_file)
+#                 csv_file_path = fs.url(csv_file_path)
+#
+#                 image_folder_path = os.path.join(fs.location, 'images')
+#                 if not os.path.exists(image_folder_path):
+#                     os.makedirs(image_folder_path)
+#
+#                 for image in image_folder:
+#                     fs.save(os.path.join('images', image.name), image)
+#
+#                 # Process CSV file
+#                 csv_file_full_path = os.path.join(fs.location, csv_file.name)
+#                 with open(csv_file_full_path, newline='', encoding='utf-8') as csvfile:
+#                     csv_reader = csv.DictReader(csvfile)
+#                     products = [row for row in csv_reader]
+#
+#                 # Odoo server information
+#                 # url = 'http://127.0.0.1:8069'
+#                 # db = 'odoo'
+#                 # username = 'admin@gmail.com'
+#                 # password = 'admin'
+#
+#                 url = settings.ODOO_URL
+#                 db = settings.DB_NAME
+#                 username = settings.ADMIN_USERNAME
+#                 password = settings.ADMIN_PASSWORD
+#
+#                 # Authenticate
+#                 common = xmlrpc.client.ServerProxy('{}/xmlrpc/2/common'.format(url))
+#                 uid = common.authenticate(db, username, password, {})
+#
+#                 # Object proxy
+#                 models = xmlrpc.client.ServerProxy('{}/xmlrpc/2/object'.format(url))
+#
+#                 # Get the company and website info from the authenticated user
+#                 user_info = request.user
+#                 company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+#                 subscription = SubscriptionInformation.objects.filter(company_info=company_info).last()
+#                 erp = Erp_Information.objects.filter(subscription_info=subscription).last()
+#                 erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subscription, Erp_Info=erp).last()
+#
+#                 # Get valid fields for product.template model
+#                 valid_fields = models.execute_kw(db, uid, password, 'product.template', 'fields_get', [{}]).keys()
+#
+#                 # Create products in Odoo
+#                 for product in products:
+#                     category_name = product['Product Category']
+#                     category_id = get_or_create_category(models, db, uid, password, category_name)
+#
+#                     # Check for price fields and convert to float if valid, else set to 0.0
+#                     list_price = float(product['Price in Dollars']) if product['Price in Dollars'] else 0.0
+#                     standard_price = float(product['Price in Local Currency']) if product[
+#                         'Price in Local Currency'] else 0.0
+#
+#                     product_data = {
+#                         'name': product['Product Name'],
+#                         # 'detailed_type': 'product',  # Ensure this field is set to a valid value
+#                         'list_price': list_price,
+#                         'standard_price': standard_price,
+#                         'categ_id': category_id,
+#                         'company_id': erp_active.company_id,
+#                         'description_sale': product.get('Sales Description', ''),
+#                         'active': product.get('Active', 'True') == 'True',
+#                         'default_code': product['SKU'],
+#                     }
+#                     if 'website_published' in valid_fields:
+#                         product_data['website_published'] = True  # Publish product on website
+#
+#                     if 'website_id' in valid_fields and erp_active.website_id:
+#                         product_data['website_id'] = erp_active.website_id
+#
+#
+#                         # Additional fields
+#                     additional_fields = [
+#                         'UPC', 'Product Description', 'Length', 'Width', 'Height', 'Weight', 'Color',
+#                         'Breakable', 'Market Name', 'Inventory Store Name', 'Product Item Name', 'Dateval',
+#                         'Stock Units', 'Supplier Type', 'Supplier Id', 'Sell Category', 'Display Weight',
+#                         'Display Height', 'Display Length', 'Display Width', 'E-Mall Category', 'Size',
+#                         'Area Scale Unit', 'Mass Scale Unit', 'Display Size', 'Display SKU', 'Local currency code'
+#                     ]
+#                     for field in additional_fields:
+#                         if field in product:
+#                             odoo_field_name = field.lower().replace(' ', '_')
+#                             if odoo_field_name in valid_fields:
+#                                 product_data[odoo_field_name] = product[field]
+#
+#                     product_id = models.execute_kw(db, uid, password, 'product.template', 'create', [product_data])
+#
+#                     # If image exists for the product, upload it
+#                     image_fields = ['image1_local_path', 'image2_local_path', 'image3_local_path', 'image4_local_path',
+#                                     'image5_local_path']
+#                     for image_field in image_fields:
+#                         image_name = product.get(image_field, '')
+#                         if image_name:
+#                             image_path = os.path.join(image_folder_path, image_name)
+#                             if os.path.exists(image_path):
+#                                 image_data = encode_image_to_base64(image_path)
+#                                 models.execute_kw(db, uid, password, 'ir.attachment', 'create', [{
+#                                     'name': image_name,
+#                                     'res_model': 'product.template',
+#                                     'res_id': product_id,
+#                                     'type': 'binary',
+#                                     'datas': image_data,
+#                                     'store_fname': image_name,
+#                                     'mimetype': 'image/jpeg',
+#                                 }])
+#
+#                 messages.success(request, 'Products uploaded successfully.')
+#                 return redirect('export_product_and_image', pk=1)
+#             except Exception as e:
+#                 return  HttpResponse(str(e))
+#         else:
+#             user_info = request.user
+#             company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+#             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+#             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
+#                                                                      payment_status=True).last()
+#             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+#             erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+#             u_list = get_users_with_roles_from_company_id(int(erp_active.company_id), int(erp_active.website_id))
+#             contex = {
+#                 'user_info': user_info,
+#                 'company_info': company_info,
+#                 'subcription': subcription,
+#                 'erp': erp,
+#                 'subcription_one': subcription_one,
+#                 'erp_active': erp_active,
+#                 'u_list': u_list,
+#             }
+#
+#             return render(request, 'upload_products.html', contex)
+#     else:
+#         return redirect('login_info')
+#
+
+def get_bucket_name_for_product(company_id, type):
+    return f'{type}/company_{company_id}/'
+
+def encode_image_to_base64_for_product(image_data):
+    return base64.b64encode(image_data).decode('utf-8')
+
+
+import xmlrpc.client
+from django.core.files.storage import FileSystemStorage
+
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
 def export_product_and_image(request, pk):
     if request.user.is_authenticated:
-        if request.method == 'POST':
-            try:
+        try:
+            if request.method == 'POST':
+                erp_active_id = request.POST.get('erp_active_id')
+                erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
+                website_id = int(erp_active_info.website_id)
+                company_id = int(erp_active_info.company_id)
+
                 # Handle file uploads
                 csv_file = request.FILES['csv_file']
                 image_folder = request.FILES.getlist('image_folder')
 
-                # Save files to media folder
+                # Save CSV file locally first
                 fs = FileSystemStorage()
-                csv_file_path = fs.save(csv_file.name, csv_file)
-                csv_file_path = fs.url(csv_file_path)
+                csv_filename = fs.save(csv_file.name, csv_file)
+                csv_local_file_path = fs.path(csv_filename)
 
-                image_folder_path = os.path.join(fs.location, 'images')
+                # Save image files locally first
+                image_folder_path = os.path.join('/tmp', 'images')
                 if not os.path.exists(image_folder_path):
                     os.makedirs(image_folder_path)
 
+                image_file_paths = []
                 for image in image_folder:
-                    fs.save(os.path.join('images', image.name), image)
+                    image_path = os.path.join(image_folder_path, image.name)
+                    with open(image_path, 'wb+') as temp_image:
+                        for chunk in image.chunks():
+                            temp_image.write(chunk)
+                    image_file_paths.append(image_path)
 
-                # Process CSV file
-                csv_file_full_path = os.path.join(fs.location, csv_file.name)
-                with open(csv_file_full_path, newline='', encoding='utf-8') as csvfile:
-                    csv_reader = csv.DictReader(csvfile)
-                    products = [row for row in csv_reader]
+                # AWS S3 credentials from settings
+                AWS_ACCESS_KEY_ID = settings.S3_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY = settings.S3_SECRET_ACCESS_KEY
+                AWS_REGION = settings.AWS_REGION
+
+                BUCKET_NAME = 'companyid' + str(company_id)
+                type = "product"
+                S3_FILE_KEY = get_bucket_name_for_product(company_id, type) + csv_file.name
+
+                # Initialize S3 client
+                s3 = boto3.client('s3',
+                                  aws_access_key_id=AWS_ACCESS_KEY_ID,
+                                  aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                                  region_name=AWS_REGION)
+
+                try:
+                    # Check if the bucket exists, create it if it doesn't
+                    buckets = s3.list_buckets()
+                    bucket_exists = any(bucket['Name'] == BUCKET_NAME for bucket in buckets['Buckets'])
+
+                    if not bucket_exists:
+                        s3.create_bucket(Bucket=BUCKET_NAME, CreateBucketConfiguration={'LocationConstraint': AWS_REGION})
+
+                    # Upload CSV file to S3
+                    s3.upload_file(csv_local_file_path, BUCKET_NAME, S3_FILE_KEY)
+
+                    # Upload image files to S3
+                    for image_path in image_file_paths:
+                        image_name = os.path.basename(image_path)
+                        S3_FILE_KEY_IMAGE = get_bucket_name_for_product(company_id, type) + os.path.join('images', image_name)
+                        s3.upload_file(image_path, BUCKET_NAME, S3_FILE_KEY_IMAGE)
+
+                    # Optionally, delete the local files after processing
+                    os.remove(csv_local_file_path)
+                    for image_path in image_file_paths:
+                        os.remove(image_path)
+
+                    messages.success(request, 'Files uploaded successfully.')
+                except Exception as e:
+                    messages.error(request, str(e))
+                    # return redirect('export_product_and_image', pk=pk)
+
+                # Process CSV file from S3
+                csv_s3_key = S3_FILE_KEY
+                csv_obj = s3.get_object(Bucket=BUCKET_NAME, Key=csv_s3_key)
+                csv_content = csv_obj['Body'].read().decode('utf-8').splitlines()
+                csv_reader = csv.DictReader(csv_content)
+                products = [row for row in csv_reader]
 
                 # Odoo server information
-                # url = 'http://127.0.0.1:8069'
-                # db = 'odoo'
-                # username = 'admin@gmail.com'
-                # password = 'admin'
-
                 url = settings.ODOO_URL
                 db = settings.DB_NAME
                 username = settings.ADMIN_USERNAME
@@ -1539,98 +1770,110 @@ def export_product_and_image(request, pk):
                 # Get valid fields for product.template model
                 valid_fields = models.execute_kw(db, uid, password, 'product.template', 'fields_get', [{}]).keys()
 
-                # Create products in Odoo
-                for product in products:
-                    category_name = product['Product Category']
-                    category_id = get_or_create_category(models, db, uid, password, category_name)
+                total_product = 0
+                upload_total = 0
+                try:
+                    # Create products in Odoo
+                    for product in products:
+                        total_product = total_product+1
+                        category_name = product['Product Category']
+                        category_id = get_or_create_category(models, db, uid, password, category_name)
 
-                    # Check for price fields and convert to float if valid, else set to 0.0
-                    list_price = float(product['Price in Dollars']) if product['Price in Dollars'] else 0.0
-                    standard_price = float(product['Price in Local Currency']) if product[
-                        'Price in Local Currency'] else 0.0
+                        # Check for price fields and convert to float if valid, else set to 0.0
+                        list_price = float(product['Price in Dollars']) if product['Price in Dollars'] else 0.0
+                        standard_price = float(product['Price in Local Currency']) if product['Price in Local Currency'] else 0.0
 
-                    product_data = {
-                        'name': product['Product Name'],
-                        # 'detailed_type': 'product',  # Ensure this field is set to a valid value
-                        'list_price': list_price,
-                        'standard_price': standard_price,
-                        'categ_id': category_id,
-                        'company_id': erp_active.company_id,
-                        'description_sale': product.get('Sales Description', ''),
-                        'active': product.get('Active', 'True') == 'True',
-                        'default_code': product['SKU'],
-                    }
-                    if 'website_published' in valid_fields:
-                        product_data['website_published'] = True  # Publish product on website
+                        product_data = {
+                            'name': product['Product Name'],
+                            'list_price': list_price,
+                            'standard_price': standard_price,
+                            'categ_id': category_id,
+                            'company_id': erp_active.company_id,
+                            'description_sale': product.get('Sales Description', ''),
+                            'active': product.get('Active', 'True') == 'True',
+                            'default_code': product['SKU'],
+                        }
+                        if 'website_published' in valid_fields:
+                            product_data['website_published'] = True  # Publish product on website
 
-                    if 'website_id' in valid_fields and erp_active.website_id:
-                        product_data['website_id'] = erp_active.website_id
-
+                        if 'website_id' in valid_fields and erp_active.website_id:
+                            product_data['website_id'] = erp_active.website_id
 
                         # Additional fields
-                    additional_fields = [
-                        'UPC', 'Product Description', 'Length', 'Width', 'Height', 'Weight', 'Color',
-                        'Breakable', 'Market Name', 'Inventory Store Name', 'Product Item Name', 'Dateval',
-                        'Stock Units', 'Supplier Type', 'Supplier Id', 'Sell Category', 'Display Weight',
-                        'Display Height', 'Display Length', 'Display Width', 'E-Mall Category', 'Size',
-                        'Area Scale Unit', 'Mass Scale Unit', 'Display Size', 'Display SKU', 'Local currency code'
-                    ]
-                    for field in additional_fields:
-                        if field in product:
-                            odoo_field_name = field.lower().replace(' ', '_')
-                            if odoo_field_name in valid_fields:
-                                product_data[odoo_field_name] = product[field]
+                        additional_fields = [
+                            'UPC', 'Product Description', 'Length', 'Width', 'Height', 'Weight', 'Color',
+                            'Breakable', 'Market Name', 'Inventory Store Name', 'Product Item Name', 'Dateval',
+                            'Stock Units', 'Supplier Type', 'Supplier Id', 'Sell Category', 'Display Weight',
+                            'Display Height', 'Display Length', 'Display Width', 'E-Mall Category', 'Size',
+                            'Area Scale Unit', 'Mass Scale Unit', 'Display Size', 'Display SKU', 'Local currency code'
+                        ]
+                        try:
+                            for field in additional_fields:
+                                if field in product:
+                                    odoo_field_name = field.lower().replace(' ', '_')
+                                    if odoo_field_name in valid_fields:
+                                        product_data[odoo_field_name] = product[field]
+                        except:
+                            pass
 
-                    product_id = models.execute_kw(db, uid, password, 'product.template', 'create', [product_data])
+                        # product_id = models.execute_kw(db, uid, password, 'product.template', 'create', [product_data])
+                        try:
+                            product_id = models.execute_kw(db, uid, password, 'product.template', 'create', [product_data])
+                        except xmlrpc.client.Fault as fault:
+                            logger.error("Error creating product in Odoo: %s", str(fault))
+                            messages.error(request, f"Error creating product {product['Product Name']}: {fault}")
+                            continue
+                        # If image exists for the product, upload it
+                        image_fields = ['image1_local_path', 'image2_local_path', 'image3_local_path', 'image4_local_path', 'image5_local_path']
+                        for image_field in image_fields:
+                            image_name = product.get(image_field, '')
+                            if image_name:
+                                image_s3_key = get_bucket_name_for_product(company_id, type) + os.path.join('images', image_name)
+                                image_obj = s3.get_object(Bucket=BUCKET_NAME, Key=image_s3_key)
 
-                    # If image exists for the product, upload it
-                    image_fields = ['image1_local_path', 'image2_local_path', 'image3_local_path', 'image4_local_path',
-                                    'image5_local_path']
-                    for image_field in image_fields:
-                        image_name = product.get(image_field, '')
-                        if image_name:
-                            image_path = os.path.join(image_folder_path, image_name)
-                            if os.path.exists(image_path):
-                                image_data = encode_image_to_base64(image_path)
+                                image_data = image_obj['Body'].read()
+                                image_base64 = encode_image_to_base64_for_product(image_data)
+
                                 models.execute_kw(db, uid, password, 'ir.attachment', 'create', [{
                                     'name': image_name,
                                     'res_model': 'product.template',
                                     'res_id': product_id,
                                     'type': 'binary',
-                                    'datas': image_data,
+                                    'datas': image_base64,
                                     'store_fname': image_name,
                                     'mimetype': 'image/jpeg',
                                 }])
+                        upload_total = upload_total+1
 
-                messages.success(request, 'Products uploaded successfully.')
-                return redirect('export_product_and_image', pk=1)
-            except Exception as e:
-                return  HttpResponse(str(e))
-        else:
-            user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
-                                                                     payment_status=True).last()
-            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-            u_list = get_users_with_roles_from_company_id(int(erp_active.company_id), int(erp_active.website_id))
-            contex = {
-                'user_info': user_info,
-                'company_info': company_info,
-                'subcription': subcription,
-                'erp': erp,
-                'subcription_one': subcription_one,
-                'erp_active': erp_active,
-                'u_list': u_list,
-            }
+                    messages.success(request, 'Products uploaded successfully.')
+                    # return redirect('export_product_and_image', pk=pk)
+                except Exception as e:
+                    messages.success(request, f'in place of {total_product} product upload {upload_total}')
 
-            return render(request, 'upload_products.html', contex)
+            else:
+                user_info = request.user
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                subscription = SubscriptionInformation.objects.filter(company_info=company_info)
+                subscription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+                erp = Erp_Information.objects.filter(subscription_info=subscription_one).last()
+                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subscription_one, Erp_Info=erp).last()
+                u_list = get_users_with_roles_from_company_id(int(erp_active.company_id), int(erp_active.website_id))
+                context = {
+                    'user_info': user_info,
+                    'company_info': company_info,
+                    'subscription': subscription,
+                    'erp': erp,
+                    'subscription_one': subscription_one,
+                    'erp_active': erp_active,
+                    'u_list': u_list,
+                }
+
+                return render(request, 'upload_products.html', context)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
-
-
-
 
 
 
@@ -1662,101 +1905,106 @@ def dashboard(request, pk):
 
 def new_subscription_plan(request, pk):
     if request.user.is_authenticated:
-        if request.method == 'POST':
+        try:
+            if request.method == 'POST':
 
-            campaignscaled = request.POST.get('campaignscaled')
-            plane_price = request.POST.get('plane_price')
-            file_number = request.POST.get('file_number')
-            client_source = request.POST.get('client_source')
-            fee_amount = request.POST.get('fee_amount')
-            Partner_client_company_name = request.POST.get('Partner_client_company_name')
-            partner_client_contact_full_name = request.POST.get('partner_client_contact_full_name')
-            client_email_address = request.POST.get('client_email_address')
-            client_phone_number = request.POST.get('client_phone_number')
-            countryCode = request.POST.get('countryCode')
-            partner_client_company_address = request.POST.get('partner_client_company_address')
-            partner_client_company_country = request.POST.get('partner_client_company_country')
-            partner_client_company_state_or_province = request.POST.get('partner_client_company_state_or_province')
-            partner_client_company_city = request.POST.get('partner_client_company_city')
-            partner_client_company_zip_or_postal_code = request.POST.get('partner_client_company_zip_or_postal_code')
-            password = request.POST.get('password')
 
-            myusr_vari = User.objects.create_user(client_email_address, client_email_address, password)
-            myusr_vari.first_name = ''
-            myusr_vari.last_name = ''
-            myusr_vari.is_active = True
-            myusr_vari.save()
+                campaignscaled = request.POST.get('campaignscaled')
+                plane_price = request.POST.get('plane_price')
+                file_number = request.POST.get('file_number')
+                client_source = request.POST.get('client_source')
+                fee_amount = request.POST.get('fee_amount')
+                Partner_client_company_name = request.POST.get('Partner_client_company_name')
+                partner_client_contact_full_name = request.POST.get('partner_client_contact_full_name')
+                client_email_address = request.POST.get('client_email_address')
+                client_phone_number = request.POST.get('client_phone_number')
+                countryCode = request.POST.get('countryCode')
+                partner_client_company_address = request.POST.get('partner_client_company_address')
+                partner_client_company_country = request.POST.get('partner_client_company_country')
+                partner_client_company_state_or_province = request.POST.get('partner_client_company_state_or_province')
+                partner_client_company_city = request.POST.get('partner_client_company_city')
+                partner_client_company_zip_or_postal_code = request.POST.get('partner_client_company_zip_or_postal_code')
+                password = request.POST.get('password')
 
-            user = authenticate(request, username=client_email_address, password=password)
-            if user is not None:
-                login(request, user)
-                request.session['user_id'] = user.id
-                request.session['username'] = user.username
+                myusr_vari = User.objects.create_user(client_email_address, client_email_address, password)
+                myusr_vari.first_name = ''
+                myusr_vari.last_name = ''
+                myusr_vari.is_active = True
+                myusr_vari.save()
 
-            partner_client_company_country = get_country_name(partner_client_company_country)
-            partner_client_company_state_or_province = get_state_name(partner_client_company_state_or_province)
+                user = authenticate(request, username=client_email_address, password=password)
+                if user is not None:
+                    login(request, user)
+                    request.session['user_id'] = user.id
+                    request.session['username'] = user.username
 
-            cri = CompanyRegistrationInformation(
-                user_info=myusr_vari,
-                file_number=file_number,
-                client_source=client_source,
-                fee_amount=fee_amount,
-                Partner_client_company_name=Partner_client_company_name,
-                partner_client_contact_full_name=partner_client_contact_full_name,
-                client_email_address=client_email_address,
-                client_phone_number=client_phone_number,
-                client_phone_code=countryCode,
-                partner_client_company_address=partner_client_company_address,
-                partner_client_company_country=partner_client_company_country,
-                partner_client_company_state_or_province=partner_client_company_state_or_province,
-                partner_client_company_city=partner_client_company_city,
-                partner_client_company_zip_or_postal_code=partner_client_company_zip_or_postal_code,
-            )
-            cri.save()
+                partner_client_company_country = get_country_name(partner_client_company_country)
+                partner_client_company_state_or_province = get_state_name(partner_client_company_state_or_province)
+
+                cri = CompanyRegistrationInformation(
+                    user_info=myusr_vari,
+                    file_number=file_number,
+                    client_source=client_source,
+                    fee_amount=fee_amount,
+                    Partner_client_company_name=Partner_client_company_name,
+                    partner_client_contact_full_name=partner_client_contact_full_name,
+                    client_email_address=client_email_address,
+                    client_phone_number=client_phone_number,
+                    client_phone_code=countryCode,
+                    partner_client_company_address=partner_client_company_address,
+                    partner_client_company_country=partner_client_company_country,
+                    partner_client_company_state_or_province=partner_client_company_state_or_province,
+                    partner_client_company_city=partner_client_company_city,
+                    partner_client_company_zip_or_postal_code=partner_client_company_zip_or_postal_code,
+                )
+                cri.save()
+
+                sp = SubscriptionPlan.objects.all()
+                user_info = request.user
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
+                                                                         payment_status=True).last()
+                erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+                contex = {
+                    'subcription_one': subcription_one,
+                    'erp': erp,
+                    'erp_active': erp_active,
+                    'user_info': user_info,
+                    'company_info': company_info,
+                    'subcription': subcription,
+                    'CompanyRegistrationInformationId': cri.id,
+                    'sp': sp,
+                    'campaignscaled': campaignscaled,
+                    'plane_price': plane_price,
+                }
+                return render(request, 'new_subscriptions.html', contex)
 
             sp = SubscriptionPlan.objects.all()
             user_info = request.user
             company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
-                                                                     payment_status=True).last()
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
             erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
             contex = {
                 'subcription_one': subcription_one,
                 'erp': erp,
                 'erp_active': erp_active,
+
                 'user_info': user_info,
                 'company_info': company_info,
                 'subcription': subcription,
-                'CompanyRegistrationInformationId': cri.id,
+
                 'sp': sp,
-                'campaignscaled': campaignscaled,
-                'plane_price': plane_price,
+
             }
-            return render(request, 'new_subscriptions.html', contex)
 
-        sp = SubscriptionPlan.objects.all()
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-        contex = {
-            'subcription_one': subcription_one,
-            'erp': erp,
-            'erp_active': erp_active,
-
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
-
-            'sp': sp,
-
-        }
-
-        return render(request, 'new_subscription_plan.html', contex)
+            return render(request, 'new_subscription_plan.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -1766,218 +2014,18 @@ def new_subscription_plan(request, pk):
 def new_subscriptions(request, pk):
     if request.user.is_authenticated:
         # if request.method == 'POST':
+        try:
+            campaignscaled = request.POST.get('campaignscaled')
+            plane_price = request.POST.get('plane_price') or 1
 
-        campaignscaled = request.POST.get('campaignscaled')
-        plane_price = request.POST.get('plane_price') or 1
+            from_back = request.POST.get('from_back')
+            demandscaled = request.POST.get('demandscaled')
+            acquirescaled = request.POST.get('acquirescaled')
+            Product_recommendations = request.POST.get('Product_recommendations')
+            CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
+            own = request.POST.get('own')
 
-        from_back = request.POST.get('from_back')
-        demandscaled = request.POST.get('demandscaled')
-        acquirescaled = request.POST.get('acquirescaled')
-        Product_recommendations = request.POST.get('Product_recommendations')
-        CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
-        own = request.POST.get('own')
-
-        if from_back == "coming_back":
-
-            user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
-                                                                     payment_status=True).last()
-            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                               Erp_Info=erp).last()
-            contex = {
-                'subcription_one': subcription_one,
-                'erp': erp,
-                'erp_active': erp_active,
-                'demandscaled': demandscaled,
-                'acquirescaled': acquirescaled,
-                'Product_recommendations': Product_recommendations,
-                'CompanyRegistrationInformationId': CompanyRegistrationInformationId,
-                'user_info': user_info,
-                'company_info': company_info,
-                'subcription': subcription,
-                'campaignscaled': campaignscaled,
-                'plane_price': plane_price,
-            }
-
-            return render(request, 'new_subscriptions.html', contex)
-        elif own == "own":
-
-
-            try:
-                package_price_demandscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
-                    app="demandscaled").last()
-                package_price_acquirescaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
-                    app="acquirescaled").last()
-                package_price_recommendscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
-                    app="recommendscaled").last()
-
-                prescriptive_ai = AdministrationkintahSubscriptionPackagePrice.objects.filter(
-                    app="(prescriptive_ai").last()
-                metricscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="metricscaled").last()
-                driven_erp = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="driven_erp").last()
-                driven_edriven_e_commerce = AdministrationkintahSubscriptionPackagePrice.objects.filter(
-                    app="driven_edriven_e_commerce").last()
-
-                if package_price_demandscaled:
-                    package_price_demandscaled_monthly_base_cost = package_price_demandscaled.monthly_base_cost
-                    package_price_demandscaled_monthly_coef = package_price_demandscaled.monthly_coef
-                    package_price_demandscaled_monthly_activity_free = package_price_demandscaled.monthly_activity_free
-
-                    package_price_demandscaled_base_price = package_price_demandscaled.base_price
-                    package_price_demandscaled_base_number_of_subscription_months = package_price_demandscaled.base_number_of_subscription_months
-                    package_price_demandscaled_base_number_of_users = package_price_demandscaled.base_number_of_users
-                    package_price_demandscaled_base_number_data_reloads = package_price_demandscaled.base_number_data_reloads
-                    package_price_demandscaled_saturation_coef = package_price_demandscaled.saturation_coef
-
-                else:
-                    package_price_demandscaled_monthly_base_cost = 495
-                    package_price_demandscaled_monthly_coef = 0.025
-                    package_price_demandscaled_monthly_activity_free = 12
-
-                    package_price_demandscaled_base_price = 2
-                    package_price_demandscaled_base_number_of_subscription_months = 4.9
-                    package_price_demandscaled_base_number_of_users = 6
-                    package_price_demandscaled_base_number_data_reloads = 6
-                    package_price_demandscaled_saturation_coef = 8
-
-
-                if package_price_acquirescaled:
-                    package_price_acquirescaled_monthly_base_cost = package_price_acquirescaled.monthly_base_cost
-                    package_price_acquirescaled_monthly_coef = package_price_acquirescaled.monthly_coef
-                    package_price_acquirescaled_monthly_activity_free = package_price_acquirescaled.monthly_activity_free
-
-                    package_price_acquirescaled_base_price = package_price_acquirescaled.base_price
-                    package_price_acquirescaled_base_number_of_subscription_months = package_price_acquirescaled.base_number_of_subscription_months
-                    package_price_acquirescaled_base_number_of_users = package_price_acquirescaled.base_number_of_users
-                    package_price_acquirescaled_base_number_data_reloads = package_price_acquirescaled.base_number_data_reloads
-                    package_price_acquirescaled_saturation_coef = package_price_acquirescaled.saturation_coef
-
-                else:
-                    package_price_acquirescaled_monthly_base_cost = 495
-                    package_price_acquirescaled_monthly_coef = 0.025
-                    package_price_acquirescaled_monthly_activity_free = 12
-
-                    package_price_acquirescaled_base_price = 22
-                    package_price_acquirescaled_base_number_of_subscription_months = 2.9
-                    package_price_acquirescaled_base_number_of_users = 3
-                    package_price_acquirescaled_base_number_data_reloads = 2.7
-                    package_price_acquirescaled_saturation_coef = 2.3
-
-
-                if package_price_recommendscaled:
-                    package_price_recommendscaled_monthly_base_cost = package_price_recommendscaled.monthly_base_cost
-                    package_price_recommendscaled_monthly_coef = package_price_recommendscaled.monthly_coef
-                    package_price_recommendscaled_monthly_activity_free = package_price_recommendscaled.monthly_activity_free
-
-                    package_price_recommendscaled_base_price = package_price_recommendscaled.base_price
-                    package_price_recommendscaled_base_number_of_subscription_months = package_price_recommendscaled.base_number_of_subscription_months
-                    package_price_recommendscaled_base_number_of_users = package_price_recommendscaled.base_number_of_users
-                    package_price_recommendscaled_base_number_data_reloads = package_price_recommendscaled.base_number_data_reloads
-                    package_price_recommendscaled_saturation_coef = package_price_recommendscaled.saturation_coef
-
-                else:
-                    package_price_recommendscaled_monthly_base_cost = 495.99
-                    package_price_recommendscaled_monthly_coef = 0.025
-                    package_price_recommendscaled_monthly_activity_free = 12
-
-                    package_price_recommendscaled_base_price = 2
-                    package_price_recommendscaled_base_number_of_subscription_months = 2.9
-                    package_price_recommendscaled_base_number_of_users = 2
-                    package_price_recommendscaled_base_number_data_reloads = 2
-                    package_price_recommendscaled_saturation_coef = 5.9
-
-
-                if prescriptive_ai:
-                    prescriptive_ai_monthly_base_cost = prescriptive_ai.monthly_base_cost
-                    prescriptive_ai_monthly_coef = prescriptive_ai.monthly_coef
-                    prescriptive_ai_monthly_activity_free = prescriptive_ai.monthly_activity_free
-
-                    prescriptive_ai_monthly_base_price = prescriptive_ai.base_price
-                    prescriptive_ai_monthly_base_number_of_subscription_months = prescriptive_ai.base_number_of_subscription_months
-                    prescriptive_ai_monthly_base_number_of_users = prescriptive_ai.base_number_of_users
-                    prescriptive_ai_monthly_base_number_data_reloads = prescriptive_ai.base_number_data_reloads
-                    prescriptive_ai_monthly_saturation_coef = prescriptive_ai.saturation_coef
-
-                else:
-                    prescriptive_ai_monthly_base_cost = 995
-                    prescriptive_ai_monthly_coef = 0.025
-                    prescriptive_ai_monthly_activity_free = 12
-
-                    prescriptive_ai_monthly_base_price = 11
-                    prescriptive_ai_monthly_base_number_of_subscription_months = 1.1
-                    prescriptive_ai_monthly_base_number_of_users = 11
-                    prescriptive_ai_monthly_base_number_data_reloads = 12
-                    prescriptive_ai_monthly_saturation_coef = 3
-
-                if metricscaled:
-                    metricscaled_monthly_base_cost = metricscaled.monthly_base_cost
-                    metricscaled_monthly_coef = metricscaled.monthly_coef
-                    metricscaled_monthly_activity_free = metricscaled.monthly_activity_free
-
-                    metricscaled_monthly_base_price = metricscaled.base_price
-                    metricscaled_monthly_base_number_of_subscription_months = metricscaled.base_number_of_subscription_months
-                    metricscaled_monthly_base_number_of_users = metricscaled.base_number_of_users
-                    metricscaled_monthly_base_number_data_reloads = metricscaled.base_number_data_reloads
-                    metricscaled_monthly_saturation_coef = metricscaled.saturation_coef
-
-                else:
-                    metricscaled_monthly_base_cost = 995
-                    metricscaled_monthly_coef = 0.025
-                    metricscaled_monthly_activity_free = 12
-
-                    metricscaled_monthly_base_price = 3
-                    metricscaled_monthly_base_number_of_subscription_months = 22
-                    metricscaled_monthly_base_number_of_users = 43
-                    metricscaled_monthly_base_number_data_reloads = 45
-                    metricscaled_monthly_saturation_coef = 34
-
-                if driven_erp:
-                    driven_erp_monthly_base_cost = driven_erp.monthly_base_cost
-                    driven_erp_monthly_coef = driven_erp.monthly_coef
-                    driven_erp_monthly_activity_free = driven_erp.monthly_activity_free
-
-                    driven_erp_monthly_base_price = driven_erp.base_price
-                    driven_erp_monthly_base_number_of_subscription_months = driven_erp.base_number_of_subscription_months
-                    driven_erp_monthly_base_number_of_users = driven_erp.base_number_of_users
-                    driven_erp_monthly_base_number_data_reloads = driven_erp.base_number_data_reloads
-                    driven_erp_monthly_saturation_coef = driven_erp.saturation_coef
-
-                else:
-                    driven_erp_monthly_base_cost = 995
-                    driven_erp_monthly_coef = 0.025
-                    driven_erp_monthly_activity_free = 12
-
-                    driven_erp_monthly_base_price = 33
-                    driven_erp_monthly_base_number_of_subscription_months = 2
-                    driven_erp_monthly_base_number_of_users = 9
-                    driven_erp_monthly_base_number_data_reloads = 89
-                    driven_erp_monthly_saturation_coef = 8
-
-
-                if driven_edriven_e_commerce:
-                    driven_edriven_e_commerce_monthly_base_cost = driven_edriven_e_commerce.monthly_base_cost
-                    driven_edriven_e_commerce_monthly_coef = driven_edriven_e_commerce.monthly_coef
-                    driven_edriven_e_commerce_monthly_coef = driven_edriven_e_commerce.monthly_activity_free
-
-                    driven_edriven_e_commerce_monthly_base_price = driven_edriven_e_commerce.base_price
-                    driven_edriven_e_commerce_monthly_base_number_of_subscription_months = driven_edriven_e_commerce.base_number_of_subscription_months
-                    driven_edriven_e_commerce_monthly_base_number_of_users = driven_edriven_e_commerce.base_number_of_users
-                    driven_edriven_e_commerce_monthly_base_number_data_reloads = driven_edriven_e_commerce.base_number_data_reloads
-                    driven_edriven_e_commerce_monthly_saturation_coef = driven_edriven_e_commerce.saturation_coef
-
-                else:
-                    driven_edriven_e_commerce_monthly_base_cost = 995
-                    driven_edriven_e_commerce_monthly_coef = 0.025
-                    driven_edriven_e_commerce_monthly_coef_monthly_activity_free = 12
-
-                    driven_edriven_e_commerce_monthly_base_price = 6
-                    driven_edriven_e_commerce_monthly_base_number_of_subscription_months = 9
-                    driven_edriven_e_commerce_monthly_base_number_of_users = 5
-                    driven_edriven_e_commerce_monthly_base_number_data_reloads = 56
-                    driven_edriven_e_commerce_monthly_saturation_coef = 5
+            if from_back == "coming_back":
 
                 user_info = request.user
                 company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
@@ -1987,151 +2035,354 @@ def new_subscriptions(request, pk):
                 erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
                 erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
                                                                    Erp_Info=erp).last()
-
-                all_company_types = PriceMatrixPerCompanyType.objects.all()
-                parameters = AdditionalCostCalculationFixParameters.objects.filter().last()
-                if parameters:
-                    sup_cost = parameters.sup_cost
-                    Train_cost = parameters.train_cost
-                else:
-                    sup_cost = 25
-                    Train_cost = 500
                 contex = {
-                    'all_company_types': all_company_types,
-                    'sup_cost': sup_cost,
-                    'Train_cost': Train_cost,
-
-
                     'subcription_one': subcription_one,
                     'erp': erp,
                     'erp_active': erp_active,
-
                     'demandscaled': demandscaled,
-                    'demandscaled_monthly_base_cost': package_price_demandscaled_monthly_base_cost,
-                    'demandscaled_monthly_coef': package_price_demandscaled_monthly_coef,
-                    'demandscaled_monthly_activity_free': package_price_demandscaled_monthly_activity_free,
-
                     'acquirescaled': acquirescaled,
-                    'acquirescaled_monthly_base_cost': package_price_acquirescaled_monthly_base_cost,
-                    'acquirescaled_monthly_coef': package_price_acquirescaled_monthly_coef,
-                    'acquirescaled_monthly_activity_free': package_price_acquirescaled_monthly_activity_free,
-
                     'Product_recommendations': Product_recommendations,
-                    'Product_recommendations_monthly_base_cost': package_price_recommendscaled_monthly_base_cost,
-                    'Product_recommendations_monthly_coef': package_price_recommendscaled_monthly_coef,
-                    'Product_recommendations_monthly_activity_free': package_price_recommendscaled_monthly_activity_free,
+                    'CompanyRegistrationInformationId': CompanyRegistrationInformationId,
+                    'user_info': user_info,
+                    'company_info': company_info,
+                    'subcription': subcription,
+                    'campaignscaled': campaignscaled,
+                    'plane_price': plane_price,
+                }
 
-                    'prescriptive_ai_monthly_base_cost': prescriptive_ai_monthly_base_cost,
-                    'prescriptive_ai_monthly_coef': prescriptive_ai_monthly_coef,
-                    'prescriptive_ai_monthly_activity_free': prescriptive_ai_monthly_activity_free,
+                return render(request, 'new_subscriptions.html', contex)
+            elif own == "own":
 
-                    'metricscaled_monthly_base_cost': metricscaled_monthly_base_cost,
-                    'metricscaled_monthly_coef': metricscaled_monthly_coef,
-                    'metricscaled_monthly_activity_free': metricscaled_monthly_activity_free,
 
-                    'driven_erp_monthly_base_cost': driven_erp_monthly_base_cost,
-                    'driven_erp_monthly_coef': driven_erp_monthly_coef,
-                    'driven_erp_monthly_activity_free': driven_erp_monthly_activity_free,
+                try:
+                    package_price_demandscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
+                        app="demandscaled").last()
+                    package_price_acquirescaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
+                        app="acquirescaled").last()
+                    package_price_recommendscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
+                        app="recommendscaled").last()
 
-                    'driven_edriven_e_commerce_monthly_base_cost': driven_edriven_e_commerce_monthly_base_cost,
-                    'driven_edriven_e_commerce_monthly_coef': driven_edriven_e_commerce_monthly_coef,
-                    'driven_edriven_e_commerce_monthly_coef_monthly_activity_free': driven_edriven_e_commerce_monthly_coef_monthly_activity_free,
+                    prescriptive_ai = AdministrationkintahSubscriptionPackagePrice.objects.filter(
+                        app="(prescriptive_ai").last()
+                    metricscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="metricscaled").last()
+                    driven_erp = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="driven_erp").last()
+                    driven_edriven_e_commerce = AdministrationkintahSubscriptionPackagePrice.objects.filter(
+                        app="driven_edriven_e_commerce").last()
 
+                    if package_price_demandscaled:
+                        package_price_demandscaled_monthly_base_cost = package_price_demandscaled.monthly_base_cost
+                        package_price_demandscaled_monthly_coef = package_price_demandscaled.monthly_coef
+                        package_price_demandscaled_monthly_activity_free = package_price_demandscaled.monthly_activity_free
+
+                        package_price_demandscaled_base_price = package_price_demandscaled.base_price
+                        package_price_demandscaled_base_number_of_subscription_months = package_price_demandscaled.base_number_of_subscription_months
+                        package_price_demandscaled_base_number_of_users = package_price_demandscaled.base_number_of_users
+                        package_price_demandscaled_base_number_data_reloads = package_price_demandscaled.base_number_data_reloads
+                        package_price_demandscaled_saturation_coef = package_price_demandscaled.saturation_coef
+
+                    else:
+                        package_price_demandscaled_monthly_base_cost = 495
+                        package_price_demandscaled_monthly_coef = 0.025
+                        package_price_demandscaled_monthly_activity_free = 12
+
+                        package_price_demandscaled_base_price = 2
+                        package_price_demandscaled_base_number_of_subscription_months = 4.9
+                        package_price_demandscaled_base_number_of_users = 6
+                        package_price_demandscaled_base_number_data_reloads = 6
+                        package_price_demandscaled_saturation_coef = 8
+
+
+                    if package_price_acquirescaled:
+                        package_price_acquirescaled_monthly_base_cost = package_price_acquirescaled.monthly_base_cost
+                        package_price_acquirescaled_monthly_coef = package_price_acquirescaled.monthly_coef
+                        package_price_acquirescaled_monthly_activity_free = package_price_acquirescaled.monthly_activity_free
+
+                        package_price_acquirescaled_base_price = package_price_acquirescaled.base_price
+                        package_price_acquirescaled_base_number_of_subscription_months = package_price_acquirescaled.base_number_of_subscription_months
+                        package_price_acquirescaled_base_number_of_users = package_price_acquirescaled.base_number_of_users
+                        package_price_acquirescaled_base_number_data_reloads = package_price_acquirescaled.base_number_data_reloads
+                        package_price_acquirescaled_saturation_coef = package_price_acquirescaled.saturation_coef
+
+                    else:
+                        package_price_acquirescaled_monthly_base_cost = 495
+                        package_price_acquirescaled_monthly_coef = 0.025
+                        package_price_acquirescaled_monthly_activity_free = 12
+
+                        package_price_acquirescaled_base_price = 22
+                        package_price_acquirescaled_base_number_of_subscription_months = 2.9
+                        package_price_acquirescaled_base_number_of_users = 3
+                        package_price_acquirescaled_base_number_data_reloads = 2.7
+                        package_price_acquirescaled_saturation_coef = 2.3
+
+
+                    if package_price_recommendscaled:
+                        package_price_recommendscaled_monthly_base_cost = package_price_recommendscaled.monthly_base_cost
+                        package_price_recommendscaled_monthly_coef = package_price_recommendscaled.monthly_coef
+                        package_price_recommendscaled_monthly_activity_free = package_price_recommendscaled.monthly_activity_free
+
+                        package_price_recommendscaled_base_price = package_price_recommendscaled.base_price
+                        package_price_recommendscaled_base_number_of_subscription_months = package_price_recommendscaled.base_number_of_subscription_months
+                        package_price_recommendscaled_base_number_of_users = package_price_recommendscaled.base_number_of_users
+                        package_price_recommendscaled_base_number_data_reloads = package_price_recommendscaled.base_number_data_reloads
+                        package_price_recommendscaled_saturation_coef = package_price_recommendscaled.saturation_coef
+
+                    else:
+                        package_price_recommendscaled_monthly_base_cost = 495.99
+                        package_price_recommendscaled_monthly_coef = 0.025
+                        package_price_recommendscaled_monthly_activity_free = 12
+
+                        package_price_recommendscaled_base_price = 2
+                        package_price_recommendscaled_base_number_of_subscription_months = 2.9
+                        package_price_recommendscaled_base_number_of_users = 2
+                        package_price_recommendscaled_base_number_data_reloads = 2
+                        package_price_recommendscaled_saturation_coef = 5.9
+
+
+                    if prescriptive_ai:
+                        prescriptive_ai_monthly_base_cost = prescriptive_ai.monthly_base_cost
+                        prescriptive_ai_monthly_coef = prescriptive_ai.monthly_coef
+                        prescriptive_ai_monthly_activity_free = prescriptive_ai.monthly_activity_free
+
+                        prescriptive_ai_monthly_base_price = prescriptive_ai.base_price
+                        prescriptive_ai_monthly_base_number_of_subscription_months = prescriptive_ai.base_number_of_subscription_months
+                        prescriptive_ai_monthly_base_number_of_users = prescriptive_ai.base_number_of_users
+                        prescriptive_ai_monthly_base_number_data_reloads = prescriptive_ai.base_number_data_reloads
+                        prescriptive_ai_monthly_saturation_coef = prescriptive_ai.saturation_coef
+
+                    else:
+                        prescriptive_ai_monthly_base_cost = 995
+                        prescriptive_ai_monthly_coef = 0.025
+                        prescriptive_ai_monthly_activity_free = 12
+
+                        prescriptive_ai_monthly_base_price = 11
+                        prescriptive_ai_monthly_base_number_of_subscription_months = 1.1
+                        prescriptive_ai_monthly_base_number_of_users = 11
+                        prescriptive_ai_monthly_base_number_data_reloads = 12
+                        prescriptive_ai_monthly_saturation_coef = 3
+
+                    if metricscaled:
+                        metricscaled_monthly_base_cost = metricscaled.monthly_base_cost
+                        metricscaled_monthly_coef = metricscaled.monthly_coef
+                        metricscaled_monthly_activity_free = metricscaled.monthly_activity_free
+
+                        metricscaled_monthly_base_price = metricscaled.base_price
+                        metricscaled_monthly_base_number_of_subscription_months = metricscaled.base_number_of_subscription_months
+                        metricscaled_monthly_base_number_of_users = metricscaled.base_number_of_users
+                        metricscaled_monthly_base_number_data_reloads = metricscaled.base_number_data_reloads
+                        metricscaled_monthly_saturation_coef = metricscaled.saturation_coef
+
+                    else:
+                        metricscaled_monthly_base_cost = 995
+                        metricscaled_monthly_coef = 0.025
+                        metricscaled_monthly_activity_free = 12
+
+                        metricscaled_monthly_base_price = 3
+                        metricscaled_monthly_base_number_of_subscription_months = 22
+                        metricscaled_monthly_base_number_of_users = 43
+                        metricscaled_monthly_base_number_data_reloads = 45
+                        metricscaled_monthly_saturation_coef = 34
+
+                    if driven_erp:
+                        driven_erp_monthly_base_cost = driven_erp.monthly_base_cost
+                        driven_erp_monthly_coef = driven_erp.monthly_coef
+                        driven_erp_monthly_activity_free = driven_erp.monthly_activity_free
+
+                        driven_erp_monthly_base_price = driven_erp.base_price
+                        driven_erp_monthly_base_number_of_subscription_months = driven_erp.base_number_of_subscription_months
+                        driven_erp_monthly_base_number_of_users = driven_erp.base_number_of_users
+                        driven_erp_monthly_base_number_data_reloads = driven_erp.base_number_data_reloads
+                        driven_erp_monthly_saturation_coef = driven_erp.saturation_coef
+
+                    else:
+                        driven_erp_monthly_base_cost = 995
+                        driven_erp_monthly_coef = 0.025
+                        driven_erp_monthly_activity_free = 12
+
+                        driven_erp_monthly_base_price = 33
+                        driven_erp_monthly_base_number_of_subscription_months = 2
+                        driven_erp_monthly_base_number_of_users = 9
+                        driven_erp_monthly_base_number_data_reloads = 89
+                        driven_erp_monthly_saturation_coef = 8
+
+
+                    if driven_edriven_e_commerce:
+                        driven_edriven_e_commerce_monthly_base_cost = driven_edriven_e_commerce.monthly_base_cost
+                        driven_edriven_e_commerce_monthly_coef = driven_edriven_e_commerce.monthly_coef
+                        driven_edriven_e_commerce_monthly_coef = driven_edriven_e_commerce.monthly_activity_free
+
+                        driven_edriven_e_commerce_monthly_base_price = driven_edriven_e_commerce.base_price
+                        driven_edriven_e_commerce_monthly_base_number_of_subscription_months = driven_edriven_e_commerce.base_number_of_subscription_months
+                        driven_edriven_e_commerce_monthly_base_number_of_users = driven_edriven_e_commerce.base_number_of_users
+                        driven_edriven_e_commerce_monthly_base_number_data_reloads = driven_edriven_e_commerce.base_number_data_reloads
+                        driven_edriven_e_commerce_monthly_saturation_coef = driven_edriven_e_commerce.saturation_coef
+
+                    else:
+                        driven_edriven_e_commerce_monthly_base_cost = 995
+                        driven_edriven_e_commerce_monthly_coef = 0.025
+                        driven_edriven_e_commerce_monthly_coef_monthly_activity_free = 12
+
+                        driven_edriven_e_commerce_monthly_base_price = 6
+                        driven_edriven_e_commerce_monthly_base_number_of_subscription_months = 9
+                        driven_edriven_e_commerce_monthly_base_number_of_users = 5
+                        driven_edriven_e_commerce_monthly_base_number_data_reloads = 56
+                        driven_edriven_e_commerce_monthly_saturation_coef = 5
+
+                    user_info = request.user
+                    company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                    subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                    subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
+                                                                             payment_status=True).last()
+                    erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
+                                                                       Erp_Info=erp).last()
+
+                    all_company_types = PriceMatrixPerCompanyType.objects.all()
+                    parameters = AdditionalCostCalculationFixParameters.objects.filter().last()
+                    if parameters:
+                        sup_cost = parameters.sup_cost
+                        Train_cost = parameters.train_cost
+                    else:
+                        sup_cost = 25
+                        Train_cost = 500
+                    contex = {
+                        'all_company_types': all_company_types,
+                        'sup_cost': sup_cost,
+                        'Train_cost': Train_cost,
+
+
+                        'subcription_one': subcription_one,
+                        'erp': erp,
+                        'erp_active': erp_active,
+
+                        'demandscaled': demandscaled,
+                        'demandscaled_monthly_base_cost': package_price_demandscaled_monthly_base_cost,
+                        'demandscaled_monthly_coef': package_price_demandscaled_monthly_coef,
+                        'demandscaled_monthly_activity_free': package_price_demandscaled_monthly_activity_free,
+
+                        'acquirescaled': acquirescaled,
+                        'acquirescaled_monthly_base_cost': package_price_acquirescaled_monthly_base_cost,
+                        'acquirescaled_monthly_coef': package_price_acquirescaled_monthly_coef,
+                        'acquirescaled_monthly_activity_free': package_price_acquirescaled_monthly_activity_free,
+
+                        'Product_recommendations': Product_recommendations,
+                        'Product_recommendations_monthly_base_cost': package_price_recommendscaled_monthly_base_cost,
+                        'Product_recommendations_monthly_coef': package_price_recommendscaled_monthly_coef,
+                        'Product_recommendations_monthly_activity_free': package_price_recommendscaled_monthly_activity_free,
+
+                        'prescriptive_ai_monthly_base_cost': prescriptive_ai_monthly_base_cost,
+                        'prescriptive_ai_monthly_coef': prescriptive_ai_monthly_coef,
+                        'prescriptive_ai_monthly_activity_free': prescriptive_ai_monthly_activity_free,
+
+                        'metricscaled_monthly_base_cost': metricscaled_monthly_base_cost,
+                        'metricscaled_monthly_coef': metricscaled_monthly_coef,
+                        'metricscaled_monthly_activity_free': metricscaled_monthly_activity_free,
+
+                        'driven_erp_monthly_base_cost': driven_erp_monthly_base_cost,
+                        'driven_erp_monthly_coef': driven_erp_monthly_coef,
+                        'driven_erp_monthly_activity_free': driven_erp_monthly_activity_free,
+
+                        'driven_edriven_e_commerce_monthly_base_cost': driven_edriven_e_commerce_monthly_base_cost,
+                        'driven_edriven_e_commerce_monthly_coef': driven_edriven_e_commerce_monthly_coef,
+                        'driven_edriven_e_commerce_monthly_coef_monthly_activity_free': driven_edriven_e_commerce_monthly_coef_monthly_activity_free,
+
+                        'CompanyRegistrationInformationId': company_info.id,
+                        'user_info': user_info,
+                        'company_info': company_info,
+                        'subcription': subcription,
+
+                        'package_price_demandscaled_base_price': package_price_demandscaled_base_price,
+                        'package_price_demandscaled_base_number_of_subscription_months': package_price_demandscaled_base_number_of_subscription_months,
+                        'package_price_demandscaled_base_number_of_users': package_price_demandscaled_base_number_of_users,
+                        'package_price_demandscaled_base_number_data_reloads': package_price_demandscaled_base_number_data_reloads,
+                        'package_price_demandscaled_saturation_coef': package_price_demandscaled_saturation_coef,
+                        'package_price_acquirescaled_base_price': package_price_acquirescaled_base_price,
+                        'package_price_acquirescaled_base_number_of_subscription_months': package_price_acquirescaled_base_number_of_subscription_months,
+                        'package_price_acquirescaled_base_number_of_users': package_price_acquirescaled_base_number_of_users,
+                        'package_price_acquirescaled_base_number_data_reloads': package_price_acquirescaled_base_number_data_reloads,
+                        'package_price_acquirescaled_saturation_coef': package_price_acquirescaled_saturation_coef,
+                        'package_price_recommendscaled_base_price': package_price_recommendscaled_base_price,
+                        'package_price_recommendscaled_base_number_of_subscription_months': package_price_recommendscaled_base_number_of_subscription_months,
+                        'package_price_recommendscaled_base_number_of_users': package_price_recommendscaled_base_number_of_users,
+                        'package_price_recommendscaled_base_number_data_reloads': package_price_recommendscaled_base_number_data_reloads,
+                        'package_price_recommendscaled_saturation_coef': package_price_recommendscaled_saturation_coef,
+                        'prescriptive_ai_monthly_base_price': prescriptive_ai_monthly_base_price,
+                        'prescriptive_ai_monthly_base_number_of_subscription_months': prescriptive_ai_monthly_base_number_of_subscription_months,
+                        'prescriptive_ai_monthly_base_number_of_users': prescriptive_ai_monthly_base_number_of_users,
+                        'prescriptive_ai_monthly_base_number_data_reloads': prescriptive_ai_monthly_base_number_data_reloads,
+                        'prescriptive_ai_monthly_saturation_coef': prescriptive_ai_monthly_saturation_coef,
+                        'metricscaled_monthly_base_price': metricscaled_monthly_base_price,
+                        'metricscaled_monthly_base_number_of_subscription_months': metricscaled_monthly_base_number_of_subscription_months,
+                        'metricscaled_monthly_base_number_of_users': metricscaled_monthly_base_number_of_users,
+                        'metricscaled_monthly_base_number_data_reloads': metricscaled_monthly_base_number_data_reloads,
+                        'metricscaled_monthly_saturation_coef': metricscaled_monthly_saturation_coef,
+                        'driven_erp_monthly_base_price': driven_erp_monthly_base_price,
+                        'driven_erp_monthly_base_number_of_subscription_months': driven_erp_monthly_base_number_of_subscription_months,
+                        'driven_erp_monthly_base_number_of_users': driven_erp_monthly_base_number_of_users,
+                        'driven_erp_monthly_base_number_data_reloads': driven_erp_monthly_base_number_data_reloads,
+                        'driven_erp_monthly_saturation_coef': driven_erp_monthly_saturation_coef,
+                        'driven_edriven_e_commerce_monthly_base_price': driven_edriven_e_commerce_monthly_base_price,
+                        'driven_edriven_e_commerce_monthly_base_number_of_subscription_months': driven_edriven_e_commerce_monthly_base_number_of_subscription_months,
+                        'driven_edriven_e_commerce_monthly_base_number_of_users': driven_edriven_e_commerce_monthly_base_number_of_users,
+                        'driven_edriven_e_commerce_monthly_base_number_data_reloads': driven_edriven_e_commerce_monthly_base_number_data_reloads,
+                        'driven_edriven_e_commerce_monthly_saturation_coef': driven_edriven_e_commerce_monthly_saturation_coef,
+
+                        'campaignscaled': campaignscaled,
+                        'plane_price': plane_price,
+
+                    }
+                    return render(request, "calculate_amount_to_pay_inside_home.html", contex)
+                except Exception as e:
+                    d = str(e)
+
+
+
+                user_info = request.user
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
+                                                                         payment_status=True).last()
+                erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
+                                                                   Erp_Info=erp).last()
+                contex = {
+                    'subcription_one': subcription_one,
+                    'erp': erp,
+                    'erp_active': erp_active,
+                    'demandscaled': demandscaled,
+                    'acquirescaled': acquirescaled,
+                    'Product_recommendations': Product_recommendations,
                     'CompanyRegistrationInformationId': company_info.id,
                     'user_info': user_info,
                     'company_info': company_info,
                     'subcription': subcription,
-
-                    'package_price_demandscaled_base_price': package_price_demandscaled_base_price,
-                    'package_price_demandscaled_base_number_of_subscription_months': package_price_demandscaled_base_number_of_subscription_months,
-                    'package_price_demandscaled_base_number_of_users': package_price_demandscaled_base_number_of_users,
-                    'package_price_demandscaled_base_number_data_reloads': package_price_demandscaled_base_number_data_reloads,
-                    'package_price_demandscaled_saturation_coef': package_price_demandscaled_saturation_coef,
-                    'package_price_acquirescaled_base_price': package_price_acquirescaled_base_price,
-                    'package_price_acquirescaled_base_number_of_subscription_months': package_price_acquirescaled_base_number_of_subscription_months,
-                    'package_price_acquirescaled_base_number_of_users': package_price_acquirescaled_base_number_of_users,
-                    'package_price_acquirescaled_base_number_data_reloads': package_price_acquirescaled_base_number_data_reloads,
-                    'package_price_acquirescaled_saturation_coef': package_price_acquirescaled_saturation_coef,
-                    'package_price_recommendscaled_base_price': package_price_recommendscaled_base_price,
-                    'package_price_recommendscaled_base_number_of_subscription_months': package_price_recommendscaled_base_number_of_subscription_months,
-                    'package_price_recommendscaled_base_number_of_users': package_price_recommendscaled_base_number_of_users,
-                    'package_price_recommendscaled_base_number_data_reloads': package_price_recommendscaled_base_number_data_reloads,
-                    'package_price_recommendscaled_saturation_coef': package_price_recommendscaled_saturation_coef,
-                    'prescriptive_ai_monthly_base_price': prescriptive_ai_monthly_base_price,
-                    'prescriptive_ai_monthly_base_number_of_subscription_months': prescriptive_ai_monthly_base_number_of_subscription_months,
-                    'prescriptive_ai_monthly_base_number_of_users': prescriptive_ai_monthly_base_number_of_users,
-                    'prescriptive_ai_monthly_base_number_data_reloads': prescriptive_ai_monthly_base_number_data_reloads,
-                    'prescriptive_ai_monthly_saturation_coef': prescriptive_ai_monthly_saturation_coef,
-                    'metricscaled_monthly_base_price': metricscaled_monthly_base_price,
-                    'metricscaled_monthly_base_number_of_subscription_months': metricscaled_monthly_base_number_of_subscription_months,
-                    'metricscaled_monthly_base_number_of_users': metricscaled_monthly_base_number_of_users,
-                    'metricscaled_monthly_base_number_data_reloads': metricscaled_monthly_base_number_data_reloads,
-                    'metricscaled_monthly_saturation_coef': metricscaled_monthly_saturation_coef,
-                    'driven_erp_monthly_base_price': driven_erp_monthly_base_price,
-                    'driven_erp_monthly_base_number_of_subscription_months': driven_erp_monthly_base_number_of_subscription_months,
-                    'driven_erp_monthly_base_number_of_users': driven_erp_monthly_base_number_of_users,
-                    'driven_erp_monthly_base_number_data_reloads': driven_erp_monthly_base_number_data_reloads,
-                    'driven_erp_monthly_saturation_coef': driven_erp_monthly_saturation_coef,
-                    'driven_edriven_e_commerce_monthly_base_price': driven_edriven_e_commerce_monthly_base_price,
-                    'driven_edriven_e_commerce_monthly_base_number_of_subscription_months': driven_edriven_e_commerce_monthly_base_number_of_subscription_months,
-                    'driven_edriven_e_commerce_monthly_base_number_of_users': driven_edriven_e_commerce_monthly_base_number_of_users,
-                    'driven_edriven_e_commerce_monthly_base_number_data_reloads': driven_edriven_e_commerce_monthly_base_number_data_reloads,
-                    'driven_edriven_e_commerce_monthly_saturation_coef': driven_edriven_e_commerce_monthly_saturation_coef,
-
                     'campaignscaled': campaignscaled,
                     'plane_price': plane_price,
-
                 }
-                return render(request, "calculate_amount_to_pay_inside_home.html", contex)
-            except Exception as e:
-                d = str(e)
 
-
-
-            user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
-                                                                     payment_status=True).last()
-            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                               Erp_Info=erp).last()
-            contex = {
-                'subcription_one': subcription_one,
-                'erp': erp,
-                'erp_active': erp_active,
-                'demandscaled': demandscaled,
-                'acquirescaled': acquirescaled,
-                'Product_recommendations': Product_recommendations,
-                'CompanyRegistrationInformationId': company_info.id,
-                'user_info': user_info,
-                'company_info': company_info,
-                'subcription': subcription,
-                'campaignscaled': campaignscaled,
-                'plane_price': plane_price,
-            }
-
-            return render(request, 'calculate_amount_to_pay_inside_home.html', contex)
-        else:
-            user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
-                                                                     payment_status=True).last()
-            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                               Erp_Info=erp).last()
-            contex = {
-                'subcription_one': subcription_one,
-                'erp': erp,
-                'erp_active': erp_active,
-                'user_info': user_info,
-                'company_info': company_info,
-                'subcription': subcription,
-                'campaignscaled': campaignscaled,
-                'plane_price': plane_price,
-            }
-            return render(request, 'new_subscriptions.html', contex)
+                return render(request, 'calculate_amount_to_pay_inside_home.html', contex)
+            else:
+                user_info = request.user
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
+                                                                         payment_status=True).last()
+                erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
+                                                                   Erp_Info=erp).last()
+                contex = {
+                    'subcription_one': subcription_one,
+                    'erp': erp,
+                    'erp_active': erp_active,
+                    'user_info': user_info,
+                    'company_info': company_info,
+                    'subcription': subcription,
+                    'campaignscaled': campaignscaled,
+                    'plane_price': plane_price,
+                }
+                return render(request, 'new_subscriptions.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -3182,8 +3433,10 @@ def import_contacts_record(request, pk):
             }
             return render(request, 'import_contacts_record.html', contex)
         except Exception as e:
-            f = str(e)
-            return HttpResponse(f"Error: {str(e)}")
+
+            messages.warning(request, str(e))
+            return redirect('home')
+
     else:
         return redirect('login_info')
 
@@ -3275,7 +3528,9 @@ def import_suppliers_record(request, pk):
             }
             return render(request, 'import_suppliers_record.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
+
     else:
         return redirect('login_info')
 
@@ -3364,7 +3619,8 @@ def import_employees_record(request, pk):
             }
             return render(request, 'import_employees_record.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 def import_fleet_assets_record(request, pk):
@@ -3452,7 +3708,9 @@ def import_fleet_assets_record(request, pk):
             }
             return render(request, 'import_fleet_assets_record.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
+
     else:
         return redirect('login_info')
 
@@ -3530,7 +3788,9 @@ def odoo_account_accountant(request, pk):
             }
             return render(request, 'odoo_account_accountant.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
+
       else:
         return redirect('login_info')
 
@@ -3582,7 +3842,9 @@ def odoo_setup_manual_shipping(request, pk):
             }
             return render(request, 'odoo_setup_manual_shipping.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
+
       else:
         return redirect('login_info')
 
@@ -3627,7 +3889,9 @@ def odoo_set_website_languages(request, pk):
             }
             return render(request, 'odoo_set_website_languages.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
+
       else:
         return redirect('login_info')
 
@@ -3677,7 +3941,8 @@ def odoo_configure_whatsapp_service(request, pk):
             }
             return render(request, 'configure_whatsapp_service.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
       else:
         return redirect('login_info')
 
@@ -3725,7 +3990,9 @@ def odoo_twilio_sms_config(request, pk):
             }
             return render(request, 'twilio_sms_config.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
+
       else:
         return redirect('login_info')
 
@@ -3772,7 +4039,9 @@ def odoo_configure_stripe_payment(request, pk):
             }
             return render(request, 'odoo_configure_stripe_payment.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
+
       else:
         return redirect('login_info')
 
@@ -3819,7 +4088,9 @@ def odoo_configure_paypal_payment(request, pk):
             }
             return render(request, 'odoo_configure_paypal_payment.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
+
       else:
         return redirect('login_info')
 
@@ -3874,7 +4145,9 @@ def get_training(request, pk):
             }
             return render(request, 'get_training.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
+
       else:
         return redirect('login_info')
 
@@ -3917,6 +4190,8 @@ def learn_erp(request, pk):
             }
             return render(request, 'learn_erp.html', context)
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}")
+            messages.warning(request, str(e))
+            return redirect('home')
+
       else:
         return redirect('login_info')
