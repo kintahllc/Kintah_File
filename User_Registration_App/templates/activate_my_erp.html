@@ -48,7 +48,7 @@
       <th>ODOO Company ID</th>
       <th>ODOO Website ID</th>
       {% else %}
-      <th>Action</th>
+<!--      <th>Action</th>-->
       {% endif %}
 
     </tr>
@@ -65,14 +65,14 @@
       <td>{{erp_active.company_id}}</td>
       <td>{{erp_active.website_id}}</td>
       {% else %}
-      <td>
-      <form method="POST" action="#"> {% csrf_token %}
-            <input type="hidden" value="{{erp.id}}" name="erp_id">
-            <input type="hidden" value="{{subcription_one.number_of_expected_users_of_the_platform}}" name="user_count">
-            <button type="submit">Connect</button>
+<!--      <td>-->
 
-        </form>
-        </td>
+<!--            <input type="hidden" value="{{erp.id}}" name="erp_id">-->
+<!--            <input type="hidden" value="{{subcription_one.number_of_expected_users_of_the_platform}}" name="user_count">-->
+<!--            <button type="submit">Connect</button>-->
+
+
+<!--        </td>-->
       {% endif %}
 
 
