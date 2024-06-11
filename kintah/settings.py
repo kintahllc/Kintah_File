@@ -15,20 +15,37 @@ import environ
 from pathlib import Path
 import os
 
-env = environ.Env()
-environ.Env.read_env()
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Read the .env file
+from pathlib import Path
+# Initialize environment variables
+env = environ.Env(
+    DEBUG=(bool, False)
+)
 BASE_DIR = Path(__file__).resolve().parent.parent
+# Define the directory containing the settings.py file
+SETTINGS_DIR = Path(__file__).resolve().parent
+
+# Specify the .env file path
+env_file_path = os.path.join(SETTINGS_DIR, '.env')
+
+# Load the .env file
+try:
+    environ.Env.read_env(env_file_path)
+    print(".env file loaded successfully.")
+except Exception as e:
+    print(f"Error loading .env file: {e}")
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7ld3vd7&1+1_%(wunt#hu5hr!&$xt0wwf325p07wf!1cjm3m%='
+
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
@@ -158,12 +175,12 @@ WHITENOISE_MEDIA_PREFIX = "/media/"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = ""  # Replace with your Gmail address
-EMAIL_HOST_PASSWORD = ""  # Replace with your Gmail password
+# Email settings
+EMAIL_HOST = env('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = env.int('EMAIL_PORT', default=587)
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
+EMAIL_HOST_USER = env('EMAIL_HOST_USER_TEST')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD_TEST')
 
 
 STRIPE_PUBLIC_KEY=env('STRIPE_PUBLIC_KEY_TEST')
@@ -179,3 +196,5 @@ ADMIN_PASSWORD=env('ADMIN_PASSWORD')
 S3_ACCESS_KEY_ID=env('S3_ACCESS_KEY_ID')
 S3_SECRET_ACCESS_KEY=env('S3_SECRET_ACCESS_KEY')
 AWS_REGION=env('AWS_REGION')
+
+ADMIN_EMAIL_TO_GET_MESSAGE=env('ADMIN_EMAIL_TO_GET_MESSAGE')

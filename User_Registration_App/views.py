@@ -36,7 +36,11 @@ import xmlrpc.client
 import base64
 from .utils import get_or_create_category
 
+import logging
+from django.conf import settings
+from django.core.mail import send_mail
 
+logger = logging.getLogger(__name__)
 
 
 def generate_otp(length=6):
@@ -65,55 +69,67 @@ def home_info(request):
 
 def billing_history(request, pk):
     if request.user.is_authenticated:
-        user_info= request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-        contex = {
-            'user_info':user_info,
-            'company_info':company_info,
-            'subcription':subcription,
-            'subcription_one':subcription_one,
-            'erp':erp,
-            'erp_active':erp_active,
-        }
-        return render(request, 'billing_history.html', contex)
+        try:
+            user_info= request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            contex = {
+                'user_info':user_info,
+                'company_info':company_info,
+                'subcription':subcription,
+                'subcription_one':subcription_one,
+                'erp':erp,
+                'erp_active':erp_active,
+            }
+            return render(request, 'billing_history.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
 
 
 def ask_billing_question(request, pk):
+
     if request.user.is_authenticated:
-        if request.method == 'POST':
-            subject = request.POST.get('subject')
-            message = request.POST.get('message')
-            sub_info = CompanyRegistrationInformation.objects.get(id=pk)
-            billqtn = BillingQuestion(
-                company_info = sub_info,
-                subjects = subject,
-                massage = message,
-            )
-            billqtn.save()
+        try:
+            if request.method == 'POST':
+                try:
+                    subject = request.POST.get('subject')
+                    message = request.POST.get('message')
+                    sub_info = CompanyRegistrationInformation.objects.get(id=pk)
+                    billqtn = BillingQuestion(
+                        company_info = sub_info,
+                        subjects = subject,
+                        massage = message,
+                    )
+                    billqtn.save()
+                except Exception as e:
+                    messages.warning(request, str(e))
 
-        user_info= request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-        contex = {
-            'user_info':user_info,
-            'company_info':company_info,
-            'subcription':subcription,
-            'subcription_one': subcription_one,
-            'erp': erp,
-            'erp_active': erp_active,
+            user_info= request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            contex = {
+                'user_info':user_info,
+                'company_info':company_info,
+                'subcription':subcription,
+                'subcription_one': subcription_one,
+                'erp': erp,
+                'erp_active': erp_active,
 
-        }
-        return render(request, 'ask_billing_question.html', contex)
+            }
+            return render(request, 'ask_billing_question.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -122,78 +138,82 @@ def ask_billing_question(request, pk):
 
 def update_company_info(request, pk):
     if request.user.is_authenticated:
-        if request.method == 'POST':
-            com_id = request.POST.get('com_id')
+        try:
+            if request.method == 'POST':
+                com_id = request.POST.get('com_id')
 
-            file_number = request.POST.get('file_number')
-            client_source = request.POST.get('client_source')
-            fee_amount = request.POST.get('fee_amount') or 0
-            Partner_client_company_name = request.POST.get('Partner_client_company_name')
-            partner_client_contact_full_name = request.POST.get('partner_client_contact_full_name')
-            client_email_address = request.POST.get('client_email_address')
-            client_phone_number = request.POST.get('client_phone_number')
-            client_phone_code = request.POST.get('countryCode')
-            partner_client_company_address = request.POST.get('partner_client_company_address')
-            partner_client_company_country = request.POST.get('partner_client_company_country')
-            partner_client_company_state_or_province = request.POST.get('partner_client_company_state_or_province')
-            partner_client_company_city = request.POST.get('partner_client_company_city')
-
-
-            partner_client_company_state_or_province1 = get_state_name(partner_client_company_state_or_province)
-            if partner_client_company_state_or_province1 == None:
-                pass
-                state_id_in = get_state_id(partner_client_company_state_or_province)
-            else:
-                state_id_in = partner_client_company_state_or_province
-                partner_client_company_state_or_province = partner_client_company_state_or_province1
+                file_number = request.POST.get('file_number')
+                client_source = request.POST.get('client_source')
+                fee_amount = request.POST.get('fee_amount') or 0
+                Partner_client_company_name = request.POST.get('Partner_client_company_name')
+                partner_client_contact_full_name = request.POST.get('partner_client_contact_full_name')
+                client_email_address = request.POST.get('client_email_address')
+                client_phone_number = request.POST.get('client_phone_number')
+                client_phone_code = request.POST.get('countryCode')
+                partner_client_company_address = request.POST.get('partner_client_company_address')
+                partner_client_company_country = request.POST.get('partner_client_company_country')
+                partner_client_company_state_or_province = request.POST.get('partner_client_company_state_or_province')
+                partner_client_company_city = request.POST.get('partner_client_company_city')
 
 
+                partner_client_company_state_or_province1 = get_state_name(partner_client_company_state_or_province)
+                if partner_client_company_state_or_province1 == None:
+                    pass
+                    state_id_in = get_state_id(partner_client_company_state_or_province)
+                else:
+                    state_id_in = partner_client_company_state_or_province
+                    partner_client_company_state_or_province = partner_client_company_state_or_province1
 
-            city_nam = get_city_name(partner_client_company_city, state_id_in)
-
-            partner_client_company_zip_or_postal_code = request.POST.get('partner_client_company_zip_or_postal_code')
-
-            cri = CompanyRegistrationInformation.objects.get(id=com_id)
 
 
-            cri.file_number=file_number
-            cri.client_source=client_source
-            cri.fee_amount=float(fee_amount)
-            cri.Partner_client_company_name=Partner_client_company_name
-            cri.partner_client_contact_full_name=partner_client_contact_full_name
-            cri.client_email_address=client_email_address
-            cri.client_phone_number=client_phone_number
-            cri.client_phone_code=client_phone_code
-            cri.partner_client_company_address=partner_client_company_address
-            cri.partner_client_company_country=partner_client_company_country
-            if cri.partner_client_company_state_or_province != partner_client_company_state_or_province:
-                cri.partner_client_company_state_or_province=partner_client_company_state_or_province
-            if cri.partner_client_company_city != partner_client_company_city:
-                cri.partner_client_company_city=partner_client_company_city
-            cri.partner_client_company_zip_or_postal_code=partner_client_company_zip_or_postal_code
+                city_nam = get_city_name(partner_client_company_city, state_id_in)
 
-            cri.save()
-            messages.success(request, "Updated Successfully! ")
+                partner_client_company_zip_or_postal_code = request.POST.get('partner_client_company_zip_or_postal_code')
 
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        country_names = [country['name'] for country in country_all]
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-        contex = {
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
-            'country_names': country_names,
-            'phone_codes': all_phone_code,
-            'subcription_one': subcription_one,
-            'erp': erp,
-            'erp_active': erp_active,
+                cri = CompanyRegistrationInformation.objects.get(id=com_id)
 
-        }
-        return render(request, 'update_company_info3.html', contex)
+
+                cri.file_number=file_number
+                cri.client_source=client_source
+                cri.fee_amount=float(fee_amount)
+                cri.Partner_client_company_name=Partner_client_company_name
+                cri.partner_client_contact_full_name=partner_client_contact_full_name
+                cri.client_email_address=client_email_address
+                cri.client_phone_number=client_phone_number
+                cri.client_phone_code=client_phone_code
+                cri.partner_client_company_address=partner_client_company_address
+                cri.partner_client_company_country=partner_client_company_country
+                if cri.partner_client_company_state_or_province != partner_client_company_state_or_province:
+                    cri.partner_client_company_state_or_province=partner_client_company_state_or_province
+                if cri.partner_client_company_city != partner_client_company_city:
+                    cri.partner_client_company_city=partner_client_company_city
+                cri.partner_client_company_zip_or_postal_code=partner_client_company_zip_or_postal_code
+
+                cri.save()
+                messages.success(request, "Updated Successfully! ")
+
+            user_info = request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            country_names = [country['name'] for country in country_all]
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            contex = {
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
+                'country_names': country_names,
+                'phone_codes': all_phone_code,
+                'subcription_one': subcription_one,
+                'erp': erp,
+                'erp_active': erp_active,
+
+            }
+            return render(request, 'update_company_info3.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -202,37 +222,41 @@ def update_company_info(request, pk):
 def change_password(request, pk):
     if request.user.is_authenticated:
 
-        if request.method == 'POST':
-            new_password = request.POST.get('new_password')
+        try:
+            if request.method == 'POST':
+                new_password = request.POST.get('new_password')
 
-            u = request.user
-            u.set_password(new_password)
-            u.save()
-
-
-            messages.success(request, "Updated Password Successfully! ")
+                u = request.user
+                u.set_password(new_password)
+                u.save()
 
 
-        user_info = request.user
-        if user_info.first_name == '':
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        else:
-            company_info = CompanyRegistrationInformation.objects.get(id=user_info.first_name)
+                messages.success(request, "Updated Password Successfully! ")
 
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-        contex = {
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
-            'subcription_one': subcription_one,
-            'erp': erp,
-            'erp_active': erp_active,
 
-        }
-        return render(request, 'change_password.html', contex)
+            user_info = request.user
+            if user_info.first_name == '':
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            else:
+                company_info = CompanyRegistrationInformation.objects.get(id=user_info.first_name)
+
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            contex = {
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
+                'subcription_one': subcription_one,
+                'erp': erp,
+                'erp_active': erp_active,
+
+            }
+            return render(request, 'change_password.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -240,23 +264,26 @@ def change_password(request, pk):
 
 def subscription_history(request, pk):
     if request.user.is_authenticated:
+        try:
+            user_info = request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            contex = {
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
+                'subcription_one': subcription_one,
+                'erp': erp,
+                'erp_active': erp_active,
 
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-        contex = {
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
-            'subcription_one': subcription_one,
-            'erp': erp,
-            'erp_active': erp_active,
-
-        }
-        return render(request, 'subscription_history.html', contex)
+            }
+            return render(request, 'subscription_history.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -264,161 +291,171 @@ def subscription_history(request, pk):
 def add_company_users(request, pk):
     if request.user.is_authenticated:
 
-
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-        contex = {
-            'subcription_one': subcription_one,
-            'erp': erp,
-            'erp_active': erp_active,
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
-        }
-        return render(request, 'add_company_users.html', contex)
+        try:
+            user_info = request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            contex = {
+                'subcription_one': subcription_one,
+                'erp': erp,
+                'erp_active': erp_active,
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
+            }
+            return render(request, 'add_company_users.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
 
 def add_expected_users(request, pk):
     if request.user.is_authenticated:
+        try:
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            role = request.POST.get('role')
 
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        role = request.POST.get('role')
+            myusr_vari = User.objects.create_user(email, email, password)
+            myusr_vari.first_name = pk
+            myusr_vari.last_name = role
+            myusr_vari.is_active = True
+            myusr_vari.save()
 
-        myusr_vari = User.objects.create_user(email, email, password)
-        myusr_vari.first_name = pk
-        myusr_vari.last_name = role
-        myusr_vari.is_active = True
-        myusr_vari.save()
-
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-        contex = {
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
-            'subcription_one': subcription_one,
-            'erp': erp,
-            'erp_active': erp_active,
-        }
-        return render(request, 'add_company_users.html', contex)
+            user_info = request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            contex = {
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
+                'subcription_one': subcription_one,
+                'erp': erp,
+                'erp_active': erp_active,
+            }
+            return render(request, 'add_company_users.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
 
 def upgrade_subscription(request, pk):
     if request.user.is_authenticated:
-        if request.method == 'POST':
-            from_back = request.POST.get('from_back')
-            demandscaled = request.POST.get('demandscaled')
-            acquirescaled = request.POST.get('acquirescaled')
-            Product_recommendations = request.POST.get('Product_recommendations')
-            campaignscaled = request.POST.get('campaignscaled')
-            CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
-            sub_id = request.POST.get('sub_id')
-            check = request.POST.get('check')
-            plane_price = request.POST.get('plane_price') or 0
+        try:
+            if request.method == 'POST':
+                from_back = request.POST.get('from_back')
+                demandscaled = request.POST.get('demandscaled')
+                acquirescaled = request.POST.get('acquirescaled')
+                Product_recommendations = request.POST.get('Product_recommendations')
+                campaignscaled = request.POST.get('campaignscaled')
+                CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
+                sub_id = request.POST.get('sub_id')
+                check = request.POST.get('check')
+                plane_price = request.POST.get('plane_price') or 0
 
-            if from_back == "coming_back":
-                subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
-                user_info = request.user
-                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-                subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-                subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
-                                                                         payment_status=True).last()
-                erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                                   Erp_Info=erp).last()
-                contex = {
-                    'demandscaled': demandscaled,
-                    'acquirescaled': acquirescaled,
-                    'Product_recommendations': Product_recommendations,
-                    'campaignscaled': campaignscaled,
-                    'CompanyRegistrationInformationId': CompanyRegistrationInformationId,
-                    'user_info': user_info,
-                    'company_info': company_info,
-                    'subcription': subcription,
-                    'sub_id': sub_id,
-                    'subcription_pk': subcription_pk,
-                    'plane_price': plane_price,
-                    'subcription_one': subcription_one,
-                    'erp': erp,
-                    'erp_active': erp_active,
-                }
+                if from_back == "coming_back":
+                    subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
+                    user_info = request.user
+                    company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                    subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                    subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
+                                                                             payment_status=True).last()
+                    erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
+                                                                       Erp_Info=erp).last()
+                    contex = {
+                        'demandscaled': demandscaled,
+                        'acquirescaled': acquirescaled,
+                        'Product_recommendations': Product_recommendations,
+                        'campaignscaled': campaignscaled,
+                        'CompanyRegistrationInformationId': CompanyRegistrationInformationId,
+                        'user_info': user_info,
+                        'company_info': company_info,
+                        'subcription': subcription,
+                        'sub_id': sub_id,
+                        'subcription_pk': subcription_pk,
+                        'plane_price': plane_price,
+                        'subcription_one': subcription_one,
+                        'erp': erp,
+                        'erp_active': erp_active,
+                    }
 
-                return render(request, 'upgrade_sub.html', contex)
-            elif check == "yes":
-                # sp = SubscriptionPlan.objects.all()
-                # user_info = request.user
-                # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-                # subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-                # subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
-                # contex = {
-                #     'user_info': user_info,
-                #     'company_info': company_info,
-                #     'subcription': subcription,
-                #     'sp': sp,
-                #     'subcription_pk': subcription_pk,
-                #
-                # }
-                #
-                # return render(request, 'upgrade_new_subscription_plan.html', contex)
-                subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
+                    return render(request, 'upgrade_sub.html', contex)
+                elif check == "yes":
+                    # sp = SubscriptionPlan.objects.all()
+                    # user_info = request.user
+                    # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                    # subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                    # subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
+                    # contex = {
+                    #     'user_info': user_info,
+                    #     'company_info': company_info,
+                    #     'subcription': subcription,
+                    #     'sp': sp,
+                    #     'subcription_pk': subcription_pk,
+                    #
+                    # }
+                    #
+                    # return render(request, 'upgrade_new_subscription_plan.html', contex)
+                    subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
 
-                user_info = request.user
-                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-                subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-                contex = {
-                    'user_info': user_info,
-                    'company_info': company_info,
-                    'subcription': subcription,
-                    'subcription_pk': subcription_pk,
-                    'sub_id': sub_id,
-                    'plane_price': plane_price,
-                }
-                return render(request, 'upgrade_sub.html', contex)
-
-
-
-
-            else:
+                    user_info = request.user
+                    company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                    subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                    contex = {
+                        'user_info': user_info,
+                        'company_info': company_info,
+                        'subcription': subcription,
+                        'subcription_pk': subcription_pk,
+                        'sub_id': sub_id,
+                        'plane_price': plane_price,
+                    }
+                    return render(request, 'upgrade_sub.html', contex)
 
 
-                subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
 
 
-                user_info = request.user
-                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-                subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-                contex = {
-                    'user_info': user_info,
-                    'company_info': company_info,
-                    'subcription': subcription,
-                    'subcription_pk': subcription_pk,
-                    'sub_id': sub_id,
-                    'plane_price': plane_price,
-                }
-                return render(request, 'upgrade_sub.html', contex)
+                else:
 
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        contex = {
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
-        }
-        return render(request, 'upgrade_subscription1.html', contex)
+
+                    subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
+
+
+                    user_info = request.user
+                    company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                    subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                    contex = {
+                        'user_info': user_info,
+                        'company_info': company_info,
+                        'subcription': subcription,
+                        'subcription_pk': subcription_pk,
+                        'sub_id': sub_id,
+                        'plane_price': plane_price,
+                    }
+                    return render(request, 'upgrade_sub.html', contex)
+
+            user_info = request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            contex = {
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
+            }
+            return render(request, 'upgrade_subscription1.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
 
     else:
         return redirect('login_info')
@@ -436,59 +473,78 @@ def upgrade_subscription(request, pk):
 
 def upgrade_new_subscription_plan(request, pk):
     if request.user.is_authenticated:
-        if request.method == 'POST':
+        try:
+            if request.method == 'POST':
 
-            campaignscaled = request.POST.get('campaignscaled')
-            plane_price = request.POST.get('plane_price')
+                campaignscaled = request.POST.get('campaignscaled')
+                plane_price = request.POST.get('plane_price')
 
-            file_number = request.POST.get('file_number')
-            client_source = request.POST.get('client_source')
-            fee_amount = request.POST.get('fee_amount')
-            Partner_client_company_name = request.POST.get('Partner_client_company_name')
-            partner_client_contact_full_name = request.POST.get('partner_client_contact_full_name')
-            client_email_address = request.POST.get('client_email_address')
-            client_phone_number = request.POST.get('client_phone_number')
-            countryCode = request.POST.get('countryCode')
-            partner_client_company_address = request.POST.get('partner_client_company_address')
-            partner_client_company_country = request.POST.get('partner_client_company_country')
+                file_number = request.POST.get('file_number')
+                client_source = request.POST.get('client_source')
+                fee_amount = request.POST.get('fee_amount')
+                Partner_client_company_name = request.POST.get('Partner_client_company_name')
+                partner_client_contact_full_name = request.POST.get('partner_client_contact_full_name')
+                client_email_address = request.POST.get('client_email_address')
+                client_phone_number = request.POST.get('client_phone_number')
+                countryCode = request.POST.get('countryCode')
+                partner_client_company_address = request.POST.get('partner_client_company_address')
+                partner_client_company_country = request.POST.get('partner_client_company_country')
 
-            partner_client_company_state_or_province = request.POST.get('partner_client_company_state_or_province')
-            partner_client_company_city = request.POST.get('partner_client_company_city')
-            partner_client_company_zip_or_postal_code = request.POST.get('partner_client_company_zip_or_postal_code')
-            password = request.POST.get('password')
+                partner_client_company_state_or_province = request.POST.get('partner_client_company_state_or_province')
+                partner_client_company_city = request.POST.get('partner_client_company_city')
+                partner_client_company_zip_or_postal_code = request.POST.get('partner_client_company_zip_or_postal_code')
+                password = request.POST.get('password')
 
-            myusr_vari = User.objects.create_user(client_email_address, client_email_address, password)
-            myusr_vari.first_name = ''
-            myusr_vari.last_name = ''
-            myusr_vari.is_active = True
-            myusr_vari.save()
+                myusr_vari = User.objects.create_user(client_email_address, client_email_address, password)
+                myusr_vari.first_name = ''
+                myusr_vari.last_name = ''
+                myusr_vari.is_active = True
+                myusr_vari.save()
 
-            user = authenticate(request, username=client_email_address, password=password)
-            if user is not None:
-                login(request, user)
-                request.session['user_id'] = user.id
-                request.session['username'] = user.username
+                user = authenticate(request, username=client_email_address, password=password)
+                if user is not None:
+                    login(request, user)
+                    request.session['user_id'] = user.id
+                    request.session['username'] = user.username
 
-            partner_client_company_country = get_country_name(partner_client_company_country)
-            partner_client_company_state_or_province = get_state_name(partner_client_company_state_or_province)
+                partner_client_company_country = get_country_name(partner_client_company_country)
+                partner_client_company_state_or_province = get_state_name(partner_client_company_state_or_province)
 
-            cri = CompanyRegistrationInformation(
-                user_info=myusr_vari,
-                file_number=file_number,
-                client_source=client_source,
-                fee_amount=fee_amount,
-                Partner_client_company_name=Partner_client_company_name,
-                partner_client_contact_full_name=partner_client_contact_full_name,
-                client_email_address=client_email_address,
-                client_phone_number=client_phone_number,
-                client_phone_code=countryCode,
-                partner_client_company_address=partner_client_company_address,
-                partner_client_company_country=partner_client_company_country,
-                partner_client_company_state_or_province=partner_client_company_state_or_province,
-                partner_client_company_city=partner_client_company_city,
-                partner_client_company_zip_or_postal_code=partner_client_company_zip_or_postal_code,
-            )
-            cri.save()
+                cri = CompanyRegistrationInformation(
+                    user_info=myusr_vari,
+                    file_number=file_number,
+                    client_source=client_source,
+                    fee_amount=fee_amount,
+                    Partner_client_company_name=Partner_client_company_name,
+                    partner_client_contact_full_name=partner_client_contact_full_name,
+                    client_email_address=client_email_address,
+                    client_phone_number=client_phone_number,
+                    client_phone_code=countryCode,
+                    partner_client_company_address=partner_client_company_address,
+                    partner_client_company_country=partner_client_company_country,
+                    partner_client_company_state_or_province=partner_client_company_state_or_province,
+                    partner_client_company_city=partner_client_company_city,
+                    partner_client_company_zip_or_postal_code=partner_client_company_zip_or_postal_code,
+                )
+                cri.save()
+
+                sp = SubscriptionPlan.objects.all()
+                user_info = request.user
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                contex = {
+                    'user_info': user_info,
+                    'company_info': company_info,
+                    'subcription': subcription,
+                    'CompanyRegistrationInformationId': cri.id,
+                    'sp': sp,
+                    'campaignscaled': campaignscaled,
+                    'plane_price': plane_price,
+                }
+
+
+                return render(request, 'new_subscriptions.html', contex)
+
 
             sp = SubscriptionPlan.objects.all()
             user_info = request.user
@@ -498,30 +554,15 @@ def upgrade_new_subscription_plan(request, pk):
                 'user_info': user_info,
                 'company_info': company_info,
                 'subcription': subcription,
-                'CompanyRegistrationInformationId': cri.id,
+
                 'sp': sp,
-                'campaignscaled': campaignscaled,
-                'plane_price': plane_price,
+
             }
 
-
-            return render(request, 'new_subscriptions.html', contex)
-
-
-        sp = SubscriptionPlan.objects.all()
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        contex = {
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
-
-            'sp': sp,
-
-        }
-
-        return render(request, 'new_subscription_plan.html', contex)
+            return render(request, 'new_subscription_plan.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -540,296 +581,300 @@ def upgrade_new_subscription_plan(request, pk):
 
 def upgrade_calculate_subscriptions(request, pk):
     if request.user.is_authenticated:
-        if request.method == 'POST':
-            demandscaled = request.POST.get('demandscaled')
-            acquirescaled = request.POST.get('acquirescaled')
-            Product_recommendations = request.POST.get('Product_recommendations')
-            campaignscaled = request.POST.get('campaignscaled')
-            CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
-            sub_id = request.POST.get('sub_id')
-            plane_price = request.POST.get('plane_price') or 0
+        try:
+            if request.method == 'POST':
+                demandscaled = request.POST.get('demandscaled')
+                acquirescaled = request.POST.get('acquirescaled')
+                Product_recommendations = request.POST.get('Product_recommendations')
+                campaignscaled = request.POST.get('campaignscaled')
+                CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
+                sub_id = request.POST.get('sub_id')
+                plane_price = request.POST.get('plane_price') or 0
 
-            try:
-                package_price_demandscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
-                    app="demandscaled").last()
-                package_price_acquirescaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
-                    app="acquirescaled").last()
-                package_price_recommendscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
-                    app="recommendscaled").last()
+                try:
+                    package_price_demandscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
+                        app="demandscaled").last()
+                    package_price_acquirescaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
+                        app="acquirescaled").last()
+                    package_price_recommendscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(
+                        app="recommendscaled").last()
 
-                prescriptive_ai = AdministrationkintahSubscriptionPackagePrice.objects.filter(
-                    app="(prescriptive_ai").last()
-                metricscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="metricscaled").last()
-                driven_erp = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="driven_erp").last()
-                driven_edriven_e_commerce = AdministrationkintahSubscriptionPackagePrice.objects.filter(
-                    app="driven_edriven_e_commerce").last()
+                    prescriptive_ai = AdministrationkintahSubscriptionPackagePrice.objects.filter(
+                        app="(prescriptive_ai").last()
+                    metricscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="metricscaled").last()
+                    driven_erp = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="driven_erp").last()
+                    driven_edriven_e_commerce = AdministrationkintahSubscriptionPackagePrice.objects.filter(
+                        app="driven_edriven_e_commerce").last()
 
-                if package_price_demandscaled:
-                    package_price_demandscaled_monthly_base_cost = package_price_demandscaled.monthly_base_cost
-                    package_price_demandscaled_monthly_coef = package_price_demandscaled.monthly_coef
-                    package_price_demandscaled_monthly_activity_free = package_price_demandscaled.monthly_activity_free
+                    if package_price_demandscaled:
+                        package_price_demandscaled_monthly_base_cost = package_price_demandscaled.monthly_base_cost
+                        package_price_demandscaled_monthly_coef = package_price_demandscaled.monthly_coef
+                        package_price_demandscaled_monthly_activity_free = package_price_demandscaled.monthly_activity_free
 
-                    package_price_demandscaled_base_price = package_price_demandscaled.base_price
-                    package_price_demandscaled_base_number_of_subscription_months = package_price_demandscaled.base_number_of_subscription_months
-                    package_price_demandscaled_base_number_of_users = package_price_demandscaled.base_number_of_users
-                    package_price_demandscaled_base_number_data_reloads = package_price_demandscaled.base_number_data_reloads
-                    package_price_demandscaled_saturation_coef = package_price_demandscaled.saturation_coef
-                else:
-                    package_price_demandscaled_monthly_base_cost = 495
-                    package_price_demandscaled_monthly_coef = 0.025
-                    package_price_demandscaled_monthly_activity_free = 12
+                        package_price_demandscaled_base_price = package_price_demandscaled.base_price
+                        package_price_demandscaled_base_number_of_subscription_months = package_price_demandscaled.base_number_of_subscription_months
+                        package_price_demandscaled_base_number_of_users = package_price_demandscaled.base_number_of_users
+                        package_price_demandscaled_base_number_data_reloads = package_price_demandscaled.base_number_data_reloads
+                        package_price_demandscaled_saturation_coef = package_price_demandscaled.saturation_coef
+                    else:
+                        package_price_demandscaled_monthly_base_cost = 495
+                        package_price_demandscaled_monthly_coef = 0.025
+                        package_price_demandscaled_monthly_activity_free = 12
 
-                    package_price_demandscaled_base_price = 2
-                    package_price_demandscaled_base_number_of_subscription_months = 4.9
-                    package_price_demandscaled_base_number_of_users = 6
-                    package_price_demandscaled_base_number_data_reloads = 6
-                    package_price_demandscaled_saturation_coef = 8
+                        package_price_demandscaled_base_price = 2
+                        package_price_demandscaled_base_number_of_subscription_months = 4.9
+                        package_price_demandscaled_base_number_of_users = 6
+                        package_price_demandscaled_base_number_data_reloads = 6
+                        package_price_demandscaled_saturation_coef = 8
 
-                if package_price_acquirescaled:
-                    package_price_acquirescaled_monthly_base_cost = package_price_acquirescaled.monthly_base_cost
-                    package_price_acquirescaled_monthly_coef = package_price_acquirescaled.monthly_coef
-                    package_price_acquirescaled_monthly_activity_free = package_price_acquirescaled.monthly_activity_free
+                    if package_price_acquirescaled:
+                        package_price_acquirescaled_monthly_base_cost = package_price_acquirescaled.monthly_base_cost
+                        package_price_acquirescaled_monthly_coef = package_price_acquirescaled.monthly_coef
+                        package_price_acquirescaled_monthly_activity_free = package_price_acquirescaled.monthly_activity_free
 
-                    package_price_acquirescaled_base_price = package_price_acquirescaled.base_price
-                    package_price_acquirescaled_base_number_of_subscription_months = package_price_acquirescaled.base_number_of_subscription_months
-                    package_price_acquirescaled_base_number_of_users = package_price_acquirescaled.base_number_of_users
-                    package_price_acquirescaled_base_number_data_reloads = package_price_acquirescaled.base_number_data_reloads
-                    package_price_acquirescaled_saturation_coef = package_price_acquirescaled.saturation_coef
-                else:
-                    package_price_acquirescaled_monthly_base_cost = 495
-                    package_price_acquirescaled_monthly_coef = 0.025
-                    package_price_acquirescaled_monthly_activity_free = 12
+                        package_price_acquirescaled_base_price = package_price_acquirescaled.base_price
+                        package_price_acquirescaled_base_number_of_subscription_months = package_price_acquirescaled.base_number_of_subscription_months
+                        package_price_acquirescaled_base_number_of_users = package_price_acquirescaled.base_number_of_users
+                        package_price_acquirescaled_base_number_data_reloads = package_price_acquirescaled.base_number_data_reloads
+                        package_price_acquirescaled_saturation_coef = package_price_acquirescaled.saturation_coef
+                    else:
+                        package_price_acquirescaled_monthly_base_cost = 495
+                        package_price_acquirescaled_monthly_coef = 0.025
+                        package_price_acquirescaled_monthly_activity_free = 12
 
-                    package_price_acquirescaled_base_price = 22
-                    package_price_acquirescaled_base_number_of_subscription_months = 2.9
-                    package_price_acquirescaled_base_number_of_users = 3
-                    package_price_acquirescaled_base_number_data_reloads = 2.7
-                    package_price_acquirescaled_saturation_coef = 2.3
-
-
-                if package_price_recommendscaled:
-                    package_price_recommendscaled_monthly_base_cost = package_price_recommendscaled.monthly_base_cost
-                    package_price_recommendscaled_monthly_coef = package_price_recommendscaled.monthly_coef
-                    package_price_recommendscaled_monthly_activity_free = package_price_recommendscaled.monthly_activity_free
-
-                    package_price_recommendscaled_base_price = package_price_recommendscaled.base_price
-                    package_price_recommendscaled_base_number_of_subscription_months = package_price_recommendscaled.base_number_of_subscription_months
-                    package_price_recommendscaled_base_number_of_users = package_price_recommendscaled.base_number_of_users
-                    package_price_recommendscaled_base_number_data_reloads = package_price_recommendscaled.base_number_data_reloads
-                    package_price_recommendscaled_saturation_coef = package_price_recommendscaled.saturation_coef
-
-                else:
-                    package_price_recommendscaled_monthly_base_cost = 495.99
-                    package_price_recommendscaled_monthly_coef = 0.025
-                    package_price_recommendscaled_monthly_activity_free = 12
-
-                    package_price_recommendscaled_base_price = 2
-                    package_price_recommendscaled_base_number_of_subscription_months = 2.9
-                    package_price_recommendscaled_base_number_of_users = 2
-                    package_price_recommendscaled_base_number_data_reloads = 2
-                    package_price_recommendscaled_saturation_coef = 5.9
+                        package_price_acquirescaled_base_price = 22
+                        package_price_acquirescaled_base_number_of_subscription_months = 2.9
+                        package_price_acquirescaled_base_number_of_users = 3
+                        package_price_acquirescaled_base_number_data_reloads = 2.7
+                        package_price_acquirescaled_saturation_coef = 2.3
 
 
-                if prescriptive_ai:
-                    prescriptive_ai_monthly_base_cost = prescriptive_ai.monthly_base_cost
-                    prescriptive_ai_monthly_coef = prescriptive_ai.monthly_coef
-                    prescriptive_ai_monthly_activity_free = prescriptive_ai.monthly_activity_free
+                    if package_price_recommendscaled:
+                        package_price_recommendscaled_monthly_base_cost = package_price_recommendscaled.monthly_base_cost
+                        package_price_recommendscaled_monthly_coef = package_price_recommendscaled.monthly_coef
+                        package_price_recommendscaled_monthly_activity_free = package_price_recommendscaled.monthly_activity_free
 
-                    prescriptive_ai_monthly_base_price = prescriptive_ai.base_price
-                    prescriptive_ai_monthly_base_number_of_subscription_months = prescriptive_ai.base_number_of_subscription_months
-                    prescriptive_ai_monthly_base_number_of_users = prescriptive_ai.base_number_of_users
-                    prescriptive_ai_monthly_base_number_data_reloads = prescriptive_ai.base_number_data_reloads
-                    prescriptive_ai_monthly_saturation_coef = prescriptive_ai.saturation_coef
+                        package_price_recommendscaled_base_price = package_price_recommendscaled.base_price
+                        package_price_recommendscaled_base_number_of_subscription_months = package_price_recommendscaled.base_number_of_subscription_months
+                        package_price_recommendscaled_base_number_of_users = package_price_recommendscaled.base_number_of_users
+                        package_price_recommendscaled_base_number_data_reloads = package_price_recommendscaled.base_number_data_reloads
+                        package_price_recommendscaled_saturation_coef = package_price_recommendscaled.saturation_coef
 
+                    else:
+                        package_price_recommendscaled_monthly_base_cost = 495.99
+                        package_price_recommendscaled_monthly_coef = 0.025
+                        package_price_recommendscaled_monthly_activity_free = 12
 
-                else:
-                    prescriptive_ai_monthly_base_cost = 995
-                    prescriptive_ai_monthly_coef = 0.025
-                    prescriptive_ai_monthly_activity_free = 12
-
-                    prescriptive_ai_monthly_base_price = 11
-                    prescriptive_ai_monthly_base_number_of_subscription_months = 1.1
-                    prescriptive_ai_monthly_base_number_of_users = 11
-                    prescriptive_ai_monthly_base_number_data_reloads = 12
-                    prescriptive_ai_monthly_saturation_coef = 3
-
-                if metricscaled:
-                    metricscaled_monthly_base_cost = metricscaled.monthly_base_cost
-                    metricscaled_monthly_coef = metricscaled.monthly_coef
-                    metricscaled_monthly_activity_free = metricscaled.monthly_activity_free
-
-                    metricscaled_monthly_base_price = metricscaled.base_price
-                    metricscaled_monthly_base_number_of_subscription_months = metricscaled.base_number_of_subscription_months
-                    metricscaled_monthly_base_number_of_users = metricscaled.base_number_of_users
-                    metricscaled_monthly_base_number_data_reloads = metricscaled.base_number_data_reloads
-                    metricscaled_monthly_saturation_coef = metricscaled.saturation_coef
-                else:
-                    metricscaled_monthly_base_cost = 995
-                    metricscaled_monthly_coef = 0.025
-                    metricscaled_monthly_activity_free = 12
-
-                    metricscaled_monthly_base_price = 3
-                    metricscaled_monthly_base_number_of_subscription_months = 22
-                    metricscaled_monthly_base_number_of_users = 43
-                    metricscaled_monthly_base_number_data_reloads = 45
-                    metricscaled_monthly_saturation_coef = 34
-
-                if driven_erp:
-                    driven_erp_monthly_base_cost = driven_erp.monthly_base_cost
-                    driven_erp_monthly_coef = driven_erp.monthly_coef
-                    driven_erp_monthly_activity_free = driven_erp.monthly_activity_free
-
-                    driven_erp_monthly_base_price = driven_erp.base_price
-                    driven_erp_monthly_base_number_of_subscription_months = driven_erp.base_number_of_subscription_months
-                    driven_erp_monthly_base_number_of_users = driven_erp.base_number_of_users
-                    driven_erp_monthly_base_number_data_reloads = driven_erp.base_number_data_reloads
-                    driven_erp_monthly_saturation_coef = driven_erp.saturation_coef
-                else:
-                    driven_erp_monthly_base_cost = 995
-                    driven_erp_monthly_coef = 0.025
-                    driven_erp_monthly_activity_free = 12
-
-                    driven_erp_monthly_base_price = 33
-                    driven_erp_monthly_base_number_of_subscription_months = 2
-                    driven_erp_monthly_base_number_of_users = 9
-                    driven_erp_monthly_base_number_data_reloads = 89
-                    driven_erp_monthly_saturation_coef = 8
-
-                if driven_edriven_e_commerce:
-                    driven_edriven_e_commerce_monthly_base_cost = driven_edriven_e_commerce.monthly_base_cost
-                    driven_edriven_e_commerce_monthly_coef = driven_edriven_e_commerce.monthly_coef
-                    driven_edriven_e_commerce_monthly_coef_monthly_activity_free = driven_edriven_e_commerce.monthly_activity_free
-
-                    driven_edriven_e_commerce_monthly_base_price = driven_edriven_e_commerce.base_price
-                    driven_edriven_e_commerce_monthly_base_number_of_subscription_months = driven_edriven_e_commerce.base_number_of_subscription_months
-                    driven_edriven_e_commerce_monthly_base_number_of_users = driven_edriven_e_commerce.base_number_of_users
-                    driven_edriven_e_commerce_monthly_base_number_data_reloads = driven_edriven_e_commerce.base_number_data_reloads
-                    driven_edriven_e_commerce_monthly_saturation_coef = driven_edriven_e_commerce.saturation_coef
-
-                else:
-                    driven_edriven_e_commerce_monthly_base_cost = 995
-                    driven_edriven_e_commerce_monthly_coef = 0.025
-                    driven_edriven_e_commerce_monthly_coef_monthly_activity_free = 12
-
-                    driven_edriven_e_commerce_monthly_base_price = 6
-                    driven_edriven_e_commerce_monthly_base_number_of_subscription_months = 9
-                    driven_edriven_e_commerce_monthly_base_number_of_users = 5
-                    driven_edriven_e_commerce_monthly_base_number_data_reloads = 56
-                    driven_edriven_e_commerce_monthly_saturation_coef = 5
-
-                user_info = request.user
-                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-                subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-                the_subcription = SubscriptionInformation.objects.get(id=sub_id)
-                subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
-                                                                         payment_status=True).last()
-                erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                                   Erp_Info=erp).last()
-
-                all_company_types = PriceMatrixPerCompanyType.objects.all()
-                parameters = AdditionalCostCalculationFixParameters.objects.filter().last()
-                if parameters:
-                    sup_cost = parameters.sup_cost
-                    Train_cost = parameters.train_cost
-                else:
-                    sup_cost = 25
-                    Train_cost = 500
-                contex = {
-                    'all_company_types': all_company_types,
-                    'sup_cost': sup_cost,
-                    'Train_cost': Train_cost,
+                        package_price_recommendscaled_base_price = 2
+                        package_price_recommendscaled_base_number_of_subscription_months = 2.9
+                        package_price_recommendscaled_base_number_of_users = 2
+                        package_price_recommendscaled_base_number_data_reloads = 2
+                        package_price_recommendscaled_saturation_coef = 5.9
 
 
-                    'subcription_one': subcription_one,
-                    'erp': erp,
-                    'erp_active': erp_active,
-                    'campaignscaled': campaignscaled,
-                    'plane_price': plane_price,
-                    'demandscaled': demandscaled,
-                    'demandscaled_monthly_base_cost': package_price_demandscaled_monthly_base_cost,
-                    'demandscaled_monthly_coef': package_price_demandscaled_monthly_coef,
-                    'demandscaled_monthly_activity_free': package_price_demandscaled_monthly_activity_free,
+                    if prescriptive_ai:
+                        prescriptive_ai_monthly_base_cost = prescriptive_ai.monthly_base_cost
+                        prescriptive_ai_monthly_coef = prescriptive_ai.monthly_coef
+                        prescriptive_ai_monthly_activity_free = prescriptive_ai.monthly_activity_free
 
-                    'acquirescaled': acquirescaled,
-                    'acquirescaled_monthly_base_cost': package_price_acquirescaled_monthly_base_cost,
-                    'acquirescaled_monthly_coef': package_price_acquirescaled_monthly_coef,
-                    'acquirescaled_monthly_activity_free': package_price_acquirescaled_monthly_activity_free,
-
-                    'Product_recommendations': Product_recommendations,
-                    'Product_recommendations_monthly_base_cost': package_price_recommendscaled_monthly_base_cost,
-                    'Product_recommendations_monthly_coef': package_price_recommendscaled_monthly_coef,
-                    'Product_recommendations_monthly_activity_free': package_price_recommendscaled_monthly_activity_free,
-
-                    'prescriptive_ai_monthly_base_cost': prescriptive_ai_monthly_base_cost,
-                    'prescriptive_ai_monthly_coef': prescriptive_ai_monthly_coef,
-                    'prescriptive_ai_monthly_activity_free': prescriptive_ai_monthly_activity_free,
-
-                    'metricscaled_monthly_base_cost': metricscaled_monthly_base_cost,
-                    'metricscaled_monthly_coef': metricscaled_monthly_coef,
-                    'metricscaled_monthly_activity_free': metricscaled_monthly_activity_free,
-
-                    'driven_erp_monthly_base_cost': driven_erp_monthly_base_cost,
-                    'driven_erp_monthly_coef': driven_erp_monthly_coef,
-                    'driven_erp_monthly_activity_free': driven_erp_monthly_activity_free,
-
-                    'driven_edriven_e_commerce_monthly_base_cost': driven_edriven_e_commerce_monthly_base_cost,
-                    'driven_edriven_e_commerce_monthly_coef': driven_edriven_e_commerce_monthly_coef,
-                    'driven_edriven_e_commerce_monthly_coef_monthly_activity_free': driven_edriven_e_commerce_monthly_coef_monthly_activity_free,
-
-                    'CompanyRegistrationInformationId': company_info.id,
-                    'user_info': user_info,
-                    'company_info': company_info,
-                    'subcription': subcription,
-                    'the_subcription': the_subcription,
-                    'sub_id': sub_id,
+                        prescriptive_ai_monthly_base_price = prescriptive_ai.base_price
+                        prescriptive_ai_monthly_base_number_of_subscription_months = prescriptive_ai.base_number_of_subscription_months
+                        prescriptive_ai_monthly_base_number_of_users = prescriptive_ai.base_number_of_users
+                        prescriptive_ai_monthly_base_number_data_reloads = prescriptive_ai.base_number_data_reloads
+                        prescriptive_ai_monthly_saturation_coef = prescriptive_ai.saturation_coef
 
 
-                    'package_price_demandscaled_base_price': package_price_demandscaled_base_price,
-                    'package_price_demandscaled_base_number_of_subscription_months': package_price_demandscaled_base_number_of_subscription_months,
-                    'package_price_demandscaled_base_number_of_users': package_price_demandscaled_base_number_of_users,
-                    'package_price_demandscaled_base_number_data_reloads': package_price_demandscaled_base_number_data_reloads,
-                    'package_price_demandscaled_saturation_coef': package_price_demandscaled_saturation_coef,
-                    'package_price_acquirescaled_base_price': package_price_acquirescaled_base_price,
-                    'package_price_acquirescaled_base_number_of_subscription_months': package_price_acquirescaled_base_number_of_subscription_months,
-                    'package_price_acquirescaled_base_number_of_users': package_price_acquirescaled_base_number_of_users,
-                    'package_price_acquirescaled_base_number_data_reloads': package_price_acquirescaled_base_number_data_reloads,
-                    'package_price_acquirescaled_saturation_coef': package_price_acquirescaled_saturation_coef,
-                    'package_price_recommendscaled_base_price': package_price_recommendscaled_base_price,
-                    'package_price_recommendscaled_base_number_of_subscription_months': package_price_recommendscaled_base_number_of_subscription_months,
-                    'package_price_recommendscaled_base_number_of_users': package_price_recommendscaled_base_number_of_users,
-                    'package_price_recommendscaled_base_number_data_reloads': package_price_recommendscaled_base_number_data_reloads,
-                    'package_price_recommendscaled_saturation_coef': package_price_recommendscaled_saturation_coef,
-                    'prescriptive_ai_monthly_base_price': prescriptive_ai_monthly_base_price,
-                    'prescriptive_ai_monthly_base_number_of_subscription_months': prescriptive_ai_monthly_base_number_of_subscription_months,
-                    'prescriptive_ai_monthly_base_number_of_users': prescriptive_ai_monthly_base_number_of_users,
-                    'prescriptive_ai_monthly_base_number_data_reloads': prescriptive_ai_monthly_base_number_data_reloads,
-                    'prescriptive_ai_monthly_saturation_coef': prescriptive_ai_monthly_saturation_coef,
-                    'metricscaled_monthly_base_price': metricscaled_monthly_base_price,
-                    'metricscaled_monthly_base_number_of_subscription_months': metricscaled_monthly_base_number_of_subscription_months,
-                    'metricscaled_monthly_base_number_of_users': metricscaled_monthly_base_number_of_users,
-                    'metricscaled_monthly_base_number_data_reloads': metricscaled_monthly_base_number_data_reloads,
-                    'metricscaled_monthly_saturation_coef': metricscaled_monthly_saturation_coef,
-                    'driven_erp_monthly_base_price': driven_erp_monthly_base_price,
-                    'driven_erp_monthly_base_number_of_subscription_months': driven_erp_monthly_base_number_of_subscription_months,
-                    'driven_erp_monthly_base_number_of_users': driven_erp_monthly_base_number_of_users,
-                    'driven_erp_monthly_base_number_data_reloads': driven_erp_monthly_base_number_data_reloads,
-                    'driven_erp_monthly_saturation_coef': driven_erp_monthly_saturation_coef,
-                    'driven_edriven_e_commerce_monthly_base_price': driven_edriven_e_commerce_monthly_base_price,
-                    'driven_edriven_e_commerce_monthly_base_number_of_subscription_months': driven_edriven_e_commerce_monthly_base_number_of_subscription_months,
-                    'driven_edriven_e_commerce_monthly_base_number_of_users': driven_edriven_e_commerce_monthly_base_number_of_users,
-                    'driven_edriven_e_commerce_monthly_base_number_data_reloads': driven_edriven_e_commerce_monthly_base_number_data_reloads,
-                    'driven_edriven_e_commerce_monthly_saturation_coef': driven_edriven_e_commerce_monthly_saturation_coef,
+                    else:
+                        prescriptive_ai_monthly_base_cost = 995
+                        prescriptive_ai_monthly_coef = 0.025
+                        prescriptive_ai_monthly_activity_free = 12
+
+                        prescriptive_ai_monthly_base_price = 11
+                        prescriptive_ai_monthly_base_number_of_subscription_months = 1.1
+                        prescriptive_ai_monthly_base_number_of_users = 11
+                        prescriptive_ai_monthly_base_number_data_reloads = 12
+                        prescriptive_ai_monthly_saturation_coef = 3
+
+                    if metricscaled:
+                        metricscaled_monthly_base_cost = metricscaled.monthly_base_cost
+                        metricscaled_monthly_coef = metricscaled.monthly_coef
+                        metricscaled_monthly_activity_free = metricscaled.monthly_activity_free
+
+                        metricscaled_monthly_base_price = metricscaled.base_price
+                        metricscaled_monthly_base_number_of_subscription_months = metricscaled.base_number_of_subscription_months
+                        metricscaled_monthly_base_number_of_users = metricscaled.base_number_of_users
+                        metricscaled_monthly_base_number_data_reloads = metricscaled.base_number_data_reloads
+                        metricscaled_monthly_saturation_coef = metricscaled.saturation_coef
+                    else:
+                        metricscaled_monthly_base_cost = 995
+                        metricscaled_monthly_coef = 0.025
+                        metricscaled_monthly_activity_free = 12
+
+                        metricscaled_monthly_base_price = 3
+                        metricscaled_monthly_base_number_of_subscription_months = 22
+                        metricscaled_monthly_base_number_of_users = 43
+                        metricscaled_monthly_base_number_data_reloads = 45
+                        metricscaled_monthly_saturation_coef = 34
+
+                    if driven_erp:
+                        driven_erp_monthly_base_cost = driven_erp.monthly_base_cost
+                        driven_erp_monthly_coef = driven_erp.monthly_coef
+                        driven_erp_monthly_activity_free = driven_erp.monthly_activity_free
+
+                        driven_erp_monthly_base_price = driven_erp.base_price
+                        driven_erp_monthly_base_number_of_subscription_months = driven_erp.base_number_of_subscription_months
+                        driven_erp_monthly_base_number_of_users = driven_erp.base_number_of_users
+                        driven_erp_monthly_base_number_data_reloads = driven_erp.base_number_data_reloads
+                        driven_erp_monthly_saturation_coef = driven_erp.saturation_coef
+                    else:
+                        driven_erp_monthly_base_cost = 995
+                        driven_erp_monthly_coef = 0.025
+                        driven_erp_monthly_activity_free = 12
+
+                        driven_erp_monthly_base_price = 33
+                        driven_erp_monthly_base_number_of_subscription_months = 2
+                        driven_erp_monthly_base_number_of_users = 9
+                        driven_erp_monthly_base_number_data_reloads = 89
+                        driven_erp_monthly_saturation_coef = 8
+
+                    if driven_edriven_e_commerce:
+                        driven_edriven_e_commerce_monthly_base_cost = driven_edriven_e_commerce.monthly_base_cost
+                        driven_edriven_e_commerce_monthly_coef = driven_edriven_e_commerce.monthly_coef
+                        driven_edriven_e_commerce_monthly_coef_monthly_activity_free = driven_edriven_e_commerce.monthly_activity_free
+
+                        driven_edriven_e_commerce_monthly_base_price = driven_edriven_e_commerce.base_price
+                        driven_edriven_e_commerce_monthly_base_number_of_subscription_months = driven_edriven_e_commerce.base_number_of_subscription_months
+                        driven_edriven_e_commerce_monthly_base_number_of_users = driven_edriven_e_commerce.base_number_of_users
+                        driven_edriven_e_commerce_monthly_base_number_data_reloads = driven_edriven_e_commerce.base_number_data_reloads
+                        driven_edriven_e_commerce_monthly_saturation_coef = driven_edriven_e_commerce.saturation_coef
+
+                    else:
+                        driven_edriven_e_commerce_monthly_base_cost = 995
+                        driven_edriven_e_commerce_monthly_coef = 0.025
+                        driven_edriven_e_commerce_monthly_coef_monthly_activity_free = 12
+
+                        driven_edriven_e_commerce_monthly_base_price = 6
+                        driven_edriven_e_commerce_monthly_base_number_of_subscription_months = 9
+                        driven_edriven_e_commerce_monthly_base_number_of_users = 5
+                        driven_edriven_e_commerce_monthly_base_number_data_reloads = 56
+                        driven_edriven_e_commerce_monthly_saturation_coef = 5
+
+                    user_info = request.user
+                    company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                    subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                    the_subcription = SubscriptionInformation.objects.get(id=sub_id)
+                    subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
+                                                                             payment_status=True).last()
+                    erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
+                                                                       Erp_Info=erp).last()
+
+                    all_company_types = PriceMatrixPerCompanyType.objects.all()
+                    parameters = AdditionalCostCalculationFixParameters.objects.filter().last()
+                    if parameters:
+                        sup_cost = parameters.sup_cost
+                        Train_cost = parameters.train_cost
+                    else:
+                        sup_cost = 25
+                        Train_cost = 500
+                    contex = {
+                        'all_company_types': all_company_types,
+                        'sup_cost': sup_cost,
+                        'Train_cost': Train_cost,
 
 
-                }
-                jk=0
-                return render(request, "upgrade_calculate_subscriptions.html", contex)
-            except Exception as e:
-                d = str(e)
-                messages.warning(request, str(e))
+                        'subcription_one': subcription_one,
+                        'erp': erp,
+                        'erp_active': erp_active,
+                        'campaignscaled': campaignscaled,
+                        'plane_price': plane_price,
+                        'demandscaled': demandscaled,
+                        'demandscaled_monthly_base_cost': package_price_demandscaled_monthly_base_cost,
+                        'demandscaled_monthly_coef': package_price_demandscaled_monthly_coef,
+                        'demandscaled_monthly_activity_free': package_price_demandscaled_monthly_activity_free,
 
-                return render(request, "upgrade_calculate_subscriptions.html")
+                        'acquirescaled': acquirescaled,
+                        'acquirescaled_monthly_base_cost': package_price_acquirescaled_monthly_base_cost,
+                        'acquirescaled_monthly_coef': package_price_acquirescaled_monthly_coef,
+                        'acquirescaled_monthly_activity_free': package_price_acquirescaled_monthly_activity_free,
+
+                        'Product_recommendations': Product_recommendations,
+                        'Product_recommendations_monthly_base_cost': package_price_recommendscaled_monthly_base_cost,
+                        'Product_recommendations_monthly_coef': package_price_recommendscaled_monthly_coef,
+                        'Product_recommendations_monthly_activity_free': package_price_recommendscaled_monthly_activity_free,
+
+                        'prescriptive_ai_monthly_base_cost': prescriptive_ai_monthly_base_cost,
+                        'prescriptive_ai_monthly_coef': prescriptive_ai_monthly_coef,
+                        'prescriptive_ai_monthly_activity_free': prescriptive_ai_monthly_activity_free,
+
+                        'metricscaled_monthly_base_cost': metricscaled_monthly_base_cost,
+                        'metricscaled_monthly_coef': metricscaled_monthly_coef,
+                        'metricscaled_monthly_activity_free': metricscaled_monthly_activity_free,
+
+                        'driven_erp_monthly_base_cost': driven_erp_monthly_base_cost,
+                        'driven_erp_monthly_coef': driven_erp_monthly_coef,
+                        'driven_erp_monthly_activity_free': driven_erp_monthly_activity_free,
+
+                        'driven_edriven_e_commerce_monthly_base_cost': driven_edriven_e_commerce_monthly_base_cost,
+                        'driven_edriven_e_commerce_monthly_coef': driven_edriven_e_commerce_monthly_coef,
+                        'driven_edriven_e_commerce_monthly_coef_monthly_activity_free': driven_edriven_e_commerce_monthly_coef_monthly_activity_free,
+
+                        'CompanyRegistrationInformationId': company_info.id,
+                        'user_info': user_info,
+                        'company_info': company_info,
+                        'subcription': subcription,
+                        'the_subcription': the_subcription,
+                        'sub_id': sub_id,
+
+
+                        'package_price_demandscaled_base_price': package_price_demandscaled_base_price,
+                        'package_price_demandscaled_base_number_of_subscription_months': package_price_demandscaled_base_number_of_subscription_months,
+                        'package_price_demandscaled_base_number_of_users': package_price_demandscaled_base_number_of_users,
+                        'package_price_demandscaled_base_number_data_reloads': package_price_demandscaled_base_number_data_reloads,
+                        'package_price_demandscaled_saturation_coef': package_price_demandscaled_saturation_coef,
+                        'package_price_acquirescaled_base_price': package_price_acquirescaled_base_price,
+                        'package_price_acquirescaled_base_number_of_subscription_months': package_price_acquirescaled_base_number_of_subscription_months,
+                        'package_price_acquirescaled_base_number_of_users': package_price_acquirescaled_base_number_of_users,
+                        'package_price_acquirescaled_base_number_data_reloads': package_price_acquirescaled_base_number_data_reloads,
+                        'package_price_acquirescaled_saturation_coef': package_price_acquirescaled_saturation_coef,
+                        'package_price_recommendscaled_base_price': package_price_recommendscaled_base_price,
+                        'package_price_recommendscaled_base_number_of_subscription_months': package_price_recommendscaled_base_number_of_subscription_months,
+                        'package_price_recommendscaled_base_number_of_users': package_price_recommendscaled_base_number_of_users,
+                        'package_price_recommendscaled_base_number_data_reloads': package_price_recommendscaled_base_number_data_reloads,
+                        'package_price_recommendscaled_saturation_coef': package_price_recommendscaled_saturation_coef,
+                        'prescriptive_ai_monthly_base_price': prescriptive_ai_monthly_base_price,
+                        'prescriptive_ai_monthly_base_number_of_subscription_months': prescriptive_ai_monthly_base_number_of_subscription_months,
+                        'prescriptive_ai_monthly_base_number_of_users': prescriptive_ai_monthly_base_number_of_users,
+                        'prescriptive_ai_monthly_base_number_data_reloads': prescriptive_ai_monthly_base_number_data_reloads,
+                        'prescriptive_ai_monthly_saturation_coef': prescriptive_ai_monthly_saturation_coef,
+                        'metricscaled_monthly_base_price': metricscaled_monthly_base_price,
+                        'metricscaled_monthly_base_number_of_subscription_months': metricscaled_monthly_base_number_of_subscription_months,
+                        'metricscaled_monthly_base_number_of_users': metricscaled_monthly_base_number_of_users,
+                        'metricscaled_monthly_base_number_data_reloads': metricscaled_monthly_base_number_data_reloads,
+                        'metricscaled_monthly_saturation_coef': metricscaled_monthly_saturation_coef,
+                        'driven_erp_monthly_base_price': driven_erp_monthly_base_price,
+                        'driven_erp_monthly_base_number_of_subscription_months': driven_erp_monthly_base_number_of_subscription_months,
+                        'driven_erp_monthly_base_number_of_users': driven_erp_monthly_base_number_of_users,
+                        'driven_erp_monthly_base_number_data_reloads': driven_erp_monthly_base_number_data_reloads,
+                        'driven_erp_monthly_saturation_coef': driven_erp_monthly_saturation_coef,
+                        'driven_edriven_e_commerce_monthly_base_price': driven_edriven_e_commerce_monthly_base_price,
+                        'driven_edriven_e_commerce_monthly_base_number_of_subscription_months': driven_edriven_e_commerce_monthly_base_number_of_subscription_months,
+                        'driven_edriven_e_commerce_monthly_base_number_of_users': driven_edriven_e_commerce_monthly_base_number_of_users,
+                        'driven_edriven_e_commerce_monthly_base_number_data_reloads': driven_edriven_e_commerce_monthly_base_number_data_reloads,
+                        'driven_edriven_e_commerce_monthly_saturation_coef': driven_edriven_e_commerce_monthly_saturation_coef,
+
+
+                    }
+                    jk=0
+                    return render(request, "upgrade_calculate_subscriptions.html", contex)
+                except Exception as e:
+                    d = str(e)
+                    messages.warning(request, str(e))
+
+                    return render(request, "upgrade_calculate_subscriptions.html")
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -1019,33 +1064,65 @@ def Payment_Submit_for_upgrade(request):
 
                             analitics_info.save()
 
-                        print(f"Product ID: {product_id}, Price ID: {price_id}, Customer: {customer_id}, Subscription: {subscription.id}")
+                        try:
+                            # for admin
+                            subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
+                            user_info = request.user
+                            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
 
-                        user_info = request.user
-                        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-                        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-                        sub_id_info = SubscriptionInformation.objects.filter(id=sub_id).last()
-                        erp_info = Erp_Information.objects.filter(subscription_info = sub_id_info).last()
-                        contex = {
-                            'user_info': user_info,
-                            'company_info': company_info,
-                            'subcription': subcription,
-                            'sub_id': sub_id,
-                            'sub_id_info': sub_id_info,
-                            'timezone_all': timezone_all,
-                            'erp_info': erp_info,
-                        }
-                        return render(request, 'erp_info_for_home_for_upgrade.html', contex)
+                            mass = f"subscription id is: {subcription_pk.id} and user  is {user_info} and company info: Id {company_info.id} and company name {company_info.file_number}"
+                            email = settings.ADMIN_EMAIL_TO_GET_MESSAGE
+                            subject = "Your New Subscriber info for Creating Odoo instance !"
+                            message = mass
+                            recipient_list = [email]
+
+                            res = send_email_info(subject, message, recipient_list)
+
+                        except Exception as e:
+                            rea = str(e)
+                            messages.warning(request, f"Admin Massage not sent reasone {rea}")
+
+                        try:
+                            # for user massage
+
+                            email = user_info.username
+                            subject = "From Kintah Platform"
+                            message = "We Sent a Request to Admin "
+                            recipient_list = [email]
+
+                            res = send_email_info(subject, message, recipient_list)
+                        except Exception as e:
+                            rea = str(e)
+                            messages.success(request, f"Admin Massage not sent reasone {rea}")
+                        return redirect('home')
+                        
+                        # print(f"Product ID: {product_id}, Price ID: {price_id}, Customer: {customer_id}, Subscription: {subscription.id}")
+                        # 
+                        # user_info = request.user
+                        # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                        # subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                        # sub_id_info = SubscriptionInformation.objects.filter(id=sub_id).last()
+                        # erp_info = Erp_Information.objects.filter(subscription_info = sub_id_info).last()
+                        # contex = {
+                        #     'user_info': user_info,
+                        #     'company_info': company_info,
+                        #     'subcription': subcription,
+                        #     'sub_id': sub_id,
+                        #     'sub_id_info': sub_id_info,
+                        #     'timezone_all': timezone_all,
+                        #     'erp_info': erp_info,
+                        # }
+                        # return render(request, 'erp_info_for_home_for_upgrade.html', contex)
 
 
                         # return redirect('home_info')
 
                     else:
-                        return HttpResponse("Failed to collect upfront payment.")
+                        messages.info(request, "Try again !")
                 else:
-                    return HttpResponse("Failed to create customer.")
+                    messages.info(request, "Try again !")
             else:
-                return HttpResponse("Failed to create Product and Price.")
+                messages.info(request, "Try again !")
 
         except stripe.error.CardError as e:
             messages.info(request, f"{e.error.message}")
@@ -1118,37 +1195,42 @@ def Payment_Submit_for_upgrade(request):
                 'messages': messages,
             }
             return render(request, 'payment_home.html', context)
-        return redirect('shop_dashboard', analytics_services_info_id)
+        # return redirect('shop_dashboard', analytics_services_info_id)
+        return redirect('home_info')
     else:
         return redirect('login_info')
 
 
 def cancel_subscription(request, pk):
     if request.user.is_authenticated:
-        if request.method == 'POST':
-            sub_id = request.POST.get('sub_id')
-            subcription = SubscriptionInformation.objects.get(id=sub_id)
-            subcription.delete()
+        try:
+            if request.method == 'POST':
+                sub_id = request.POST.get('sub_id')
+                subcription = SubscriptionInformation.objects.get(id=sub_id)
+                subcription.delete()
 
 
 
-            messages.success(request, "Cancel Subscription Successfully! ")
+                messages.success(request, "Cancel Subscription Successfully! ")
 
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-        contex = {
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
-            'subcription_one': subcription_one,
-            'erp': erp,
-            'erp_active': erp_active,
-        }
-        return render(request, 'cancel_subscription.html', contex)
+            user_info = request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            contex = {
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
+                'subcription_one': subcription_one,
+                'erp': erp,
+                'erp_active': erp_active,
+            }
+            return render(request, 'cancel_subscription.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -1212,6 +1294,10 @@ def activate_my_erp(request, pk):
             'subcription_one': subcription_one,
             'erp_active': erp_active,
         }
+        try:
+            d = erp_active.company_id
+        except:
+            messages.warning(request, 'Very Soon Admin will Active the ERP After That You Can See Your Info Below!')
         return render(request, 'activate_my_erp.html', contex)
     else:
         return redirect('login_info')
@@ -1245,57 +1331,61 @@ def activate_my_erp_info(request, pk):
 
 def add_user_with_manager_role(request, pk):
     if request.user.is_authenticated:
-        if request.method == 'POST':
-            try:
-                erp_active_id = request.POST.get('erp_active_id')
-                user_name = request.POST.get('user_name')
-                user_login = request.POST.get('user_login')
-                user_email = request.POST.get('user_email')
-                new_password = request.POST.get('new_password')
+        try:
+            if request.method == 'POST':
+                try:
+                    erp_active_id = request.POST.get('erp_active_id')
+                    user_name = request.POST.get('user_name')
+                    user_login = request.POST.get('user_login')
+                    user_email = request.POST.get('user_email')
+                    new_password = request.POST.get('new_password')
 
-                erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
-                if erp_active_info.user_count > 0 :
-                    remain = erp_active_info.user_count
-                    erp_active_info.user_count = remain-1
-                    company_id = erp_active_info.company_id
-                    website_id = erp_active_info.website_id
-
-                    erp_active_info.save()
-                    GROUP_NAME = 'Manager'
-
-                    res = create_user_manager_role(user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
-
-                    if res == None:
+                    erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
+                    if erp_active_info.user_count > 0 :
                         remain = erp_active_info.user_count
-                        erp_active_info.user_count = remain + 1
+                        erp_active_info.user_count = remain-1
+                        company_id = erp_active_info.company_id
+                        website_id = erp_active_info.website_id
+
                         erp_active_info.save()
-                        messages.warning(request,'Manager is  not created ! change your email and login and try again !')
+                        GROUP_NAME = 'Manager'
 
+                        res = create_user_manager_role(user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
+
+                        if res == None:
+                            remain = erp_active_info.user_count
+                            erp_active_info.user_count = remain + 1
+                            erp_active_info.save()
+                            messages.warning(request,'Manager is  not created ! change your email and login and try again !')
+
+                        else:
+                            messages.warning(request,'Manager is created !')
                     else:
-                        messages.warning(request,'Manager is created !')
-                else:
-                    messages.warning(request,'your user create limit is over !')
-            except Exception as e:
-                messages.warning(request, str(e))
+                        messages.warning(request,'your user create limit is over !')
+                except Exception as e:
+                    messages.warning(request, str(e))
 
 
 
 
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info = erp).last()
-        contex = {
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
-            'erp': erp,
-            'subcription_one': subcription_one,
-            'erp_active': erp_active,
-        }
-        return render(request, 'add_user_with_manager_role.html', contex)
+            user_info = request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info = erp).last()
+            contex = {
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
+                'erp': erp,
+                'subcription_one': subcription_one,
+                'erp_active': erp_active,
+            }
+            return render(request, 'add_user_with_manager_role.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -1303,56 +1393,60 @@ def add_user_with_manager_role(request, pk):
 
 def add_user_without_manager_role(request, pk):
     if request.user.is_authenticated:
-        if request.method == 'POST':
-            try:
-                erp_active_id = request.POST.get('erp_active_id')
-                user_name = request.POST.get('user_name')
-                user_login = request.POST.get('user_login')
-                user_email = request.POST.get('user_email')
-                new_password = request.POST.get('new_password')
+        try:
+            if request.method == 'POST':
+                try:
+                    erp_active_id = request.POST.get('erp_active_id')
+                    user_name = request.POST.get('user_name')
+                    user_login = request.POST.get('user_login')
+                    user_email = request.POST.get('user_email')
+                    new_password = request.POST.get('new_password')
 
-                erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
-                if erp_active_info.user_count > 0 :
-                    remain = erp_active_info.user_count
-                    erp_active_info.user_count = remain-1
-                    company_id = erp_active_info.company_id
-                    website_id = erp_active_info.website_id
-
-                    erp_active_info.save()
-                    GROUP_NAME = 'User'
-
-                    res = create_user_manager_role(user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
-
-                    if res == None:
+                    erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
+                    if erp_active_info.user_count > 0 :
                         remain = erp_active_info.user_count
-                        erp_active_info.user_count = remain + 1
+                        erp_active_info.user_count = remain-1
+                        company_id = erp_active_info.company_id
+                        website_id = erp_active_info.website_id
+
                         erp_active_info.save()
-                        messages.warning(request,'User is  not created ! change your email and login and try again !')
+                        GROUP_NAME = 'User'
 
+                        res = create_user_manager_role(user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
+
+                        if res == None:
+                            remain = erp_active_info.user_count
+                            erp_active_info.user_count = remain + 1
+                            erp_active_info.save()
+                            messages.warning(request,'User is  not created ! change your email and login and try again !')
+
+                        else:
+                            messages.warning(request,'User is created !')
                     else:
-                        messages.warning(request,'User is created !')
-                else:
-                    messages.warning(request,'your user create limit is over !')
-            except Exception as e:
-                messages.warning(request, str(e))
+                        messages.warning(request,'your user create limit is over !')
+                except Exception as e:
+                    messages.warning(request, str(e))
 
 
 
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info = erp).last()
-        contex = {
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
-            'erp': erp,
-            'subcription_one': subcription_one,
-            'erp_active': erp_active,
-        }
-        return render(request, 'add_user_without_manager_role.html', contex)
+            user_info = request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info = erp).last()
+            contex = {
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
+                'erp': erp,
+                'subcription_one': subcription_one,
+                'erp_active': erp_active,
+            }
+            return render(request, 'add_user_without_manager_role.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -1492,7 +1586,7 @@ def update_user_roles_view(request):
                     else:
                         messages.warning(request, 'Failed to update user roles !')
                         return redirect('update_user_role', pk=1)
-        except:
+        except Exception as e:
             messages.warning(request, str(e))
             return redirect('home')
 
@@ -1880,24 +1974,28 @@ def export_product_and_image(request, pk):
 
 def dashboard(request, pk):
     if request.user.is_authenticated:
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-        subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
-        erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
-        contex = {
-            'subcription_one': subcription_one,
-            'erp': erp,
-            'erp_active': erp_active,
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
+        try:
+            user_info = request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            contex = {
+                'subcription_one': subcription_one,
+                'erp': erp,
+                'erp_active': erp_active,
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
 
-        }
+            }
 
 
-        return render(request, 'dashboard.html', contex)
+            return render(request, 'dashboard.html', contex)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
 
@@ -2389,106 +2487,110 @@ def new_subscriptions(request, pk):
 
 def submit_subscription_inside_home(request):
     if request.user.is_authenticated:
-        CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
+        try:
+            CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
 
-        demandscaled = request.POST.get('demandscaled')
-        if demandscaled == 'on':
-            demandscaled = True
-        else:
+            demandscaled = request.POST.get('demandscaled')
+            if demandscaled == 'on':
+                demandscaled = True
+            else:
 
-            demandscaled = False
-        acquirescaled = request.POST.get('acquirescaled')
-        if acquirescaled == 'on':
-            acquirescaled = True
-        else:
-            acquirescaled = False
-        Product_recommendations = request.POST.get('Product_recommendations')
-        if Product_recommendations == 'on':
-            Product_recommendations = True
-        else:
-            Product_recommendations = False
+                demandscaled = False
+            acquirescaled = request.POST.get('acquirescaled')
+            if acquirescaled == 'on':
+                acquirescaled = True
+            else:
+                acquirescaled = False
+            Product_recommendations = request.POST.get('Product_recommendations')
+            if Product_recommendations == 'on':
+                Product_recommendations = True
+            else:
+                Product_recommendations = False
 
-        plane_price = request.POST.get('plane_price')
-        campaignscaled = request.POST.get('campaignscaled')
-        if campaignscaled == 'on':
-            campaignscaled = True
-        else:
-            campaignscaled = False
+            plane_price = request.POST.get('plane_price')
+            campaignscaled = request.POST.get('campaignscaled')
+            if campaignscaled == 'on':
+                campaignscaled = True
+            else:
+                campaignscaled = False
 
-        all_amount_sum = request.POST.get('all_amount_sum')
-        installment_amount = request.POST.get('installment_amount')
-        now_pay = request.POST.get('installmentsCount')
+            all_amount_sum = request.POST.get('all_amount_sum')
+            installment_amount = request.POST.get('installment_amount')
+            now_pay = request.POST.get('installmentsCount')
 
-        month_to_access = request.POST.get('month_to_access')
-        number_of_times = request.POST.get('number_of_times')
-        expected_users = request.POST.get('expected_users')
+            month_to_access = request.POST.get('month_to_access')
+            number_of_times = request.POST.get('number_of_times')
+            expected_users = request.POST.get('expected_users')
 
-        training_hours = request.POST.get('training_hours')
-        support_hours = request.POST.get('support_hours')
+            training_hours = request.POST.get('training_hours')
+            support_hours = request.POST.get('support_hours')
 
-        payment_type_get = request.POST.get('payment_type_get')
-        total_amount = request.POST.get('total_amount')
-        installment_amount = request.POST.get('installment_amount')
-        print('total_amount')
-        print(installment_amount)
-        print('total_amount')
-        installmentsCount = request.POST.get('installmentsCount')
-        if payment_type_get == "installments":
-            total = float(installmentsCount)
-        else:
-            total = float(installmentsCount)
-
-
-
-        com_id = CompanyRegistrationInformation.objects.get(id=CompanyRegistrationInformationId)
-
-        sub = SubscriptionInformation(
-            company_info=com_id,
-            demandscaled=demandscaled,
-            acquirescaled=acquirescaled,
-            product_recommendations=Product_recommendations,
-            campaignscaled=campaignscaled,
-            services_plan_cost=plane_price,
-
-            number_of_month_to_access=month_to_access,
-            number_of_times_ERP=number_of_times,
-            number_of_expected_users_of_the_platform=expected_users,
-            number_of_training_per_month=training_hours,
-            number_of_support_hours_per_month=support_hours,
-            platform_total_payment=total_amount,
-            paid_payment=total,
-            services_plan_cost_and_platform_total_payment=all_amount_sum,
-        )
-        sub.save()
-
-        user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-
-        publishable_key = settings.STRIPE_PUBLIC_KEY
-
-        print('now pay')
-        print(total)
-        print('services_plan_cost_and_platform_total_payment')
-        print(all_amount_sum)
-        print('monthly')
-        print(installment_amount)
-        print('installment_amount')
+            payment_type_get = request.POST.get('payment_type_get')
+            total_amount = request.POST.get('total_amount')
+            installment_amount = request.POST.get('installment_amount')
+            print('total_amount')
+            print(installment_amount)
+            print('total_amount')
+            installmentsCount = request.POST.get('installmentsCount')
+            if payment_type_get == "installments":
+                total = float(installmentsCount)
+            else:
+                total = float(installmentsCount)
 
 
-        context = {
-            'analytics_services_info_id': sub.id,
-            'publishable_key': publishable_key,
-            'total_amount': total,
-            'user_info': user_info,
-            'company_info': company_info,
-            'subcription': subcription,
 
-            'services_plan_cost_and_platform_total_payment': all_amount_sum,
-            'installment_amount': installment_amount,
-            'now_pay': total,
-        }
-        return render(request, 'payment_home_for_home.html', context)
+            com_id = CompanyRegistrationInformation.objects.get(id=CompanyRegistrationInformationId)
+
+            sub = SubscriptionInformation(
+                company_info=com_id,
+                demandscaled=demandscaled,
+                acquirescaled=acquirescaled,
+                product_recommendations=Product_recommendations,
+                campaignscaled=campaignscaled,
+                services_plan_cost=plane_price,
+
+                number_of_month_to_access=month_to_access,
+                number_of_times_ERP=number_of_times,
+                number_of_expected_users_of_the_platform=expected_users,
+                number_of_training_per_month=training_hours,
+                number_of_support_hours_per_month=support_hours,
+                platform_total_payment=total_amount,
+                paid_payment=total,
+                services_plan_cost_and_platform_total_payment=all_amount_sum,
+            )
+            sub.save()
+
+            user_info = request.user
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+
+            publishable_key = settings.STRIPE_PUBLIC_KEY
+
+            print('now pay')
+            print(total)
+            print('services_plan_cost_and_platform_total_payment')
+            print(all_amount_sum)
+            print('monthly')
+            print(installment_amount)
+            print('installment_amount')
+
+
+            context = {
+                'analytics_services_info_id': sub.id,
+                'publishable_key': publishable_key,
+                'total_amount': total,
+                'user_info': user_info,
+                'company_info': company_info,
+                'subcription': subcription,
+
+                'services_plan_cost_and_platform_total_payment': all_amount_sum,
+                'installment_amount': installment_amount,
+                'now_pay': total,
+            }
+            return render(request, 'payment_home_for_home.html', context)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('home')
     else:
         return redirect('login_info')
     
@@ -2509,92 +2611,144 @@ def index(request):
 #
 #     return render(request, 'registration.html')
 
+# def forgot_password(request):
+#     if request.method == 'POST':
+#         email = request.POST.get('email')
+#         list_mail = []
+#         get_recipient_list = list_mail.append(email)
+#         get_subject = "OTP form the Kintah"
+#         otp = generate_otp()
+#         print('otp')
+#         print(otp)
+#         print("otp")
+#         get_massage = f"your otp is {otp}"
+#         res = send_email_info(get_subject, get_massage, get_recipient_list)
+#         # if res == 'Done':
+#         if res:
+#             contex = {
+#                 'otp':otp,
+#                 'email':email,
+#
+#             }
+#             return render(request, 'enter_new_password.html', contex)
+#         else:
+#             messages.success(request, "please try again later . ")
+#             return redirect('forgot_password')
+#
+#     return render(request, 'forgot_password.html')
+
 def forgot_password(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
-        list_mail = []
-        get_recipient_list = list_mail.append(email)
-        get_subject = "OTP form the Kintah"
-        otp = generate_otp()
-        print('otp')
-        print(otp)
-        print("otp")
-        get_massage = f"your otp is {otp}"
-        res = send_email_info(get_subject, get_massage, get_recipient_list)
-        # if res == 'Done':
-        if res:
-            contex = {
-                'otp':otp,
-                'email':email,
+        try:
+            email = request.POST.get('email')
+            if not email:
+                messages.error(request, "Email is required.")
+                return redirect('forgot_password')
+            try:
+                u = User.objects.get(username=email)
+            except Exception as e :
+                messages.error(request, str(e))
+                return redirect('forgot_password')
 
-            }
-            return render(request, 'enter_new_password.html', contex)
-        else:
-            messages.success(request, "please try again later . ")
+
+
+            # Assuming generate_otp() is defined and returns the OTP as a string
+            otp = generate_otp()
+
+            subject = "OTP from Kintah"
+            message = f"Your OTP is {otp}"
+            recipient_list = [email]
+
+            res = send_email_info(subject, message, recipient_list)
+
+            if res == 'Done':
+                context = {
+                    'otp': otp,
+                    'email': email,
+                }
+                return render(request, 'enter_new_password.html', context)
+            else:
+                messages.error(request, "There was an error sending the email. Please try again later.")
+                return redirect('forgot_password')
+        except Exception as e:
+            messages.warning(request, str(e))
             return redirect('forgot_password')
 
     return render(request, 'forgot_password.html')
 
 
+
 def set_new_password(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        u = User.objects.get(username=email)
-        u.set_password(password)
-        u.save()
-        messages.success(request, "Password reset successfully.")
-        return redirect('login_info')
+        try:
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            u = User.objects.get(username=email)
+            u.set_password(password)
+            u.save()
+            messages.success(request, "Password reset successfully.")
+            return redirect('login_info')
+        except Exception as e:
+            messages.warning(request, str(e))
+            return redirect('forgot_password')
 
 
     return render(request, 'forgot_password.html')
 
 
 def login_info(request):
-    if request.user.is_authenticated:
-        return redirect('home_info')
-    if request.method == 'POST':
-        get_email = request.POST['email']
-        get_password = request.POST['password']
+    try:
+        if request.user.is_authenticated:
+            return redirect('home_info')
+        if request.method == 'POST':
+            get_email = request.POST['email']
+            get_password = request.POST['password']
 
 
-        user = authenticate(request, username=get_email, password=get_password)
-        if user is not None:
-            login(request, user)
-            request.session['user_id'] = user.id
-            request.session['username'] = user.username
+            user = authenticate(request, username=get_email, password=get_password)
+            if user is not None:
+                login(request, user)
+                request.session['user_id'] = user.id
+                request.session['username'] = user.username
 
-            if request.POST.get('remember-me'):
-                messages.success(request, "You have been successfully logged in.")
-                response =  redirect('home_info')
-                response.set_cookie('set_email', get_email)
-                response.set_cookie('set_password', get_password)
-                return response
+                if request.POST.get('remember-me'):
+                    messages.success(request, "You have been successfully logged in.")
+                    response =  redirect('home_info')
+                    response.set_cookie('set_email', get_email)
+                    response.set_cookie('set_password', get_password)
+                    return response
+                else:
+                    messages.success(request, "You have been successfully logged in.")
+                    return redirect('home_info')
             else:
-                messages.success(request, "You have been successfully logged in.")
-                return redirect('home_info')
-        else:
-            messages.error(request, "Invalid login credentials. Please try again.")
-            return redirect('login_info')
-    if request.COOKIES.get('set_email'):
-        contex = {
-            'set_email':request.COOKIES['set_email'],
-            'set_password':request.COOKIES['set_password']
-        }
-        return render(request, 'login.html', contex)
-    return render(request, 'login.html')
+                messages.error(request, "Invalid login credentials. Please try again.")
+                return redirect('login_info')
+        if request.COOKIES.get('set_email'):
+            contex = {
+                'set_email':request.COOKIES['set_email'],
+                'set_password':request.COOKIES['set_password']
+            }
+            return render(request, 'login.html', contex)
+        return render(request, 'login.html')
+    except Exception as e:
+        messages.warning(request, str(e))
+        return redirect('home_info')
 
 
 
 
 def user_logout(request):
-    if 'user_id' in request.session:
-        del request.session['user_id']
-    if 'username' in request.session:
-        del request.session['username']
-    logout(request)
-    messages.success(request, "You have been successfully logged out.")
-    return redirect('login_info')
+    try:
+        if 'user_id' in request.session:
+            del request.session['user_id']
+        if 'username' in request.session:
+            del request.session['username']
+        logout(request)
+        messages.success(request, "You have been successfully logged out.")
+        return redirect('login_info')
+    except Exception as e:
+        messages.warning(request, str(e))
+        return redirect('home')
 
 
 def subscription_plan(request):
@@ -2758,278 +2912,283 @@ def user_registration(request):
 
 
 def calculate_amount_to_pay(request):
-    if request.method == 'POST':
-        demandscaled = request.POST.get('demandscaled')
-        acquirescaled = request.POST.get('acquirescaled')
-        Product_recommendations = request.POST.get('Product_recommendations')
-        campaignscaled = request.POST.get('campaignscaled')
-        plane_price = request.POST.get('plane_price')
+    try:
+        if request.method == 'POST':
+            demandscaled = request.POST.get('demandscaled')
+            acquirescaled = request.POST.get('acquirescaled')
+            Product_recommendations = request.POST.get('Product_recommendations')
+            campaignscaled = request.POST.get('campaignscaled')
+            plane_price = request.POST.get('plane_price')
 
-        CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
-        try:
-            all_company_types = PriceMatrixPerCompanyType.objects.all()
+            CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
+            try:
+                all_company_types = PriceMatrixPerCompanyType.objects.all()
 
-            package_price_demandscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="demandscaled").last()
-            package_price_acquirescaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="acquirescaled").last()
-            package_price_recommendscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="recommendscaled").last()
+                package_price_demandscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="demandscaled").last()
+                package_price_acquirescaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="acquirescaled").last()
+                package_price_recommendscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="recommendscaled").last()
 
-            prescriptive_ai = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="(prescriptive_ai").last()
-            metricscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="metricscaled").last()
-            driven_erp = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="driven_erp").last()
-            driven_edriven_e_commerce = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="driven_edriven_e_commerce").last()
-
-
-            if package_price_demandscaled:
-                package_price_demandscaled_monthly_base_cost=package_price_demandscaled.monthly_base_cost
-                package_price_demandscaled_monthly_coef = package_price_demandscaled.monthly_coef
-                package_price_demandscaled_monthly_activity_free = package_price_demandscaled.monthly_activity_free
-
-                package_price_demandscaled_base_price = package_price_demandscaled.base_price
-                package_price_demandscaled_base_number_of_subscription_months = package_price_demandscaled.base_number_of_subscription_months
-                package_price_demandscaled_base_number_of_users = package_price_demandscaled.base_number_of_users
-                package_price_demandscaled_base_number_data_reloads = package_price_demandscaled.base_number_data_reloads
-                package_price_demandscaled_saturation_coef = package_price_demandscaled.saturation_coef
-
-            else:
-                package_price_demandscaled_monthly_base_cost = 495
-                package_price_demandscaled_monthly_coef = 0.025
-                package_price_demandscaled_monthly_activity_free = 12
-
-                package_price_demandscaled_base_price = 2
-                package_price_demandscaled_base_number_of_subscription_months = 4.9
-                package_price_demandscaled_base_number_of_users = 6
-                package_price_demandscaled_base_number_data_reloads = 6
-                package_price_demandscaled_saturation_coef = 8
+                prescriptive_ai = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="(prescriptive_ai").last()
+                metricscaled = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="metricscaled").last()
+                driven_erp = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="driven_erp").last()
+                driven_edriven_e_commerce = AdministrationkintahSubscriptionPackagePrice.objects.filter(app="driven_edriven_e_commerce").last()
 
 
-            if package_price_acquirescaled:
-                package_price_acquirescaled_monthly_base_cost = package_price_acquirescaled.monthly_base_cost
-                package_price_acquirescaled_monthly_coef = package_price_acquirescaled.monthly_coef
-                package_price_acquirescaled_monthly_activity_free = package_price_acquirescaled.monthly_activity_free
+                if package_price_demandscaled:
+                    package_price_demandscaled_monthly_base_cost=package_price_demandscaled.monthly_base_cost
+                    package_price_demandscaled_monthly_coef = package_price_demandscaled.monthly_coef
+                    package_price_demandscaled_monthly_activity_free = package_price_demandscaled.monthly_activity_free
 
-                package_price_acquirescaled_base_price = package_price_acquirescaled.base_price
-                package_price_acquirescaled_base_number_of_subscription_months = package_price_acquirescaled.base_number_of_subscription_months
-                package_price_acquirescaled_base_number_of_users = package_price_acquirescaled.base_number_of_users
-                package_price_acquirescaled_base_number_data_reloads = package_price_acquirescaled.base_number_data_reloads
-                package_price_acquirescaled_saturation_coef = package_price_acquirescaled.saturation_coef
+                    package_price_demandscaled_base_price = package_price_demandscaled.base_price
+                    package_price_demandscaled_base_number_of_subscription_months = package_price_demandscaled.base_number_of_subscription_months
+                    package_price_demandscaled_base_number_of_users = package_price_demandscaled.base_number_of_users
+                    package_price_demandscaled_base_number_data_reloads = package_price_demandscaled.base_number_data_reloads
+                    package_price_demandscaled_saturation_coef = package_price_demandscaled.saturation_coef
 
-            else:
-                package_price_acquirescaled_monthly_base_cost = 495
-                package_price_acquirescaled_monthly_coef = 0.025
-                package_price_acquirescaled_monthly_activity_free = 12
+                else:
+                    package_price_demandscaled_monthly_base_cost = 495
+                    package_price_demandscaled_monthly_coef = 0.025
+                    package_price_demandscaled_monthly_activity_free = 12
 
-                package_price_acquirescaled_base_price = 22
-                package_price_acquirescaled_base_number_of_subscription_months = 2.9
-                package_price_acquirescaled_base_number_of_users = 3
-                package_price_acquirescaled_base_number_data_reloads = 2.7
-                package_price_acquirescaled_saturation_coef = 2.3
-
-            if package_price_recommendscaled:
-                package_price_recommendscaled_monthly_base_cost = package_price_recommendscaled.monthly_base_cost
-                package_price_recommendscaled_monthly_coef = package_price_recommendscaled.monthly_coef
-                package_price_recommendscaled_monthly_activity_free = package_price_recommendscaled.monthly_activity_free
-
-                package_price_recommendscaled_base_price = package_price_recommendscaled.base_price
-                package_price_recommendscaled_base_number_of_subscription_months = package_price_recommendscaled.base_number_of_subscription_months
-                package_price_recommendscaled_base_number_of_users = package_price_recommendscaled.base_number_of_users
-                package_price_recommendscaled_base_number_data_reloads = package_price_recommendscaled.base_number_data_reloads
-                package_price_recommendscaled_saturation_coef = package_price_recommendscaled.saturation_coef
-
-            else:
-                package_price_recommendscaled_monthly_base_cost = 495.99
-                package_price_recommendscaled_monthly_coef = 0.025
-                package_price_recommendscaled_monthly_activity_free = 12
-
-                package_price_recommendscaled_base_price = 2
-                package_price_recommendscaled_base_number_of_subscription_months = 2.9
-                package_price_recommendscaled_base_number_of_users = 2
-                package_price_recommendscaled_base_number_data_reloads = 2
-                package_price_recommendscaled_saturation_coef = 5.9
+                    package_price_demandscaled_base_price = 2
+                    package_price_demandscaled_base_number_of_subscription_months = 4.9
+                    package_price_demandscaled_base_number_of_users = 6
+                    package_price_demandscaled_base_number_data_reloads = 6
+                    package_price_demandscaled_saturation_coef = 8
 
 
-            if prescriptive_ai:
-                prescriptive_ai_monthly_base_cost=prescriptive_ai.monthly_base_cost
-                prescriptive_ai_monthly_coef = prescriptive_ai.monthly_coef
-                prescriptive_ai_monthly_activity_free = prescriptive_ai.monthly_activity_free
+                if package_price_acquirescaled:
+                    package_price_acquirescaled_monthly_base_cost = package_price_acquirescaled.monthly_base_cost
+                    package_price_acquirescaled_monthly_coef = package_price_acquirescaled.monthly_coef
+                    package_price_acquirescaled_monthly_activity_free = package_price_acquirescaled.monthly_activity_free
 
-                prescriptive_ai_monthly_base_price = prescriptive_ai.base_price
-                prescriptive_ai_monthly_base_number_of_subscription_months = prescriptive_ai.base_number_of_subscription_months
-                prescriptive_ai_monthly_base_number_of_users = prescriptive_ai.base_number_of_users
-                prescriptive_ai_monthly_base_number_data_reloads = prescriptive_ai.base_number_data_reloads
-                prescriptive_ai_monthly_saturation_coef = prescriptive_ai.saturation_coef
+                    package_price_acquirescaled_base_price = package_price_acquirescaled.base_price
+                    package_price_acquirescaled_base_number_of_subscription_months = package_price_acquirescaled.base_number_of_subscription_months
+                    package_price_acquirescaled_base_number_of_users = package_price_acquirescaled.base_number_of_users
+                    package_price_acquirescaled_base_number_data_reloads = package_price_acquirescaled.base_number_data_reloads
+                    package_price_acquirescaled_saturation_coef = package_price_acquirescaled.saturation_coef
 
-            else:
-                prescriptive_ai_monthly_base_cost = 995
-                prescriptive_ai_monthly_coef = 0.025
-                prescriptive_ai_monthly_activity_free = 12
+                else:
+                    package_price_acquirescaled_monthly_base_cost = 495
+                    package_price_acquirescaled_monthly_coef = 0.025
+                    package_price_acquirescaled_monthly_activity_free = 12
 
-                prescriptive_ai_monthly_base_price = 11
-                prescriptive_ai_monthly_base_number_of_subscription_months = 1.1
-                prescriptive_ai_monthly_base_number_of_users = 11
-                prescriptive_ai_monthly_base_number_data_reloads = 12
-                prescriptive_ai_monthly_saturation_coef = 3
+                    package_price_acquirescaled_base_price = 22
+                    package_price_acquirescaled_base_number_of_subscription_months = 2.9
+                    package_price_acquirescaled_base_number_of_users = 3
+                    package_price_acquirescaled_base_number_data_reloads = 2.7
+                    package_price_acquirescaled_saturation_coef = 2.3
 
-            if metricscaled:
-                metricscaled_monthly_base_cost=metricscaled.monthly_base_cost
-                metricscaled_monthly_coef = metricscaled.monthly_coef
-                metricscaled_monthly_activity_free = metricscaled.monthly_activity_free
+                if package_price_recommendscaled:
+                    package_price_recommendscaled_monthly_base_cost = package_price_recommendscaled.monthly_base_cost
+                    package_price_recommendscaled_monthly_coef = package_price_recommendscaled.monthly_coef
+                    package_price_recommendscaled_monthly_activity_free = package_price_recommendscaled.monthly_activity_free
 
-                metricscaled_monthly_base_price = metricscaled.base_price
-                metricscaled_monthly_base_number_of_subscription_months = metricscaled.base_number_of_subscription_months
-                metricscaled_monthly_base_number_of_users = metricscaled.base_number_of_users
-                metricscaled_monthly_base_number_data_reloads = metricscaled.base_number_data_reloads
-                metricscaled_monthly_saturation_coef = metricscaled.saturation_coef
+                    package_price_recommendscaled_base_price = package_price_recommendscaled.base_price
+                    package_price_recommendscaled_base_number_of_subscription_months = package_price_recommendscaled.base_number_of_subscription_months
+                    package_price_recommendscaled_base_number_of_users = package_price_recommendscaled.base_number_of_users
+                    package_price_recommendscaled_base_number_data_reloads = package_price_recommendscaled.base_number_data_reloads
+                    package_price_recommendscaled_saturation_coef = package_price_recommendscaled.saturation_coef
 
-            else:
-                metricscaled_monthly_base_cost = 995
-                metricscaled_monthly_coef = 0.025
-                metricscaled_monthly_activity_free = 12
+                else:
+                    package_price_recommendscaled_monthly_base_cost = 495.99
+                    package_price_recommendscaled_monthly_coef = 0.025
+                    package_price_recommendscaled_monthly_activity_free = 12
 
-                metricscaled_monthly_base_price = 3
-                metricscaled_monthly_base_number_of_subscription_months = 22
-                metricscaled_monthly_base_number_of_users = 43
-                metricscaled_monthly_base_number_data_reloads = 45
-                metricscaled_monthly_saturation_coef = 34
-
-            if driven_erp:
-                driven_erp_monthly_base_cost=driven_erp.monthly_base_cost
-                driven_erp_monthly_coef = driven_erp.monthly_coef
-                driven_erp_monthly_activity_free = driven_erp.monthly_activity_free
-
-                driven_erp_monthly_base_price = driven_erp.base_price
-                driven_erp_monthly_base_number_of_subscription_months = driven_erp.base_number_of_subscription_months
-                driven_erp_monthly_base_number_of_users = driven_erp.base_number_of_users
-                driven_erp_monthly_base_number_data_reloads = driven_erp.base_number_data_reloads
-                driven_erp_monthly_saturation_coef = driven_erp.saturation_coef
-
-            else:
-                driven_erp_monthly_base_cost = 995
-                driven_erp_monthly_coef = 0.025
-                driven_erp_monthly_activity_free = 12
-
-                driven_erp_monthly_base_price = 33
-                driven_erp_monthly_base_number_of_subscription_months = 2
-                driven_erp_monthly_base_number_of_users = 9
-                driven_erp_monthly_base_number_data_reloads = 89
-                driven_erp_monthly_saturation_coef = 8
+                    package_price_recommendscaled_base_price = 2
+                    package_price_recommendscaled_base_number_of_subscription_months = 2.9
+                    package_price_recommendscaled_base_number_of_users = 2
+                    package_price_recommendscaled_base_number_data_reloads = 2
+                    package_price_recommendscaled_saturation_coef = 5.9
 
 
-            if driven_edriven_e_commerce:
-                driven_edriven_e_commerce_monthly_base_cost=driven_edriven_e_commerce.monthly_base_cost
-                driven_edriven_e_commerce_monthly_coef = driven_edriven_e_commerce.monthly_coef
-                driven_edriven_e_commerce_monthly_coef_monthly_activity_free = driven_edriven_e_commerce.monthly_activity_free
+                if prescriptive_ai:
+                    prescriptive_ai_monthly_base_cost=prescriptive_ai.monthly_base_cost
+                    prescriptive_ai_monthly_coef = prescriptive_ai.monthly_coef
+                    prescriptive_ai_monthly_activity_free = prescriptive_ai.monthly_activity_free
 
-                driven_edriven_e_commerce_monthly_base_price = driven_edriven_e_commerce.base_price
-                driven_edriven_e_commerce_monthly_base_number_of_subscription_months = driven_edriven_e_commerce.base_number_of_subscription_months
-                driven_edriven_e_commerce_monthly_base_number_of_users = driven_edriven_e_commerce.base_number_of_users
-                driven_edriven_e_commerce_monthly_base_number_data_reloads = driven_edriven_e_commerce.base_number_data_reloads
-                driven_edriven_e_commerce_monthly_saturation_coef = driven_edriven_e_commerce.saturation_coef
+                    prescriptive_ai_monthly_base_price = prescriptive_ai.base_price
+                    prescriptive_ai_monthly_base_number_of_subscription_months = prescriptive_ai.base_number_of_subscription_months
+                    prescriptive_ai_monthly_base_number_of_users = prescriptive_ai.base_number_of_users
+                    prescriptive_ai_monthly_base_number_data_reloads = prescriptive_ai.base_number_data_reloads
+                    prescriptive_ai_monthly_saturation_coef = prescriptive_ai.saturation_coef
 
-            else:
-                driven_edriven_e_commerce_monthly_base_cost = 995
-                driven_edriven_e_commerce_monthly_coef = 0.025
-                driven_edriven_e_commerce_monthly_coef_monthly_activity_free = 12
+                else:
+                    prescriptive_ai_monthly_base_cost = 995
+                    prescriptive_ai_monthly_coef = 0.025
+                    prescriptive_ai_monthly_activity_free = 12
 
-                driven_edriven_e_commerce_monthly_base_price = 6
-                driven_edriven_e_commerce_monthly_base_number_of_subscription_months = 9
-                driven_edriven_e_commerce_monthly_base_number_of_users = 5
-                driven_edriven_e_commerce_monthly_base_number_data_reloads = 56
-                driven_edriven_e_commerce_monthly_saturation_coef = 5
+                    prescriptive_ai_monthly_base_price = 11
+                    prescriptive_ai_monthly_base_number_of_subscription_months = 1.1
+                    prescriptive_ai_monthly_base_number_of_users = 11
+                    prescriptive_ai_monthly_base_number_data_reloads = 12
+                    prescriptive_ai_monthly_saturation_coef = 3
 
-            parameters = AdditionalCostCalculationFixParameters.objects.filter().last()
-            if parameters:
-                sup_cost = parameters.sup_cost
-                Train_cost = parameters.train_cost
-            else:
-                sup_cost = 25
-                Train_cost = 500
+                if metricscaled:
+                    metricscaled_monthly_base_cost=metricscaled.monthly_base_cost
+                    metricscaled_monthly_coef = metricscaled.monthly_coef
+                    metricscaled_monthly_activity_free = metricscaled.monthly_activity_free
 
-            contex = {
-                'all_company_types': all_company_types,
-                'sup_cost': sup_cost,
-                'Train_cost': Train_cost,
+                    metricscaled_monthly_base_price = metricscaled.base_price
+                    metricscaled_monthly_base_number_of_subscription_months = metricscaled.base_number_of_subscription_months
+                    metricscaled_monthly_base_number_of_users = metricscaled.base_number_of_users
+                    metricscaled_monthly_base_number_data_reloads = metricscaled.base_number_data_reloads
+                    metricscaled_monthly_saturation_coef = metricscaled.saturation_coef
 
-                'campaignscaled': campaignscaled,
-                'plane_price': plane_price,
+                else:
+                    metricscaled_monthly_base_cost = 995
+                    metricscaled_monthly_coef = 0.025
+                    metricscaled_monthly_activity_free = 12
 
-                'demandscaled': demandscaled,
-                'demandscaled_monthly_base_cost': package_price_demandscaled_monthly_base_cost,
-                'demandscaled_monthly_coef': package_price_demandscaled_monthly_coef,
-                'demandscaled_monthly_activity_free': package_price_demandscaled_monthly_activity_free,
+                    metricscaled_monthly_base_price = 3
+                    metricscaled_monthly_base_number_of_subscription_months = 22
+                    metricscaled_monthly_base_number_of_users = 43
+                    metricscaled_monthly_base_number_data_reloads = 45
+                    metricscaled_monthly_saturation_coef = 34
 
-                'acquirescaled': acquirescaled,
-                'acquirescaled_monthly_base_cost': package_price_acquirescaled_monthly_base_cost,
-                'acquirescaled_monthly_coef': package_price_acquirescaled_monthly_coef,
-                'acquirescaled_monthly_activity_free': package_price_acquirescaled_monthly_activity_free,
+                if driven_erp:
+                    driven_erp_monthly_base_cost=driven_erp.monthly_base_cost
+                    driven_erp_monthly_coef = driven_erp.monthly_coef
+                    driven_erp_monthly_activity_free = driven_erp.monthly_activity_free
 
-                'Product_recommendations': Product_recommendations,
-                'Product_recommendations_monthly_base_cost': package_price_recommendscaled_monthly_base_cost,
-                'Product_recommendations_monthly_coef': package_price_recommendscaled_monthly_coef,
-                'Product_recommendations_monthly_activity_free': package_price_recommendscaled_monthly_activity_free,
+                    driven_erp_monthly_base_price = driven_erp.base_price
+                    driven_erp_monthly_base_number_of_subscription_months = driven_erp.base_number_of_subscription_months
+                    driven_erp_monthly_base_number_of_users = driven_erp.base_number_of_users
+                    driven_erp_monthly_base_number_data_reloads = driven_erp.base_number_data_reloads
+                    driven_erp_monthly_saturation_coef = driven_erp.saturation_coef
 
+                else:
+                    driven_erp_monthly_base_cost = 995
+                    driven_erp_monthly_coef = 0.025
+                    driven_erp_monthly_activity_free = 12
 
-                'prescriptive_ai_monthly_base_cost': prescriptive_ai_monthly_base_cost,
-                'prescriptive_ai_monthly_coef': prescriptive_ai_monthly_coef,
-                'prescriptive_ai_monthly_activity_free': prescriptive_ai_monthly_activity_free,
-
-                'metricscaled_monthly_base_cost': metricscaled_monthly_base_cost,
-                'metricscaled_monthly_coef': metricscaled_monthly_coef,
-                'metricscaled_monthly_activity_free': metricscaled_monthly_activity_free,
-
-                'driven_erp_monthly_base_cost': driven_erp_monthly_base_cost,
-                'driven_erp_monthly_coef': driven_erp_monthly_coef,
-                'driven_erp_monthly_activity_free': driven_erp_monthly_activity_free,
-
-                'driven_edriven_e_commerce_monthly_base_cost': driven_edriven_e_commerce_monthly_base_cost,
-                'driven_edriven_e_commerce_monthly_coef': driven_edriven_e_commerce_monthly_coef,
-                'driven_edriven_e_commerce_monthly_coef_monthly_activity_free': driven_edriven_e_commerce_monthly_coef_monthly_activity_free,
+                    driven_erp_monthly_base_price = 33
+                    driven_erp_monthly_base_number_of_subscription_months = 2
+                    driven_erp_monthly_base_number_of_users = 9
+                    driven_erp_monthly_base_number_data_reloads = 89
+                    driven_erp_monthly_saturation_coef = 8
 
 
-                'CompanyRegistrationInformationId': CompanyRegistrationInformationId,
+                if driven_edriven_e_commerce:
+                    driven_edriven_e_commerce_monthly_base_cost=driven_edriven_e_commerce.monthly_base_cost
+                    driven_edriven_e_commerce_monthly_coef = driven_edriven_e_commerce.monthly_coef
+                    driven_edriven_e_commerce_monthly_coef_monthly_activity_free = driven_edriven_e_commerce.monthly_activity_free
 
-                'package_price_demandscaled_base_price': package_price_demandscaled_base_price,
-                'package_price_demandscaled_base_number_of_subscription_months': package_price_demandscaled_base_number_of_subscription_months,
-                'package_price_demandscaled_base_number_of_users': package_price_demandscaled_base_number_of_users,
-                'package_price_demandscaled_base_number_data_reloads': package_price_demandscaled_base_number_data_reloads,
-                'package_price_demandscaled_saturation_coef': package_price_demandscaled_saturation_coef,
-                'package_price_acquirescaled_base_price': package_price_acquirescaled_base_price,
-                'package_price_acquirescaled_base_number_of_subscription_months': package_price_acquirescaled_base_number_of_subscription_months,
-                'package_price_acquirescaled_base_number_of_users': package_price_acquirescaled_base_number_of_users,
-                'package_price_acquirescaled_base_number_data_reloads': package_price_acquirescaled_base_number_data_reloads,
-                'package_price_acquirescaled_saturation_coef': package_price_acquirescaled_saturation_coef,
-                'package_price_recommendscaled_base_price': package_price_recommendscaled_base_price,
-                'package_price_recommendscaled_base_number_of_subscription_months': package_price_recommendscaled_base_number_of_subscription_months,
-                'package_price_recommendscaled_base_number_of_users': package_price_recommendscaled_base_number_of_users,
-                'package_price_recommendscaled_base_number_data_reloads': package_price_recommendscaled_base_number_data_reloads,
-                'package_price_recommendscaled_saturation_coef': package_price_recommendscaled_saturation_coef,
-                'prescriptive_ai_monthly_base_price': prescriptive_ai_monthly_base_price,
-                'prescriptive_ai_monthly_base_number_of_subscription_months': prescriptive_ai_monthly_base_number_of_subscription_months,
-                'prescriptive_ai_monthly_base_number_of_users': prescriptive_ai_monthly_base_number_of_users,
-                'prescriptive_ai_monthly_base_number_data_reloads': prescriptive_ai_monthly_base_number_data_reloads,
-                'prescriptive_ai_monthly_saturation_coef': prescriptive_ai_monthly_saturation_coef,
-                'metricscaled_monthly_base_price': metricscaled_monthly_base_price,
-                'metricscaled_monthly_base_number_of_subscription_months': metricscaled_monthly_base_number_of_subscription_months,
-                'metricscaled_monthly_base_number_of_users': metricscaled_monthly_base_number_of_users,
-                'metricscaled_monthly_base_number_data_reloads': metricscaled_monthly_base_number_data_reloads,
-                'metricscaled_monthly_saturation_coef': metricscaled_monthly_saturation_coef,
-                'driven_erp_monthly_base_price': driven_erp_monthly_base_price,
-                'driven_erp_monthly_base_number_of_subscription_months': driven_erp_monthly_base_number_of_subscription_months,
-                'driven_erp_monthly_base_number_of_users': driven_erp_monthly_base_number_of_users,
-                'driven_erp_monthly_base_number_data_reloads': driven_erp_monthly_base_number_data_reloads,
-                'driven_erp_monthly_saturation_coef': driven_erp_monthly_saturation_coef,
-                'driven_edriven_e_commerce_monthly_base_price': driven_edriven_e_commerce_monthly_base_price,
-                'driven_edriven_e_commerce_monthly_base_number_of_subscription_months': driven_edriven_e_commerce_monthly_base_number_of_subscription_months,
-                'driven_edriven_e_commerce_monthly_base_number_of_users': driven_edriven_e_commerce_monthly_base_number_of_users,
-                'driven_edriven_e_commerce_monthly_base_number_data_reloads': driven_edriven_e_commerce_monthly_base_number_data_reloads,
-                'driven_edriven_e_commerce_monthly_saturation_coef': driven_edriven_e_commerce_monthly_saturation_coef,
+                    driven_edriven_e_commerce_monthly_base_price = driven_edriven_e_commerce.base_price
+                    driven_edriven_e_commerce_monthly_base_number_of_subscription_months = driven_edriven_e_commerce.base_number_of_subscription_months
+                    driven_edriven_e_commerce_monthly_base_number_of_users = driven_edriven_e_commerce.base_number_of_users
+                    driven_edriven_e_commerce_monthly_base_number_data_reloads = driven_edriven_e_commerce.base_number_data_reloads
+                    driven_edriven_e_commerce_monthly_saturation_coef = driven_edriven_e_commerce.saturation_coef
 
-            }
-            return render(request, "calculate_amount_to_pay.html", contex)
-        except Exception as e:
-            d = str(e)
+                else:
+                    driven_edriven_e_commerce_monthly_base_cost = 995
+                    driven_edriven_e_commerce_monthly_coef = 0.025
+                    driven_edriven_e_commerce_monthly_coef_monthly_activity_free = 12
+
+                    driven_edriven_e_commerce_monthly_base_price = 6
+                    driven_edriven_e_commerce_monthly_base_number_of_subscription_months = 9
+                    driven_edriven_e_commerce_monthly_base_number_of_users = 5
+                    driven_edriven_e_commerce_monthly_base_number_data_reloads = 56
+                    driven_edriven_e_commerce_monthly_saturation_coef = 5
+
+                parameters = AdditionalCostCalculationFixParameters.objects.filter().last()
+                if parameters:
+                    sup_cost = parameters.sup_cost
+                    Train_cost = parameters.train_cost
+                else:
+                    sup_cost = 25
+                    Train_cost = 500
+
+                contex = {
+                    'all_company_types': all_company_types,
+                    'sup_cost': sup_cost,
+                    'Train_cost': Train_cost,
+
+                    'campaignscaled': campaignscaled,
+                    'plane_price': plane_price,
+
+                    'demandscaled': demandscaled,
+                    'demandscaled_monthly_base_cost': package_price_demandscaled_monthly_base_cost,
+                    'demandscaled_monthly_coef': package_price_demandscaled_monthly_coef,
+                    'demandscaled_monthly_activity_free': package_price_demandscaled_monthly_activity_free,
+
+                    'acquirescaled': acquirescaled,
+                    'acquirescaled_monthly_base_cost': package_price_acquirescaled_monthly_base_cost,
+                    'acquirescaled_monthly_coef': package_price_acquirescaled_monthly_coef,
+                    'acquirescaled_monthly_activity_free': package_price_acquirescaled_monthly_activity_free,
+
+                    'Product_recommendations': Product_recommendations,
+                    'Product_recommendations_monthly_base_cost': package_price_recommendscaled_monthly_base_cost,
+                    'Product_recommendations_monthly_coef': package_price_recommendscaled_monthly_coef,
+                    'Product_recommendations_monthly_activity_free': package_price_recommendscaled_monthly_activity_free,
+
+
+                    'prescriptive_ai_monthly_base_cost': prescriptive_ai_monthly_base_cost,
+                    'prescriptive_ai_monthly_coef': prescriptive_ai_monthly_coef,
+                    'prescriptive_ai_monthly_activity_free': prescriptive_ai_monthly_activity_free,
+
+                    'metricscaled_monthly_base_cost': metricscaled_monthly_base_cost,
+                    'metricscaled_monthly_coef': metricscaled_monthly_coef,
+                    'metricscaled_monthly_activity_free': metricscaled_monthly_activity_free,
+
+                    'driven_erp_monthly_base_cost': driven_erp_monthly_base_cost,
+                    'driven_erp_monthly_coef': driven_erp_monthly_coef,
+                    'driven_erp_monthly_activity_free': driven_erp_monthly_activity_free,
+
+                    'driven_edriven_e_commerce_monthly_base_cost': driven_edriven_e_commerce_monthly_base_cost,
+                    'driven_edriven_e_commerce_monthly_coef': driven_edriven_e_commerce_monthly_coef,
+                    'driven_edriven_e_commerce_monthly_coef_monthly_activity_free': driven_edriven_e_commerce_monthly_coef_monthly_activity_free,
+
+
+                    'CompanyRegistrationInformationId': CompanyRegistrationInformationId,
+
+                    'package_price_demandscaled_base_price': package_price_demandscaled_base_price,
+                    'package_price_demandscaled_base_number_of_subscription_months': package_price_demandscaled_base_number_of_subscription_months,
+                    'package_price_demandscaled_base_number_of_users': package_price_demandscaled_base_number_of_users,
+                    'package_price_demandscaled_base_number_data_reloads': package_price_demandscaled_base_number_data_reloads,
+                    'package_price_demandscaled_saturation_coef': package_price_demandscaled_saturation_coef,
+                    'package_price_acquirescaled_base_price': package_price_acquirescaled_base_price,
+                    'package_price_acquirescaled_base_number_of_subscription_months': package_price_acquirescaled_base_number_of_subscription_months,
+                    'package_price_acquirescaled_base_number_of_users': package_price_acquirescaled_base_number_of_users,
+                    'package_price_acquirescaled_base_number_data_reloads': package_price_acquirescaled_base_number_data_reloads,
+                    'package_price_acquirescaled_saturation_coef': package_price_acquirescaled_saturation_coef,
+                    'package_price_recommendscaled_base_price': package_price_recommendscaled_base_price,
+                    'package_price_recommendscaled_base_number_of_subscription_months': package_price_recommendscaled_base_number_of_subscription_months,
+                    'package_price_recommendscaled_base_number_of_users': package_price_recommendscaled_base_number_of_users,
+                    'package_price_recommendscaled_base_number_data_reloads': package_price_recommendscaled_base_number_data_reloads,
+                    'package_price_recommendscaled_saturation_coef': package_price_recommendscaled_saturation_coef,
+                    'prescriptive_ai_monthly_base_price': prescriptive_ai_monthly_base_price,
+                    'prescriptive_ai_monthly_base_number_of_subscription_months': prescriptive_ai_monthly_base_number_of_subscription_months,
+                    'prescriptive_ai_monthly_base_number_of_users': prescriptive_ai_monthly_base_number_of_users,
+                    'prescriptive_ai_monthly_base_number_data_reloads': prescriptive_ai_monthly_base_number_data_reloads,
+                    'prescriptive_ai_monthly_saturation_coef': prescriptive_ai_monthly_saturation_coef,
+                    'metricscaled_monthly_base_price': metricscaled_monthly_base_price,
+                    'metricscaled_monthly_base_number_of_subscription_months': metricscaled_monthly_base_number_of_subscription_months,
+                    'metricscaled_monthly_base_number_of_users': metricscaled_monthly_base_number_of_users,
+                    'metricscaled_monthly_base_number_data_reloads': metricscaled_monthly_base_number_data_reloads,
+                    'metricscaled_monthly_saturation_coef': metricscaled_monthly_saturation_coef,
+                    'driven_erp_monthly_base_price': driven_erp_monthly_base_price,
+                    'driven_erp_monthly_base_number_of_subscription_months': driven_erp_monthly_base_number_of_subscription_months,
+                    'driven_erp_monthly_base_number_of_users': driven_erp_monthly_base_number_of_users,
+                    'driven_erp_monthly_base_number_data_reloads': driven_erp_monthly_base_number_data_reloads,
+                    'driven_erp_monthly_saturation_coef': driven_erp_monthly_saturation_coef,
+                    'driven_edriven_e_commerce_monthly_base_price': driven_edriven_e_commerce_monthly_base_price,
+                    'driven_edriven_e_commerce_monthly_base_number_of_subscription_months': driven_edriven_e_commerce_monthly_base_number_of_subscription_months,
+                    'driven_edriven_e_commerce_monthly_base_number_of_users': driven_edriven_e_commerce_monthly_base_number_of_users,
+                    'driven_edriven_e_commerce_monthly_base_number_data_reloads': driven_edriven_e_commerce_monthly_base_number_data_reloads,
+                    'driven_edriven_e_commerce_monthly_saturation_coef': driven_edriven_e_commerce_monthly_saturation_coef,
+
+                }
+                return render(request, "calculate_amount_to_pay.html", contex)
+            except Exception as e:
+                d = str(e)
+
 
 
         return render(request, 'calculate_amount_to_pay.html')
+    except Exception as e:
+        messages.warning(request, str(e))
+        return redirect('home')
     else:
         return render(request, 'not_allowed.html')
 
@@ -3117,25 +3276,51 @@ def submit_subscription(request):
         return render(request, 'payment_home.html', context)
 
     except Exception as e:
-        return HttpResponse(str(e))
+        messages.warning(request, str(e))
+        # return HttpResponse(str(e))
+        return redirect('index')
 
     # return render(request, 'registration.html')
     # return render(request, 'home.html')
 
 
-def send_email_info(get_subject, get_massage, get_recipient_list):
+# def send_email_info(get_subject, get_massage, get_recipient_list):
+#     try:
+#         get_from_email = settings.EMAIL_HOST_USER
+#         send_mail(
+#             get_subject,
+#             get_massage,
+#             get_from_email,
+#             get_recipient_list,
+#             fail_silently=False,
+#         )
+#         return 'Done'
+#     except Exception as E:
+#         return str(E)
+
+
+def send_email_info(subject, message, recipient_list):
     try:
-        get_from_email = settings.EMAIL_HOST_USER
-        send_mail(
-            get_subject,
-            get_massage,
-            get_from_email,
-            get_recipient_list,
+        from_email = settings.EMAIL_HOST_USER
+        result = send_mail(
+            subject,
+            message,
+            from_email,
+            recipient_list,
             fail_silently=False,
         )
-        return 'Done'
-    except Exception as E:
-        return str(E)
+        if result == len(recipient_list):
+            # All emails were sent successfully
+            logger.info(f"Email sent successfully to {recipient_list}")
+            return 'Done'
+        else:
+            # Email sending failed, log this for further inspection
+            logger.warning(f"Email sending failed to some or all recipients: {recipient_list}")
+            return f"Failed to send email to {recipient_list}"
+    except Exception as e:
+        # Log the exception and return the error message
+        logger.error(f"Error sending email: {e}")
+        return str(e)
 
 
 
@@ -3209,32 +3394,83 @@ def Payment_Submit(request):
                         print(f"Product ID: {product_id}, Price ID: {price_id}, Customer: {customer_id}, Subscription: {subscription.id}")
                         # return redirect('home_info')
                         if iamhome == "iamhome":
-                            user_info = request.user
-                            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-                            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-                            contex = {
-                                'user_info': user_info,
-                                'company_info': company_info,
-                                'subcription': subcription,
-                                'sub_id': sub_id,
-                                'timezone_all': timezone_all
-                            }
-                            return render(request, 'erp_info_for_home.html', contex)
+
+                            try:
+                                # for admin
+                                subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
+                                user_info = request.user
+                                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+
+                                mass = f"subscription id is: {subcription_pk.id} and user  is {user_info} and company info: Id {company_info.id} and company name {company_info.file_number}"
+                                email = settings.ADMIN_EMAIL_TO_GET_MESSAGE
+                                subject = "Your New Subscriber info for Creating Odoo instance !"
+                                message = mass
+                                recipient_list = [email]
+
+                                res = send_email_info(subject, message, recipient_list)
+
+                            except Exception as e:
+                                rea = str(e)
+                                messages.warning(request, f"Admin Massage not sent reasone {rea}")
+
+                            try:
+                                # for user massage
+
+                                email = user_info.username
+                                subject = "From Kintah Platform"
+                                message = "We Sent a Request to Admin "
+                                recipient_list = [email]
+
+                                res = send_email_info(subject, message, recipient_list)
+                            except Exception as e:
+                                rea = str(e)
+                                messages.success(request, f"Admin Massage not sent reasone {rea}")
+                            return redirect('home')
                         else:
-                            contex = {
-                                'sub_id': sub_id,
-                                'timezone_all':timezone_all
-                            }
-                            return render(request, 'erp_info.html', contex)
+                            try:
+                                # for admin
+                                subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
+                                user_info = request.user
+                                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+
+                                mass = f"subscription id is: {subcription_pk.id} and user  is {user_info} and company info: Id {company_info.id} and company name {company_info.file_number}"
+                                email = settings.ADMIN_EMAIL_TO_GET_MESSAGE
+                                subject = "Your New Subscriber info for Creating Odoo instance !"
+                                message = mass
+                                recipient_list = [email]
+
+                                res = send_email_info(subject, message, recipient_list)
+
+                            except Exception as e:
+                                rea = str(e)
+                                messages.warning(request, f"Admin Massage not sent reasone {rea}")
+
+                            try:
+                                # for user massage
+
+                                email = user_info.username
+                                subject = "From Kintah Platform"
+                                message = "We Sent a Request to Admin "
+                                recipient_list = [email]
+
+                                res = send_email_info(subject, message, recipient_list)
+                            except Exception as e:
+                                rea = str(e)
+                                messages.success(request, f"Admin Massage not sent reasone {rea}")
+
+                            return redirect('home_info')
 
                         # return HttpResponse(
                         #     f"Product ID: {product_id}, Price ID: {price_id}, Customer: {customer_id}, Subscription: {subscription.id}")
                     else:
-                        return HttpResponse("Failed to collect upfront payment.")
+                        messages.info(request, "Try again !")
+                        # return HttpResponse("Failed to collect upfront payment.")
                 else:
-                    return HttpResponse("Failed to create customer.")
+                    messages.info(request, "Try again !")
+                    # return HttpResponse("Failed to create customer.")
             else:
-                return HttpResponse("Failed to create Product and Price.")
+                messages.info(request, "Try again !")
+                # return HttpResponse("Failed to create Product and Price.")
 
 
 
@@ -3309,7 +3545,8 @@ def Payment_Submit(request):
                 'messages': messages,
             }
             return render(request, 'payment_home.html', context)
-        return redirect('shop_dashboard', analytics_services_info_id)
+        # return redirect('shop_dashboard', analytics_services_info_id)
+        return redirect('home_info')
     else:
         return redirect('login_info')
 
