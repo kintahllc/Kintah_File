@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +10,13 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            position: relative; /* Required for pseudo-element positioning */
+            background-image: url('{% static 'img/back.avif' %}');
+            background-size: cover;
+            background-position: center;
         }
+
+
         .container {
             max-width: 500px;
             margin: 50px auto;
@@ -25,26 +32,33 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
-        input[type="text"],
+        input[type="text"] {
+            width: 96%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
         input[type="password"] {
-            width: 100%;
+            width: 96%;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
         input[type="submit"] {
-            width: 100%;
+            width: 50%;
             padding: 10px;
             font-size: 16px;
-            background-color: #007bff;
-            color: #fff;
+            background-color: white;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
         input[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: white;
         }
         .forgot-password {
             text-align: right;
@@ -54,6 +68,7 @@
 </head>
 <body>
     <div class="container">
+
         {% if messages %}
         <ul class="messages">
             {% for message in messages %}
@@ -61,29 +76,36 @@
             {% endfor %}
         </ul>
         {% endif %}
-        <h2>NEW LOG IN/REGISTER</h2>
+        <h2 style="color:white; text-align:center;">Kintah Platform Sign Up/Log In</h2>
         <form action="#" method="POST">{% csrf_token %}
             <div class="form-group">
-                <label for="email">Email address</label>
+                <label for="email" style="color: white;">Email address</label>
                 <input type="text" id="email" name="email" placeholder="email@example.com" value="{{set_email}}" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" style="color: white;">Password</label>
                 <input type="password" id="password" name="password" placeholder="Password" value="{{set_password}}" required>
             </div>
-            <div class="form-group">
-                <input type="checkbox" id="remember-me" name="remember-me">Remember me
+            <div class="form-group" style="color: white;">
+                <input type="checkbox" id="remember-me" name="remember-me" >Remember me
 
             </div>
-            <div class="form-group">
-                <input type="submit" value="Sign in">
+            <div class="form-group" style="text-align: center;">
+                <input type="submit" value="Sign in" style="color:black; ">
             </div>
         </form>
-        <div class="forgot-password">
-            <a href="{% url 'forgot_password' %}">Forgot password?</a>
+        <div class="forgot-password" style="color: white;">
+            <a href="{% url 'forgot_password' %}" style="color: white;">Forgot password?</a>
         </div>
 
-        <p>New around here? <a href="{% url 'index' %}">Sign up</a></p>
+        <p style="color: white;">New around here? <a href="{% url 'index' %}" style="color: white;">Sign up</a></p>
     </div>
+
+<div class="row mt-4" style=" width: 100%; text-align: center; background-color: #1b4ebba8; padding-top: 11px; ">
+      <div class="col-md-12 text-center bg-dark" style="height: 60px;">
+        <p class="navbar-brand" style="font-size: 20px;margin-top: 10px;color: white;">(C) Copywrite Kintah Platform LLC</p>
+      </div>
+    </div>
+
 </body>
 </html>
