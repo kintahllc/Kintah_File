@@ -11,7 +11,7 @@
 
     <title>{% block title %}{% endblock %}</title>
   </head>
-  <body>
+  <body style="background-color: aliceblue;">
 <!--    <nav class="navbar navbar-dark bg-primary navbar-expand-lg">-->
 <!--      <a class="navbar-brand" href="/Kintah/">Kintah</a>-->
 <!--      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">-->
@@ -48,7 +48,16 @@
       {% endif %}
 
       {% block content %}{% endblock %}
+
+      <div class="row mt-4">
+      <div class="col-md-12 text-center bg-dark" style="height: 60px;">
+        <p class="navbar-brand" style="font-size: 20px;margin-top: 10px;color: white;">(C) Copywrite Kintah Platform LLC</p>
+      </div>
     </div>
+
+    </div>
+
+
 
     <!-- Optional JavaScript; choose one of the two! -->
 

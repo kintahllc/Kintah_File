@@ -52,16 +52,20 @@ def generate_otp(length=6):
 def home_info(request):
     if request.user.is_authenticated:
         user_info= request.user
-        if user_info.first_name == '':
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-        else:
-            company_info = CompanyRegistrationInformation.objects.get(id=user_info.first_name)
+        try:
+            if user_info.first_name == '':
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            else:
+                company_info = CompanyRegistrationInformation.objects.get(id=user_info.first_name)
 
-        contex = {
-            'user_info':user_info,
-            'company_info':company_info,
-        }
-        return render(request, 'home.html', contex)
+            contex = {
+                'user_info':user_info,
+                'company_info':company_info,
+            }
+            return render(request, 'home.html', contex)
+        except Exception as e:
+            logout(request)
+            return redirect('login_info')
     else:
         return redirect('login_info')
 
@@ -86,7 +90,13 @@ def billing_history(request, pk):
             }
             return render(request, 'billing_history.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -102,14 +112,34 @@ def ask_billing_question(request, pk):
                     subject = request.POST.get('subject')
                     message = request.POST.get('message')
                     sub_info = CompanyRegistrationInformation.objects.get(id=pk)
-                    billqtn = BillingQuestion(
-                        company_info = sub_info,
-                        subjects = subject,
-                        massage = message,
-                    )
-                    billqtn.save()
+
+
+                    email = settings.ADMIN_EMAIL_TO_GET_MESSAGE
+                    subject = f"{subject}"
+                    message = f"User billing Question is {message}"
+                    recipient_list = [email]
+
+                    res = send_email_info(subject, message, recipient_list)
+
+                    if res == 'Done':
+                        billqtn = BillingQuestion(
+                            company_info=sub_info,
+                            subjects=subject,
+                            massage=message,
+                        )
+                        billqtn.save()
+                        messages.success(request, 'Question is send to admin Successfully !')
+                    else:
+                        messages.error(request, "There was an error sending the email. Please try again later !")
+
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
             user_info= request.user
             company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
@@ -128,7 +158,13 @@ def ask_billing_question(request, pk):
             }
             return render(request, 'ask_billing_question.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -212,7 +248,13 @@ def update_company_info(request, pk):
             }
             return render(request, 'update_company_info3.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -255,7 +297,13 @@ def change_password(request, pk):
             }
             return render(request, 'change_password.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -282,7 +330,13 @@ def subscription_history(request, pk):
             }
             return render(request, 'subscription_history.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -308,7 +362,13 @@ def add_company_users(request, pk):
             }
             return render(request, 'add_company_users.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -343,7 +403,13 @@ def add_expected_users(request, pk):
             }
             return render(request, 'add_company_users.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -454,7 +520,13 @@ def upgrade_subscription(request, pk):
             }
             return render(request, 'upgrade_subscription1.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
 
     else:
@@ -561,7 +633,13 @@ def upgrade_new_subscription_plan(request, pk):
 
             return render(request, 'new_subscription_plan.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -868,12 +946,24 @@ def upgrade_calculate_subscriptions(request, pk):
                     jk=0
                     return render(request, "upgrade_calculate_subscriptions.html", contex)
                 except Exception as e:
-                    d = str(e)
-                    messages.warning(request, str(e))
+                    # d = str(e)
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
                     return render(request, "upgrade_calculate_subscriptions.html")
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -971,7 +1061,13 @@ def upgrade_submit_subscription_inside_home(request, pk):
             }
             return render(request, 'payment_home_for_home_for_upgrade.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -1229,7 +1325,13 @@ def cancel_subscription(request, pk):
             }
             return render(request, 'cancel_subscription.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -1277,7 +1379,13 @@ def activate_my_erp(request, pk):
                     print('yes')  # This will confirm the pattern was found
                     messages.warning(request, 'FATAL: database "kintah-db" does not exist')
                 else:
-                    messages.warning(request, str(e))
+                    # messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
 
 
         user_info = request.user
@@ -1363,7 +1471,13 @@ def add_user_with_manager_role(request, pk):
                     else:
                         messages.warning(request,'your user create limit is over !')
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
 
 
@@ -1384,7 +1498,13 @@ def add_user_with_manager_role(request, pk):
             }
             return render(request, 'add_user_with_manager_role.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -1425,7 +1545,13 @@ def add_user_without_manager_role(request, pk):
                     else:
                         messages.warning(request,'your user create limit is over !')
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
 
 
@@ -1445,7 +1571,13 @@ def add_user_without_manager_role(request, pk):
             }
             return render(request, 'add_user_without_manager_role.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -1471,7 +1603,14 @@ def remove_user(request, pk):
                     else:
                         messages.warning(request,'try again !')
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+
+                    # messages.warning(request, str(e))
 
 
             user_info = request.user
@@ -1492,7 +1631,12 @@ def remove_user(request, pk):
             }
             return render(request, 'remove_user.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request, 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -1587,7 +1731,13 @@ def update_user_roles_view(request):
                         messages.warning(request, 'Failed to update user roles !')
                         return redirect('update_user_role', pk=1)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
 
 
@@ -1964,7 +2114,13 @@ def export_product_and_image(request, pk):
 
                 return render(request, 'upload_products.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -1994,7 +2150,13 @@ def dashboard(request, pk):
 
             return render(request, 'dashboard.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -2101,7 +2263,13 @@ def new_subscription_plan(request, pk):
 
             return render(request, 'new_subscription_plan.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -2479,7 +2647,13 @@ def new_subscriptions(request, pk):
                 }
                 return render(request, 'new_subscriptions.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -2589,7 +2763,13 @@ def submit_subscription_inside_home(request):
             }
             return render(request, 'payment_home_for_home.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -2671,7 +2851,13 @@ def forgot_password(request):
                 messages.error(request, "There was an error sending the email. Please try again later.")
                 return redirect('forgot_password')
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('forgot_password')
 
     return render(request, 'forgot_password.html')
@@ -2689,7 +2875,13 @@ def set_new_password(request):
             messages.success(request, "Password reset successfully.")
             return redirect('login_info')
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('forgot_password')
 
 
@@ -2731,7 +2923,12 @@ def login_info(request):
             return render(request, 'login.html', contex)
         return render(request, 'login.html')
     except Exception as e:
-        messages.warning(request, str(e))
+        error_message = str(e)
+        if "'NoneType' object has no attribute 'company_id'" in error_message:
+            messages.warning(request, 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+        else:
+            messages.warning(request, error_message)
+        # messages.warning(request, str(e))
         return redirect('home_info')
 
 
@@ -2747,7 +2944,12 @@ def user_logout(request):
         messages.success(request, "You have been successfully logged out.")
         return redirect('login_info')
     except Exception as e:
-        messages.warning(request, str(e))
+        error_message = str(e)
+        if "'NoneType' object has no attribute 'company_id'" in error_message:
+            messages.warning(request, 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+        else:
+            messages.warning(request, error_message)
+        # messages.warning(request, str(e))
         return redirect('home')
 
 
@@ -2813,7 +3015,13 @@ def subscription_plan(request):
 
             return render(request, 'subscription_plan.html', contex)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('index')
     else:
         return render(request, 'not_allowed.html')
@@ -2903,7 +3111,13 @@ def user_registration(request):
                 return render(request, 'authorize_the_following_connected_services.html', contex)
 
             except Exception as e:
-                messages.warning(request, str(e))
+                error_message = str(e)
+                if "'NoneType' object has no attribute 'company_id'" in error_message:
+                    messages.warning(request,
+                                     'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                else:
+                    messages.warning(request, error_message)
+                # messages.warning(request, str(e))
                 return redirect('index')
 
         return render(request, 'authorize_the_following_connected_services.html')
@@ -3187,7 +3401,12 @@ def calculate_amount_to_pay(request):
 
         return render(request, 'calculate_amount_to_pay.html')
     except Exception as e:
-        messages.warning(request, str(e))
+        # messages.warning(request, str(e))
+        error_message = str(e)
+        if "'NoneType' object has no attribute 'company_id'" in error_message:
+            messages.warning(request, 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+        else:
+            messages.warning(request, error_message)
         return redirect('home')
     else:
         return render(request, 'not_allowed.html')
@@ -3276,7 +3495,12 @@ def submit_subscription(request):
         return render(request, 'payment_home.html', context)
 
     except Exception as e:
-        messages.warning(request, str(e))
+        # messages.warning(request, str(e))
+        error_message = str(e)
+        if "'NoneType' object has no attribute 'company_id'" in error_message:
+            messages.warning(request, 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+        else:
+            messages.warning(request, error_message)
         # return HttpResponse(str(e))
         return redirect('index')
 
@@ -3624,7 +3848,13 @@ def import_contacts_record(request, pk):
                         res = s3.create_bucket(Bucket=BUCKET_NAME, CreateBucketConfiguration={'LocationConstraint': AWS_REGION})
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    # messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
 
                 try:
                     # Upload file to S3
@@ -3634,7 +3864,13 @@ def import_contacts_record(request, pk):
 
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
                 # Odoo credentials from environment variables
 
@@ -3643,7 +3879,13 @@ def import_contacts_record(request, pk):
 
                     messages.success(request, res3)
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
                 finally:
                     # Optionally, delete the local file after processing
                     os.remove(local_file_path)
@@ -3671,7 +3913,13 @@ def import_contacts_record(request, pk):
             return render(request, 'import_contacts_record.html', contex)
         except Exception as e:
 
-            messages.warning(request, str(e))
+            # messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
             return redirect('home')
 
     else:
@@ -3723,7 +3971,13 @@ def import_suppliers_record(request, pk):
                         res = s3.create_bucket(Bucket=BUCKET_NAME, CreateBucketConfiguration={'LocationConstraint': AWS_REGION})
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
                 try:
                     # Upload file to S3
@@ -3732,7 +3986,13 @@ def import_suppliers_record(request, pk):
                     file_url = f"https://{BUCKET_NAME}.s3.amazonaws.com/{file.name}"
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    # messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
 
                 # Odoo credentials from environment variables
 
@@ -3741,7 +4001,13 @@ def import_suppliers_record(request, pk):
 
                     messages.success(request, res3)
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    # messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
                 finally:
                     # Optionally, delete the local file after processing
                     os.remove(local_file_path)
@@ -3765,7 +4031,13 @@ def import_suppliers_record(request, pk):
             }
             return render(request, 'import_suppliers_record.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            # messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
             return redirect('home')
 
     else:
@@ -3815,7 +4087,13 @@ def import_employees_record(request, pk):
                         res = s3.create_bucket(Bucket=BUCKET_NAME, CreateBucketConfiguration={'LocationConstraint': AWS_REGION})
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    # messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
 
                 try:
                     # Upload file to S3
@@ -3824,7 +4102,13 @@ def import_employees_record(request, pk):
                     file_url = f"https://{BUCKET_NAME}.s3.amazonaws.com/{file.name}"
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    # messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
 
                 # Odoo credentials from environment variables
 
@@ -3833,7 +4117,13 @@ def import_employees_record(request, pk):
 
                     messages.success(request, res3)
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    # messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
                 finally:
                     # Optionally, delete the local file after processing
                     os.remove(local_file_path)
@@ -3856,7 +4146,13 @@ def import_employees_record(request, pk):
             }
             return render(request, 'import_employees_record.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
     else:
         return redirect('login_info')
@@ -3904,7 +4200,13 @@ def import_fleet_assets_record(request, pk):
                         res = s3.create_bucket(Bucket=BUCKET_NAME, CreateBucketConfiguration={'LocationConstraint': AWS_REGION})
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
                 try:
                     # Upload file to S3
@@ -3913,7 +4215,13 @@ def import_fleet_assets_record(request, pk):
                     file_url = f"https://{BUCKET_NAME}.s3.amazonaws.com/{file.name}"
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
                 # Odoo credentials from environment variables
 
@@ -3922,7 +4230,13 @@ def import_fleet_assets_record(request, pk):
 
                     messages.success(request, res3)
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
                 finally:
                     # Optionally, delete the local file after processing
                     os.remove(local_file_path)
@@ -3945,7 +4259,13 @@ def import_fleet_assets_record(request, pk):
             }
             return render(request, 'import_fleet_assets_record.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
 
     else:
@@ -4002,7 +4322,13 @@ def odoo_account_accountant(request, pk):
                     #     chart_template_name='Standard Chart of Accounts'
                     # )
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
             user_info = request.user
             company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
@@ -4025,7 +4351,13 @@ def odoo_account_accountant(request, pk):
             }
             return render(request, 'odoo_account_accountant.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
 
       else:
@@ -4056,7 +4388,13 @@ def odoo_setup_manual_shipping(request, pk):
                     messages.warning(request, str(result))
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
             user_info = request.user
             company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
@@ -4079,7 +4417,13 @@ def odoo_setup_manual_shipping(request, pk):
             }
             return render(request, 'odoo_setup_manual_shipping.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
 
       else:
@@ -4106,7 +4450,13 @@ def odoo_set_website_languages(request, pk):
                     messages.warning(request, str(result))
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
             user_info = request.user
             company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
@@ -4126,7 +4476,13 @@ def odoo_set_website_languages(request, pk):
             }
             return render(request, 'odoo_set_website_languages.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
 
       else:
@@ -4158,7 +4514,13 @@ def odoo_configure_whatsapp_service(request, pk):
                     messages.warning(request, str(result))
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
             user_info = request.user
             company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
@@ -4178,7 +4540,13 @@ def odoo_configure_whatsapp_service(request, pk):
             }
             return render(request, 'configure_whatsapp_service.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
       else:
         return redirect('login_info')
@@ -4207,7 +4575,13 @@ def odoo_twilio_sms_config(request, pk):
                     messages.warning(request, str(result))
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
             user_info = request.user
             company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
@@ -4227,7 +4601,13 @@ def odoo_twilio_sms_config(request, pk):
             }
             return render(request, 'twilio_sms_config.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
 
       else:
@@ -4256,7 +4636,13 @@ def odoo_configure_stripe_payment(request, pk):
                     messages.warning(request, str(result))
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
             user_info = request.user
             company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
@@ -4276,7 +4662,13 @@ def odoo_configure_stripe_payment(request, pk):
             }
             return render(request, 'odoo_configure_stripe_payment.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
 
       else:
@@ -4305,7 +4697,13 @@ def odoo_configure_paypal_payment(request, pk):
                     messages.warning(request, str(result))
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
             user_info = request.user
             company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
@@ -4325,7 +4723,13 @@ def odoo_configure_paypal_payment(request, pk):
             }
             return render(request, 'odoo_configure_paypal_payment.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
 
       else:
@@ -4359,7 +4763,13 @@ def get_training(request, pk):
                     messages.success(request, "Saved Successfully")
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
 
             user_info = request.user
@@ -4382,7 +4792,13 @@ def get_training(request, pk):
             }
             return render(request, 'get_training.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
 
       else:
@@ -4402,12 +4818,19 @@ def learn_erp(request, pk):
                 website_id = int(erp_active_info.website_id)
                 company_id = int(erp_active_info.company_id)
                 try:
+                    pass
 
-                    result = configure_paypal_payment(company_id, website_id, paypal_email, paypal_seller_account)
-                    messages.warning(request, str(result))
+                    # result = configure_paypal_payment(company_id, website_id, paypal_email, paypal_seller_account)
+                    # messages.warning(request, str(result))
 
                 except Exception as e:
-                    messages.warning(request, str(e))
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
 
             user_info = request.user
             company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
@@ -4427,7 +4850,13 @@ def learn_erp(request, pk):
             }
             return render(request, 'learn_erp.html', context)
         except Exception as e:
-            messages.warning(request, str(e))
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
             return redirect('home')
 
       else:

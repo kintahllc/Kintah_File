@@ -1,7 +1,20 @@
 {% extends 'home_base.html' %}
 {% block home_content %}
 
-<p>Welcome To Kintah Platform.</p>
+<style>
+    .iframe-container {
+            width: 100%;
+            height: 440vh; /* Full viewport height */
+            border: none;
+            overflow: hidden;
+        }
+</style>
+
+<p style=" color: yellowgreen; text-align: center; font-size: 25px; ">Welcome To Kintah Platform.</p>
+<div class="iframe-container">
+        <iframe src="https://www.odoo.com/documentation/17.0/applications.html" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+
 {% endblock %}
 
 
