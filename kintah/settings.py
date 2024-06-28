@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     #My Apps
     'subscription_app',
     'User_Registration_App',
+    'Automatic_Deployment',
 
     # 3rd party
     'ckeditor',

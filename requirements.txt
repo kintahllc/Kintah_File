@@ -27,3 +27,10 @@ stripe
 typing_extensions
 tzdata
 urllib3
+
+
+python-dotenv
+psycopg2-binary
+paramiko
+scp
+
