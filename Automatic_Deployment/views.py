@@ -300,170 +300,218 @@ def create_instance_view(request, company_info_id, setup_id):
     return render(request, 'Automatic_Deployment/instance_created.html', {'setup': setup, "company_info":company_info, "user_info": request.user})
 
 
-def verify_instance_key_pair(instance_name, expected_key_pair_name):
+# Utility function to execute SSH commands
+def ssh_execute_command(instance_ip, username, private_key, commands):
     try:
-        client = boto3.client(
-            'lightsail',
-            region_name=os.getenv('AWS_REGION'),
-            aws_access_key_id=os.getenv('S3_ACCESS_KEY_ID'),
-            aws_secret_access_key=os.getenv('S3_SECRET_ACCESS_KEY')
-        )
-        response = client.get_instance(instanceName=instance_name)
-        #print(response)
-        instance_key_pair_name = response['instance']['sshKeyName']
-
-        if instance_key_pair_name == expected_key_pair_name:
-            print(f"Instance '{instance_name}' is associated with key pair '{expected_key_pair_name}'.")
-            return True
-        else:
-            print(f"Instance '{instance_name}' is associated with key pair '{instance_key_pair_name}', not '{expected_key_pair_name}'.")
-            return False
-    except Exception as e:
-        print(f"Error verifying instance key pair: {e}")
-        return False
-
-
-def connect_to_instance(instance_ip, username, private_key):
-    # print(instance_ip, username, private_key)
-    try:
-        ssh_client = paramiko.SSHClient()
-        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_key = paramiko.RSAKey.from_private_key(io.StringIO(private_key))
-        ssh_client.connect(instance_ip, username=username, pkey=ssh_key)
-        print("ssh Connected")
-        return ssh_client
-    except Exception as e:
-        print(f"Error connecting to instance: {e}")
-        return False
-
-
-def wait_for_apt_lock(ssh_client):
-    command = "sudo lsof /var/lib/dpkg/lock-frontend"
-    while True:
-        stdin, stdout, stderr = ssh_client.exec_command(command)
-        output = stdout.read().decode()
-        if not output:
-            break
-        print(f"Waiting for lock: {output}")
-        time.sleep(10)
-    print("Lock released, proceeding with installation.")
-
-def install_docker(ssh_client):
-    try:
-        commands = [
-            "sudo apt update && sudo apt upgrade -y",
-            "curl -fsSL https://get.docker.com -o get-docker.sh",
-            "sudo sh get-docker.sh",
-            "sudo usermod -aG docker $USER",
-            "sudo apt install docker-compose -y"
-        ]
+        key = paramiko.RSAKey.from_private_key(private_key)
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(hostname=instance_ip, username=username, pkey=key)
 
         for command in commands:
-            print(f"Executing: {command}")
-            wait_for_apt_lock(ssh_client)  # Ensure the lock is released before running the command
-            stdin, stdout, stderr = ssh_client.exec_command(command)
-            exit_status = stdout.channel.recv_exit_status()
-            output = stdout.read().decode()
-            error = stderr.read().decode()
-            print(f"Output: {output}")
-            if error:
-                print(f"Error: {error}")
+            stdin, stdout, stderr = ssh.exec_command(command)
+            print(stdout.read().decode())
+            print(stderr.read().decode())
 
-        print("Docker and Docker Compose installed successfully.")
+        ssh.close()
         return True
     except Exception as e:
-        print(f"Error installing Docker: {e}")
-        return False
-
-def create_docker_compose_file(ssh_client):
-    docker_compose_content = """
-    version: '3.1'
-
-    services:
-      web:
-        image: odoo:14
-        depends_on:
-          - db
-        ports:
-          - "8069:8069"
-        environment:
-          - HOST=db
-          - USER=odoo
-          - PASSWORD=odoo
-        volumes:
-          - odoo-web-data:/var/lib/odoo
-          - ./config:/etc/odoo
-
-      db:
-        image: postgres:13
-        environment:
-          - POSTGRES_DB=postgres
-          - POSTGRES_PASSWORD=odoo
-          - POSTGRES_USER=odoo
-        volumes:
-          - odoo-db-data:/var/lib/postgresql/data
-
-    volumes:
-      odoo-web-data:
-      odoo-db-data:
-    """
-
-    command = f'echo "{docker_compose_content}" | sudo tee /home/ubuntu/docker-compose.yml'
-    stdin, stdout, stderr = ssh_client.exec_command(command)
-    output = stdout.read().decode()
-    error = stderr.read().decode()
-    print(f"Output: {output}")
-    if error:
-        print(f"Error: {error}")
-    else:
-        print("Docker Compose file created successfully.")
-
-
-def start_docker_containers(ssh_client):
-    try:
-        commands = [
-            "cd /home/ubuntu",
-            "sudo docker-compose up -d"
-        ]
-
-        for command in commands:
-            print(f"Executing: {command}")
-            stdin, stdout, stderr = ssh_client.exec_command(command)
-            output = stdout.read().decode()
-            error = stderr.read().decode()
-            print(f"Output: {output}")
-            if error:
-                print(f"Error: {error}")
-
-        print("Docker containers started successfully.")
-        return True
-    except Exception as e:
-        print(f"Error starting Docker containers: {e}")
+        print(f"SSH connection or command execution failed: {e}")
         return False
 
 
 @login_required
 def setup_odoo_docker_view(request, setup_id, company_info_id):
-    print("Odoo Deployment Process Start ...")
     setup = OdooDomainSetup.objects.get(id=setup_id)
+    instance_public_ip = setup.instance_public_ip
+    private_key = paramiko.RSAKey.from_private_key_string(setup.private_key)
 
-    if not verify_instance_key_pair(setup.instance_name, setup.key_pair_name):
-        # Handle key pair verification failure
-        return HttpResponse("Instance key pair association verification failed.")
-
-
-    ssh_client = connect_to_instance(setup.instance_public_ip, 'ubuntu', setup.private_key)
-    # print(ssh_client)
-    if ssh_client:
-        if install_docker(ssh_client):
-            create_docker_compose_file(ssh_client)
-            start_docker_containers(ssh_client)
-        ssh_client.close()
-        print("Successfully Installed Odoo")
-        return HttpResponse("Successfully Installed Odoo")
+    # Deploy Odoo
+    print('Deploying Odoo ...')
+    commands = [
+        'sudo apt update',
+        'sudo apt install -y docker.io',
+        'sudo systemctl start docker',
+        'sudo systemctl enable docker',
+        f'sudo docker run -d -p 8069:8069 -e POSTGRES_DB={setup.db_name} -e POSTGRES_USER={setup.db_user} -e POSTGRES_PASSWORD={setup.db_password} --name odoo --restart always odoo'
+    ]
+    if ssh_execute_command(instance_public_ip, 'ubuntu', private_key, commands):
+        print('Odoo deployment successful.')
+        messages.success(request, "Odoo deployment successful.")
     else:
-        print("Failed to connect ssh")
-        return HttpResponse("Failed to connect ssh")
+        print('Odoo deployment failed.')
+        messages.error(request, "Odoo deployment failed.")
+        return redirect('addMyDomain', company_info_id)
+
+    company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
+    return render(request, 'Automatic_Deployment/instance_created.html',
+                  {'setup': setup, "company_info": company_info, "user_info": request.user})
+
+
+# def verify_instance_key_pair(instance_name, expected_key_pair_name):
+#     try:
+#         client = boto3.client(
+#             'lightsail',
+#             region_name=os.getenv('AWS_REGION'),
+#             aws_access_key_id=os.getenv('S3_ACCESS_KEY_ID'),
+#             aws_secret_access_key=os.getenv('S3_SECRET_ACCESS_KEY')
+#         )
+#         response = client.get_instance(instanceName=instance_name)
+#         #print(response)
+#         instance_key_pair_name = response['instance']['sshKeyName']
+#
+#         if instance_key_pair_name == expected_key_pair_name:
+#             print(f"Instance '{instance_name}' is associated with key pair '{expected_key_pair_name}'.")
+#             return True
+#         else:
+#             print(f"Instance '{instance_name}' is associated with key pair '{instance_key_pair_name}', not '{expected_key_pair_name}'.")
+#             return False
+#     except Exception as e:
+#         print(f"Error verifying instance key pair: {e}")
+#         return False
+
+
+# def connect_to_instance(instance_ip, username, private_key):
+#     # print(instance_ip, username, private_key)
+#     try:
+#         ssh_client = paramiko.SSHClient()
+#         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+#         ssh_key = paramiko.RSAKey.from_private_key(io.StringIO(private_key))
+#         ssh_client.connect(instance_ip, username=username, pkey=ssh_key)
+#         print("ssh Connected")
+#         return ssh_client
+#     except Exception as e:
+#         print(f"Error connecting to instance: {e}")
+#         return False
+
+
+# def wait_for_apt_lock(ssh_client):
+#     command = "sudo lsof /var/lib/dpkg/lock-frontend"
+#     while True:
+#         stdin, stdout, stderr = ssh_client.exec_command(command)
+#         output = stdout.read().decode()
+#         if not output:
+#             break
+#         print(f"Waiting for lock: {output}")
+#         time.sleep(10)
+#     print("Lock released, proceeding with installation.")
+
+# def install_docker(ssh_client):
+#     try:
+#         commands = [
+#             "sudo apt update && sudo apt upgrade -y",
+#             "curl -fsSL https://get.docker.com -o get-docker.sh",
+#             "sudo sh get-docker.sh",
+#             "sudo usermod -aG docker $USER",
+#             "sudo apt install docker-compose -y"
+#         ]
+#
+#         for command in commands:
+#             print(f"Executing: {command}")
+#             wait_for_apt_lock(ssh_client)  # Ensure the lock is released before running the command
+#             stdin, stdout, stderr = ssh_client.exec_command(command)
+#             exit_status = stdout.channel.recv_exit_status()
+#             output = stdout.read().decode()
+#             error = stderr.read().decode()
+#             print(f"Output: {output}")
+#             if error:
+#                 print(f"Error: {error}")
+#
+#         print("Docker and Docker Compose installed successfully.")
+#         return True
+#     except Exception as e:
+#         print(f"Error installing Docker: {e}")
+#         return False
+
+# def create_docker_compose_file(ssh_client):
+#     docker_compose_content = """
+#     version: '3.1'
+#
+#     services:
+#       web:
+#         image: odoo:14
+#         depends_on:
+#           - db
+#         ports:
+#           - "8069:8069"
+#         environment:
+#           - HOST=db
+#           - USER=odoo
+#           - PASSWORD=odoo
+#         volumes:
+#           - odoo-web-data:/var/lib/odoo
+#           - ./config:/etc/odoo
+#
+#       db:
+#         image: postgres:13
+#         environment:
+#           - POSTGRES_DB=postgres
+#           - POSTGRES_PASSWORD=odoo
+#           - POSTGRES_USER=odoo
+#         volumes:
+#           - odoo-db-data:/var/lib/postgresql/data
+#
+#     volumes:
+#       odoo-web-data:
+#       odoo-db-data:
+#     """
+#
+#     command = f'echo "{docker_compose_content}" | sudo tee /home/ubuntu/docker-compose.yml'
+#     stdin, stdout, stderr = ssh_client.exec_command(command)
+#     output = stdout.read().decode()
+#     error = stderr.read().decode()
+#     print(f"Output: {output}")
+#     if error:
+#         print(f"Error: {error}")
+#     else:
+#         print("Docker Compose file created successfully.")
+
+
+# def start_docker_containers(ssh_client):
+#     try:
+#         commands = [
+#             "cd /home/ubuntu",
+#             "sudo docker-compose up -d"
+#         ]
+#
+#         for command in commands:
+#             print(f"Executing: {command}")
+#             stdin, stdout, stderr = ssh_client.exec_command(command)
+#             output = stdout.read().decode()
+#             error = stderr.read().decode()
+#             print(f"Output: {output}")
+#             if error:
+#                 print(f"Error: {error}")
+#
+#         print("Docker containers started successfully.")
+#         return True
+#     except Exception as e:
+#         print(f"Error starting Docker containers: {e}")
+#         return False
+
+
+# @login_required
+# def setup_odoo_docker_view(request, setup_id, company_info_id):
+#     print("Odoo Deployment Process Start ...")
+#     setup = OdooDomainSetup.objects.get(id=setup_id)
+#
+#     if not verify_instance_key_pair(setup.instance_name, setup.key_pair_name):
+#         # Handle key pair verification failure
+#         return HttpResponse("Instance key pair association verification failed.")
+#
+#
+#     ssh_client = connect_to_instance(setup.instance_public_ip, 'ubuntu', setup.private_key)
+#     # print(ssh_client)
+#     if ssh_client:
+#         if install_docker(ssh_client):
+#             create_docker_compose_file(ssh_client)
+#             start_docker_containers(ssh_client)
+#         ssh_client.close()
+#         print("Successfully Installed Odoo")
+#         return HttpResponse("Successfully Installed Odoo")
+#     else:
+#         print("Failed to connect ssh")
+#         return HttpResponse("Failed to connect ssh")
 
 
 
