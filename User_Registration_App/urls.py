@@ -84,6 +84,7 @@ urlpatterns = [
 
 
 
+
     path('activate_my_erp/<int:pk>', views.activate_my_erp, name='activate_my_erp'),
     path('activate_my_erp_info/<int:pk>', views.activate_my_erp_info, name='activate_my_erp_info'),
     path('add_user_with_manager_role/<int:pk>', views.add_user_with_manager_role, name='add_user_with_manager_role'),

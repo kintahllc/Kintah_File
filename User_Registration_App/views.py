@@ -1337,6 +1337,8 @@ def cancel_subscription(request, pk):
         return redirect('login_info')
 
 import re
+
+
 def activate_my_erp(request, pk):
     if request.user.is_authenticated:
         if request.method == 'POST':
