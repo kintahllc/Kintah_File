@@ -29,18 +29,6 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link" href="#">Profile</a>-->
-<!--          </li>-->
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link" href="#">Billing</a>-->
-<!--          </li>-->
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link" href="#">Subscriptions</a>-->
-<!--          </li>-->
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link" href="#">Partners</a>-->
-<!--          </li>-->
           <li class="nav-item">
             <a class="nav-link" href="{% url 'user_logout' %}">logout</a>
           </li>
@@ -60,7 +48,7 @@
   <div class="border border-primary rounded p-3 mb-3">
     <h3 class="text-primary">Profile</h3>
     <ul class="nav flex-column">
-      {% if user_info.first_name == '' %}
+      {% if user_info.user_type == 'Root User' %}
       <li class="nav-item">
         <a class="nav-link btn btn-light" href="{% url 'update_company_info' company_info.id %}">Update Company Info</a>
       </li>
@@ -78,21 +66,19 @@
 
     </ul>
   </div>
-{% if user_info.first_name == '' %}
+{% if user_info.user_type == 'Root User'  %}
   <div class="border border-primary rounded p-3 mb-3">
     <h3 class="text-warning">Billing</h3>
     <ul class="nav flex-column">
       <li class="nav-item">
         <a class="nav-link btn btn-light" href="{% url 'billing_history' company_info.id %}">View billing history</a>
       </li>
-<!--      <li class="nav-item">-->
-<!--        <a class="nav-link btn btn-light" href="#">Add/edit payment information</a>-->
-<!--      </li>-->
       <li class="nav-item">
         <a class="nav-link btn btn-light" href="{% url 'ask_billing_question' company_info.id %}">Ask billing question</a>
       </li>
     </ul>
   </div>
+
 
   <!-- Subscriptions Section -->
   <div class="border border-success rounded p-3 mb-3">
@@ -114,31 +100,10 @@
     </ul>
   </div>
 
-  <!-- Partners Section -->
-<!--  <div class="border border-info rounded p-3 mb-3">-->
-<!--    <h3 class="text-info">Partners</h3>-->
-<!--    <ul class="nav flex-column">-->
-<!--      <li class="nav-item">-->
-<!--        <a class="nav-link btn btn-light" href="#">Register/Login as Partner</a>-->
-<!--      </li>-->
-<!--      <li class="nav-item">-->
-<!--        <a class="nav-link btn btn-light" href="#">View My Client Subscriptions</a>-->
-<!--      </li>-->
-<!--      <li class="nav-item">-->
-<!--        <a class="nav-link btn btn-light" href="#">Add a New Client Subscription</a>-->
-<!--      </li>-->
-<!--      <li class="nav-item">-->
-<!--        <a class="nav-link btn btn-light" href="#">Cancel Client Subscription</a>-->
-<!--      </li>-->
-<!--      <li class="nav-item">-->
-<!--        <a class="nav-link btn btn-light" href="#">Set Customer Subscription Price</a>-->
-<!--      </li>-->
-<!--    </ul>-->
-<!--  </div>-->
 
   <!-- My ERP Section -->
   <div class="border border-warning rounded p-3 mb-3">
-    <h3 class="text-warning">My AI Assistant Dashboard</h3>
+    <h3 class="text-warning">Advanced ERP Management</h3>
     <ul class="nav flex-column">
       <li class="nav-item">
         <a class="nav-link btn btn-light" href="{% url 'activate_my_erp' company_info.id %}">Activate My ERP</a>
@@ -158,7 +123,7 @@
 
   <!-- My AI Assistant Dashboard Section -->
   <div class="border border-warning rounded p-3 mb-3">
-    <h3 class="text-success">My AI Assistant Dashboard</h3>
+    <h3 class="text-success">Kintah Analytics dashboard</h3>
     <ul class="nav flex-column">
 
       <li class="nav-item">
@@ -240,6 +205,8 @@
 
     </ul>
   </div>
+
+
 
   {% endif %}
 

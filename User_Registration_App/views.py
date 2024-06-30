@@ -1,5 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from account.models import User
+import datetime
 from django.contrib.auth import authenticate, logout, login
 # Create your views here.
 from . models import CompanyRegistrationInformation, AdministrationkintahSubscriptionPackagePrice, PriceMatrixPerCompanyType, AdditionalCostCalculationFixParameters, TrainingUserEmail
@@ -52,19 +54,28 @@ def generate_otp(length=6):
 def home_info(request):
     if request.user.is_authenticated:
         user_info= request.user
-        try:
-            if user_info.first_name == '':
-                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-            else:
-                company_info = CompanyRegistrationInformation.objects.get(id=user_info.first_name)
+        check_user_type = user_info.user_type
+        if check_user_type != "Deactivate User" and user_info.is_superuser != True:
+            try:
+                if user_info.first_name == '':
+                    company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                else:
+                    company_info = CompanyRegistrationInformation.objects.get(id=user_info.first_name)
 
-            contex = {
-                'user_info':user_info,
-                'company_info':company_info,
-            }
-            return render(request, 'home.html', contex)
-        except Exception as e:
+                contex = {
+                    'user_info':user_info,
+                    'company_info':company_info,
+                }
+                return render(request, 'home.html', contex)
+            except Exception as e:
+                logout(request)
+                return redirect('login_info')
+        elif user_info.is_superuser == True:
             logout(request)
+            return redirect('login_info')
+        else:
+            logout(request)
+            user_info.delete()
             return redirect('login_info')
     else:
         return redirect('login_info')
@@ -380,11 +391,13 @@ def add_expected_users(request, pk):
             email = request.POST.get('email')
             password = request.POST.get('password')
             role = request.POST.get('role')
+            user_type = request.POST.get('user_type')
 
             myusr_vari = User.objects.create_user(email, email, password)
             myusr_vari.first_name = pk
             myusr_vari.last_name = role
             myusr_vari.is_active = True
+            myusr_vari.user_type = user_type
             myusr_vari.save()
 
             user_info = request.user
@@ -3026,7 +3039,8 @@ def subscription_plan(request):
             # messages.warning(request, str(e))
             return redirect('index')
     else:
-        return render(request, 'not_allowed.html')
+        # return render(request, 'not_allowed.html')
+        return redirect('home')
 
 
 
@@ -3124,7 +3138,8 @@ def user_registration(request):
 
         return render(request, 'authorize_the_following_connected_services.html')
     else:
-        return render(request, 'not_allowed.html')
+        # return render(request, 'not_allowed.html')
+        return redirect('home')
 
 
 def calculate_amount_to_pay(request):
@@ -3411,7 +3426,8 @@ def calculate_amount_to_pay(request):
             messages.warning(request, error_message)
         return redirect('home')
     else:
-        return render(request, 'not_allowed.html')
+        # return render(request, 'not_allowed.html')
+        return redirect('home')
 
 def submit_subscription(request):
     try:
@@ -3454,6 +3470,12 @@ def submit_subscription(request):
 
         installmentsCount = request.POST.get('installmentsCount')
 
+        select_erp_business_type = request.POST.get('select_erp_business_type')
+
+        if select_erp_business_type:
+            # Split the value to get the components
+            company_type_cost2, company_type_cost, select_erp_business_type = select_erp_business_type.split('|')
+
         if payment_type_get == "installments":
             total = float(installmentsCount)
         else:
@@ -3467,6 +3489,8 @@ def submit_subscription(request):
             acquirescaled = acquirescaled,
             product_recommendations = Product_recommendations,
             campaignscaled = campaignscaled,
+
+            select_erp_business_type=select_erp_business_type,
 
             number_of_month_to_access = month_to_access,
             number_of_times_ERP = number_of_times,
@@ -3557,14 +3581,14 @@ def Payment_Submit(request):
         # Getting post requests values
         stripeToken = request.POST.get('stripeToken')
         installment_amount = request.POST.get('installment_amount')
-        print('installment_amount')
-        print(installment_amount)
-        print('installment_amount')
+        # print('installment_amount')
+        # print(installment_amount)
+        # print('installment_amount')
         services_plan_cost_and_platform_total_payment = request.POST.get('services_plan_cost_and_platform_total_payment')
         now_pay = request.POST.get('now_pay')
-        print('services_plan_cost_and_platform_total_payment')
-        print(services_plan_cost_and_platform_total_payment)
-        print('services_plan_cost_and_platform_total_payment')
+        # print('services_plan_cost_and_platform_total_payment')
+        # print(services_plan_cost_and_platform_total_payment)
+        # print('services_plan_cost_and_platform_total_payment')
 
 
 
@@ -3587,7 +3611,10 @@ def Payment_Submit(request):
             interval = 'month'  # Monthly billing
             user_info = request.user
             email = user_info.email
-            name = user_info.first_name
+
+            company_info_here = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            name = company_info_here.file_number
+
             payment_method = request.POST.get('payment_method')
             stripe_token = request.POST.get('stripeToken')
 
@@ -3612,6 +3639,9 @@ def Payment_Submit(request):
 
                     if payment_intent and payment_intent.status == 'succeeded':
                         messages.success(request, 'Payment was Successfull !!')
+
+                        user_info.user_type = "Root User"
+                        user_info.save()
 
                         analitics_info = SubscriptionInformation.objects.filter(id=sub_id).last()
                         if analitics_info:
@@ -3641,10 +3671,69 @@ def Payment_Submit(request):
 
                             try:
                                 # for user massage
-
+                                subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
                                 email = user_info.username
-                                subject = "From Kintah Platform"
-                                message = "We Sent a Request to Admin "
+                                subject = "🎉 Welcome to Kintah Platform! Your Odoo ERP Journey Starts Here 🚀"
+                                subscriber_name = name
+                                subscription_plan_name = subcription_pk.select_erp_business_type
+                                start_date = subcription_pk.created_at
+                                renewal_date = "after" + subcription_pk.number_of_month_to_access
+                                amount_paid = subcription_pk.paid_payment
+                                order_number = 100000 + subcription_pk.id
+                                order_date = subcription_pk.created_at
+                                your_name = "Kintah Staff"
+                                message = f""" Hi {subscriber_name},
+
+                                Welcome to Kintah Platform! We're thrilled to have you on board as our newest member. Thank you for choosing us for your Odoo ERP on-boarding, support, training, and customization needs.
+
+                                ### 📝 Subscription Information
+                                **Plan Name**: {subscription_plan_name}  
+                                **Start Date**: {start_date}  
+                                **Renewal Date**: {renewal_date}  
+                                **Amount Paid**: {amount_paid} USD
+
+                                ### 🛒 Order Information
+                                **Order Number**: {order_number}  
+                                **Order Date**: {order_date}  
+                                **Services Included**:
+                                - Odoo ERP On-boarding
+                                - Comprehensive Support
+                                - In-depth Training
+                                - Custom Solutions
+                                - AI-driven Insights & Recommendations
+
+                                ### What’s Next?
+                                - **Getting Started**: Our onboarding specialist will reach out to you within the next 24 hours to kickstart your journey.
+                                - **Support**: Our support team is available 24/7 to assist you with any queries. Reach out to us anytime at support@kintah.com.
+                                - **Training**: Stay tuned for your personalized training schedule, designed to help you make the most of Odoo ERP.
+                                - **Customization**: We'll work closely with you to tailor Odoo ERP to meet your unique business needs.
+                                - **AI Insights**: Discover powerful insights and recommendations driven by your Odoo ERP data.
+
+                                ### Exclusive Benefits
+                                As a Kintah Platform subscriber, you gain access to:
+                                - **Expert Guidance**: Our team of Odoo experts is here to ensure your success.
+                                - **Tailored Solutions**: Customizations that align perfectly with your business goals.
+                                - **Continuous Learning**: Regular training sessions to keep your skills sharp.
+                                - **Smart Decisions**: Leverage AI-driven insights to make data-backed decisions.
+
+                                Thank you for placing your trust in us. We are committed to providing you with exceptional service and helping you unlock the full potential of Odoo ERP.
+
+                                If you have any questions or need assistance, please don't hesitate to reach out. We're here to help!
+
+                                Welcome aboard!
+
+                                Best regards,
+
+                                {your_name}  
+                                Customer Success Team  
+                                Kintah Platform  
+                                support@kintah.com
+
+                                ---
+
+                                P.S. Follow us on social media for the latest updates and tips on making the most of your Odoo ERP!
+                                ---
+                                """
                                 recipient_list = [email]
 
                                 res = send_email_info(subject, message, recipient_list)
@@ -3675,8 +3764,71 @@ def Payment_Submit(request):
                                 # for user massage
 
                                 email = user_info.username
-                                subject = "From Kintah Platform"
-                                message = "We Sent a Request to Admin "
+                                subject = "🎉 Welcome to Kintah Platform! Your Odoo ERP Journey Starts Here 🚀"
+                                subscriber_name = name
+                                subscription_plan_name = subcription_pk.select_erp_business_type
+                                start_date = subcription_pk.created_at
+                                start_date = start_date.strftime('%d/%m/%Y')
+                                renewal_date = "after " + subcription_pk.number_of_month_to_access + "month "
+                                amount_paid = subcription_pk.paid_payment + "USD"
+                                order_number = 100000 + subcription_pk.id
+                                order_date = subcription_pk.created_at
+                                order_date = order_date.strftime('%d/%m/%Y')
+                                your_name = "Kintah Staff"
+                                message = f""" Hi {subscriber_name},
+
+
+                                Welcome to Kintah Platform! We're thrilled to have you on board as our newest member. Thank you for choosing us for your Odoo ERP on-boarding, support, training, and customization needs.
+
+                                ### 📝 Subscription Information
+                                **Plan Name**: {subscription_plan_name}  
+                                **Start Date**: {start_date}  
+                                **Renewal Date**: {renewal_date}  
+                                **Amount Paid**: {amount_paid} USD
+
+                                ### 🛒 Order Information
+                                **Order Number**: {order_number}  
+                                **Order Date**: {order_date}  
+                                **Services Included**:
+                                - Odoo ERP On-boarding
+                                - Comprehensive Support
+                                - In-depth Training
+                                - Custom Solutions
+                                - AI-driven Insights & Recommendations
+
+                                ### What’s Next?
+                                - **Getting Started**: Our onboarding specialist will reach out to you within the next 24 hours to kickstart your journey.
+                                - **Support**: Our support team is available 24/7 to assist you with any queries. Reach out to us anytime at support@kintah.com.
+                                - **Training**: Stay tuned for your personalized training schedule, designed to help you make the most of Odoo ERP.
+                                - **Customization**: We'll work closely with you to tailor Odoo ERP to meet your unique business needs.
+                                - **AI Insights**: Discover powerful insights and recommendations driven by your Odoo ERP data.
+
+                                ### Exclusive Benefits
+                                As a Kintah Platform subscriber, you gain access to:
+                                - **Expert Guidance**: Our team of Odoo experts is here to ensure your success.
+                                - **Tailored Solutions**: Customizations that align perfectly with your business goals.
+                                - **Continuous Learning**: Regular training sessions to keep your skills sharp.
+                                - **Smart Decisions**: Leverage AI-driven insights to make data-backed decisions.
+
+                                Thank you for placing your trust in us. We are committed to providing you with exceptional service and helping you unlock the full potential of Odoo ERP.
+
+                                If you have any questions or need assistance, please don't hesitate to reach out. We're here to help!
+
+                                Welcome aboard!
+
+                                Best regards,
+
+                                {your_name}  
+                                Customer Success Team  
+                                Kintah Platform  
+                                support@kintah.com
+
+                                ---
+
+                                P.S. Follow us on social media for the latest updates and tips on making the most of your Odoo ERP!
+
+                                ---
+                                """
                                 recipient_list = [email]
 
                                 res = send_email_info(subject, message, recipient_list)

@@ -214,9 +214,9 @@ function rangeChanged1(supportRangeInput) {
           <!-- ERP Dropdown -->
     <div class="form-group">
         <label for="selectERP">Select ERP Business Type</label>
-        <select class="form-control" id="selectERP">
+        <select class="form-control" id="selectERP" name="select_erp_business_type">
             {% for company_type in all_company_types %}
-                <option value="{{ company_type.fix_cost }}|{{ company_type.company_type_cost }}">{{ company_type.company_type_or_industry }}</option>
+                <option value="{{ company_type.fix_cost }}|{{ company_type.company_type_cost }}|{{ company_type.company_type_or_industry }}">{{ company_type.company_type_or_industry }}</option>
             {% endfor %}
         </select>
     </div>

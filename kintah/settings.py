@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'subscription_app',
     'User_Registration_App',
     'Automatic_Deployment',
+    'account',
 
     # 3rd party
     'ckeditor',
@@ -199,3 +200,5 @@ S3_SECRET_ACCESS_KEY=env('S3_SECRET_ACCESS_KEY')
 AWS_REGION=env('AWS_REGION')
 
 ADMIN_EMAIL_TO_GET_MESSAGE=env('ADMIN_EMAIL_TO_GET_MESSAGE')
+
+AUTH_USER_MODEL = 'account.User'

@@ -2,7 +2,8 @@ from django.db import models
 from datetime import datetime
 # Create your models here.
 
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from account.models import User
 # Create your models here.
 
 class CompanyRegistrationInformation(models.Model):
@@ -76,6 +77,10 @@ class PriceMatrixPerCompanyType(models.Model):
     company_type_or_industry = models.CharField(max_length=255, blank=True, null=True)
     fix_cost = models.FloatField(blank=True, null=True)
     company_type_cost = models.FloatField(blank=True, null=True)
+
+    subcategory = models.CharField(max_length=255, blank=True, null=True)
+    category = models.CharField(max_length=255, blank=True, null=True)
+    module = models.TextField(blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
