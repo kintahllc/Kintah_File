@@ -22,7 +22,7 @@ import stat
 from django.shortcuts import get_object_or_404, redirect
 from psycopg2 import sql  # Import the sql module from psycopg2
 from io import StringIO
-
+from account.models import User
 
 
 

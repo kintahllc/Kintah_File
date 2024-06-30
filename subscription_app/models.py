@@ -2,7 +2,8 @@ from django.db import models
 from datetime import datetime
 # Create your models here.
 from ckeditor.fields import RichTextField
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from account.models import User
 # Create your models here.
 from User_Registration_App.models import CompanyRegistrationInformation
 
@@ -24,6 +25,8 @@ class SubscriptionInformation(models.Model):
     number_of_month_to_access = models.CharField(max_length=225, blank=True, null=True)
     number_of_times_ERP = models.CharField(max_length=225,blank=True, null=True)
     number_of_expected_users_of_the_platform = models.CharField(max_length=225,blank=True, null=True)
+
+    select_erp_business_type = models.CharField(max_length=200,blank=True, null=True)
 
     number_of_training_per_month = models.CharField(max_length=225,blank=True, null=True)
     number_of_support_hours_per_month = models.CharField(max_length=225,blank=True, null=True)

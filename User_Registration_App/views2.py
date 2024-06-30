@@ -17,7 +17,8 @@ from . models import CompanyRegistrationInformation
 from django.http import JsonResponse
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from account.models import User
 
 @csrf_exempt
 def country_list_from_ajax(request):
