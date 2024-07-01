@@ -63,10 +63,10 @@
         <a class="nav-link btn btn-light" href="{% url 'change_password' company_info.id %}">Change Password</a>
       </li>
       {% endif %}
-
     </ul>
   </div>
-{% if user_info.user_type == 'Root User'  %}
+
+  {% if user_info.user_type == 'Root User'  %}
   <div class="border border-primary rounded p-3 mb-3">
     <h3 class="text-warning">Billing</h3>
     <ul class="nav flex-column">
@@ -78,7 +78,6 @@
       </li>
     </ul>
   </div>
-
 
   <!-- Subscriptions Section -->
   <div class="border border-success rounded p-3 mb-3">
@@ -100,7 +99,6 @@
     </ul>
   </div>
 
-
   <!-- My ERP Section -->
   <div class="border border-warning rounded p-3 mb-3">
     <h3 class="text-warning">Advanced ERP Management</h3>
@@ -120,7 +118,6 @@
     </ul>
   </div>
 
-
   <!-- My AI Assistant Dashboard Section -->
   <div class="border border-warning rounded p-3 mb-3">
     <h3 class="text-success">Kintah Analytics dashboard</h3>
@@ -131,7 +128,6 @@
       </li>
     </ul>
   </div>
-
 
   <!-- My ERP Section -->
   <div class="border border-warning rounded p-3 mb-3">
@@ -163,7 +159,6 @@
     </ul>
   </div>
 
-
   <!-- My ERP Section -->
   <div class="border border-warning rounded p-3 mb-3">
     <h3 class="text-info">Migration</h3>
@@ -177,7 +172,6 @@
 
     </ul>
   </div>
-
 
   <div class="border border-warning rounded p-3 mb-3">
     <h3 class="text-warning">Advanced Setup</h3>
@@ -206,9 +200,155 @@
     </ul>
   </div>
 
+  {% endif %}
 
+
+
+  {% if user_info.user_type == 'Technical User' or user_info.user_type == 'Regular User' %}
+  <div class="border border-primary rounded p-3 mb-3">
+    <h3 class="text-warning">Billing</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'billing_history' user_info.first_name %}">View billing history</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'ask_billing_question' user_info.first_name %}">Ask billing question</a>
+      </li>
+    </ul>
+  </div>
+  {% endif %}
+
+
+
+  {% if user_info.user_type == 'Technical User' %}
+  <!-- My ERP Section -->
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-warning">Advanced ERP Management</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'activate_my_erp' user_info.first_name %}">Activate My ERP</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{{erp_active.domain}}" target="_blank">Go to My ERP Site</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'activate_my_erp_info' user_info.first_name %}">Get My ERP Access Info</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="#">Process Data for Reporting</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- My ERP Section -->
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-warning">Manage ERP User</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'add_user_with_manager_role' user_info.first_name %}">Add User with Manager Role</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'add_user_without_manager_role' user_info.first_name %}">Add User with Non Manager Role</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'remove_user' user_info.first_name %}">Remove User</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'update_user_role' user_info.first_name %}">Update User Role</a>
+      </li>
+    </ul>
+  </div>
+  {% endif %}
+
+
+
+  {% if user_info.user_type == 'Technical User' or user_info.user_type == 'Regular User' %}
+
+  <!-- Subscriptions Section -->
+  <div class="border border-success rounded p-3 mb-3">
+    <h3 class="text-success">Subscriptions</h3>
+    <ul class="nav flex-column">
+
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'subscription_history' user_info.first_name %}">View Subscription History</a>
+      </li>
+
+    </ul>
+  </div>
+    <!-- My AI Assistant Dashboard Section -->
+
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-success">Kintah Analytics dashboard</h3>
+    <ul class="nav flex-column">
+
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'dashboard' user_info.first_name %}">Dashboard</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- My ERP Section -->
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-success">Manage Products</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'export_product_and_image' user_info.first_name %}">Export Products & Images to ERP</a>
+      </li>
+
+    </ul>
+  </div>
+
+  <!-- My ERP Section -->
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-info">Migration</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'import_contacts_record' user_info.first_name %}">Import Contacts Record</a>
+        <a class="nav-link btn btn-light" href="{% url 'import_employees_record' user_info.first_name %}">Import Employees Record</a>
+        <a class="nav-link btn btn-light" href="{% url 'import_suppliers_record' user_info.first_name %}">Import Suppliers</a>
+        <a class="nav-link btn btn-light" href="{% url 'import_fleet_assets_record' user_info.first_name %}">Import Fleet Assests</a>
+      </li>
+
+    </ul>
+  </div>
 
   {% endif %}
+
+
+  {% if user_info.user_type == 'Technical User' %}
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-warning">Advanced Setup</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="{% url 'odoo_account_accountant' user_info.first_name %}">Setup Accounting</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_setup_manual_shipping' user_info.first_name %}">Setup Manual delivery</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_configure_stripe_payment' user_info.first_name %}">Setup Stripe Payment</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_configure_paypal_payment' user_info.first_name %}">Setup Paypal Payment</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_twilio_sms_config' user_info.first_name %}">Setup Twilio for Messaging</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_configure_whatsapp_service' user_info.first_name %}">Setup Twilio Whatsapp</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_set_website_languages' user_info.first_name %}">Setup Company/Website Languages</a>
+      </li>
+
+    </ul>
+  </div>
+  {% endif %}
+
+
+  {% if user_info.user_type == 'Technical User' or user_info.user_type == 'Regular User' %}
+  <div class="border border-warning rounded p-3 mb-3">
+    <h3 class="text-info">ERP Documentation</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link btn btn-light" href="https://www.odoo.com/documentation/17.0/applications.html"  target="_blank">Learn ODOO ERP</a>
+        <a class="nav-link btn btn-light" href="{% url 'get_training' user_info.first_name %}">Get Training</a>
+        </li>
+
+    </ul>
+  </div>
+  {% endif %}
+
+
+
 
 </div>
 

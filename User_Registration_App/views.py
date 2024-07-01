@@ -86,7 +86,11 @@ def billing_history(request, pk):
     if request.user.is_authenticated:
         try:
             user_info= request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User" or user_info.user_type == "Regular User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
@@ -153,7 +157,12 @@ def ask_billing_question(request, pk):
                     # messages.warning(request, str(e))
 
             user_info= request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User" or user_info.user_type == "Regular User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
@@ -325,7 +334,12 @@ def subscription_history(request, pk):
     if request.user.is_authenticated:
         try:
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User" or user_info.user_type == "Regular User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
@@ -1404,7 +1418,12 @@ def activate_my_erp(request, pk):
 
 
         user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+        if user_info.user_type == "Technical User":
+            pk = int(user_info.first_name)
+            company_info = CompanyRegistrationInformation.objects.get(id=pk)
+        else:
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+
         subcription = SubscriptionInformation.objects.filter(company_info=company_info)
         subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
         erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
@@ -1432,7 +1451,12 @@ def activate_my_erp_info(request, pk):
     if request.user.is_authenticated:
 
         user_info = request.user
-        company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+        if user_info.user_type == "Technical User":
+            pk = int(user_info.first_name)
+            company_info = CompanyRegistrationInformation.objects.get(id=pk)
+        else:
+            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+        # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
         subcription = SubscriptionInformation.objects.filter(company_info=company_info)
         subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
         erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
@@ -1498,7 +1522,12 @@ def add_user_with_manager_role(request, pk):
 
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
@@ -1571,7 +1600,12 @@ def add_user_without_manager_role(request, pk):
 
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
@@ -1629,7 +1663,12 @@ def remove_user(request, pk):
 
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
@@ -1665,7 +1704,12 @@ def update_user_role(request, pk):
         try:
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
@@ -2021,7 +2065,12 @@ def export_product_and_image(request, pk):
 
                 # Get the company and website info from the authenticated user
                 user_info = request.user
-                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                if user_info.user_type == "Technical User" or user_info.user_type == "Regular User":
+                    pk = int(user_info.first_name)
+                    company_info = CompanyRegistrationInformation.objects.get(id=pk)
+                else:
+                    company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
                 subscription = SubscriptionInformation.objects.filter(company_info=company_info).last()
                 erp = Erp_Information.objects.filter(subscription_info=subscription).last()
                 erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subscription, Erp_Info=erp).last()
@@ -2111,7 +2160,12 @@ def export_product_and_image(request, pk):
 
             else:
                 user_info = request.user
-                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                if user_info.user_type == "Technical User":
+                    pk = int(user_info.first_name)
+                    company_info = CompanyRegistrationInformation.objects.get(id=pk)
+                else:
+                    company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
                 subscription = SubscriptionInformation.objects.filter(company_info=company_info)
                 subscription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
                 erp = Erp_Information.objects.filter(subscription_info=subscription_one).last()
@@ -2147,7 +2201,12 @@ def dashboard(request, pk):
     if request.user.is_authenticated:
         try:
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User" or user_info.user_type == "Regular User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
@@ -4048,7 +4107,12 @@ def import_contacts_record(request, pk):
 
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User" or user_info.user_type == "Regular User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                      payment_status=True).last()
@@ -4167,7 +4231,12 @@ def import_suppliers_record(request, pk):
                     os.remove(local_file_path)
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User" or user_info.user_type == "Regular User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                      payment_status=True).last()
@@ -4283,7 +4352,12 @@ def import_employees_record(request, pk):
                     os.remove(local_file_path)
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User" or user_info.user_type == "Regular User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subscription = SubscriptionInformation.objects.filter(company_info=company_info)
             subscription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                       payment_status=True).last()
@@ -4396,7 +4470,12 @@ def import_fleet_assets_record(request, pk):
                     os.remove(local_file_path)
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User" or user_info.user_type == "Regular User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subscription = SubscriptionInformation.objects.filter(company_info=company_info)
             subscription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                       payment_status=True).last()
@@ -4485,7 +4564,12 @@ def odoo_account_accountant(request, pk):
                     # messages.warning(request, str(e))
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subscription = SubscriptionInformation.objects.filter(company_info=company_info)
             subscription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                       payment_status=True).last()
@@ -4551,7 +4635,12 @@ def odoo_setup_manual_shipping(request, pk):
                     # messages.warning(request, str(e))
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subscription = SubscriptionInformation.objects.filter(company_info=company_info)
             subscription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                       payment_status=True).last()
@@ -4613,7 +4702,12 @@ def odoo_set_website_languages(request, pk):
                     # messages.warning(request, str(e))
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subscription = SubscriptionInformation.objects.filter(company_info=company_info)
             subscription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                       payment_status=True).last()
@@ -4677,7 +4771,12 @@ def odoo_configure_whatsapp_service(request, pk):
                     # messages.warning(request, str(e))
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subscription = SubscriptionInformation.objects.filter(company_info=company_info)
             subscription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                       payment_status=True).last()
@@ -4738,7 +4837,12 @@ def odoo_twilio_sms_config(request, pk):
                     # messages.warning(request, str(e))
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subscription = SubscriptionInformation.objects.filter(company_info=company_info)
             subscription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                       payment_status=True).last()
@@ -4799,7 +4903,12 @@ def odoo_configure_stripe_payment(request, pk):
                     # messages.warning(request, str(e))
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subscription = SubscriptionInformation.objects.filter(company_info=company_info)
             subscription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                       payment_status=True).last()
@@ -4860,7 +4969,12 @@ def odoo_configure_paypal_payment(request, pk):
                     # messages.warning(request, str(e))
 
             user_info = request.user
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subscription = SubscriptionInformation.objects.filter(company_info=company_info)
             subscription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                       payment_status=True).last()
@@ -4928,7 +5042,12 @@ def get_training(request, pk):
 
             user_info = request.user
             print('1')
-            company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            if user_info.user_type == "Technical User" or user_info.user_type == "Regular User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             subscription = SubscriptionInformation.objects.filter(company_info=company_info)
             subscription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                       payment_status=True).last()
