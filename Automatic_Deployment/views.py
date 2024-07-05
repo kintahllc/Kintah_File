@@ -246,6 +246,28 @@ def confirm_ip_view(request, company_info_id, setup_id):
 #     return render(request, 'Automatic_Deployment/instance_created.html', {'setup': setup, "company_info":company_info, "user_info": request.user})
 
 
+def verify_instance_key_pair(instance_name, expected_key_pair_name):
+    try:
+        client = boto3.client(
+            'lightsail',
+            region_name=os.getenv('AWS_REGION'),
+            aws_access_key_id=os.getenv('S3_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.getenv('S3_SECRET_ACCESS_KEY')
+        )
+        response = client.get_instance(instanceName=instance_name)
+        instance_key_pair_name = response['instance']['sshKeyName']
+
+        if instance_key_pair_name == expected_key_pair_name:
+            print(f"Instance '{instance_name}' is associated with key pair '{expected_key_pair_name}'.")
+            return True
+        else:
+            print(f"Instance '{instance_name}' is associated with key pair '{instance_key_pair_name}', not '{expected_key_pair_name}'.")
+            return False
+    except Exception as e:
+        print(f"Error verifying instance key pair: {e}")
+        return False
+
+
 @login_required
 def create_instance_view(request, company_info_id, setup_id):
     print('Processing for create instance ...')
@@ -359,74 +381,272 @@ def create_instance_view(request, company_info_id, setup_id):
     except Exception as e:
         print(f"Failed to retrieve instance public IP: {e}")
 
-    print('Creating DB ...')
-    # Create a PostgreSQL database for the Odoo instance
-    db_name = f"{setup.domain.replace('.', '_')}-{unique_suffix}-db"
-    db_user = f"{setup.domain.replace('.', '_')}-{unique_suffix}"
-    db_password = f"{setup.domain.replace('.', '_')}-{unique_suffix}"
+    # print('Creating DB ...')
+    # # Create a PostgreSQL database for the Odoo instance
+    # unique_suffix = str(uuid.uuid4()).split('-')[0]
+    # db_name = f"{setup.domain.replace('.', '_')}-{unique_suffix}-db"
+    # db_user = f"{setup.domain.replace('.', '_')}-{unique_suffix}"
+    # db_password = f"{setup.domain.replace('.', '_')}-{unique_suffix}"
+    # setup.db_name = db_name
+    # setup.db_user = db_user
+    # setup.db_password = db_password
+    # setup.save()
 
-    if create_postgresql_db(db_name, db_user, db_password):
-        setup.db_name = db_name
-        setup.db_user = db_user
-        setup.db_password = db_password
-        setup.save()
-        print(f"Database {db_name} created and user {db_user} added.")
-    else:
-        print(f"Failed to create database {db_name} and user {db_user}.")
+
+
+    # if create_postgresql_db(db_name, db_user, db_password):
+    #     setup.db_name = db_name
+    #     setup.db_user = db_user
+    #     setup.db_password = db_password
+    #     setup.save()
+    #     print(f"Database {db_name} created and user {db_user} added.")
+    # else:
+    #     print(f"Failed to create database {db_name} and user {db_user}.")
 
     company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
     return render(request, 'Automatic_Deployment/instance_created.html', {'setup': setup, "company_info": company_info, "user_info": request.user})
 
-def verify_instance_key_pair(instance_name, expected_key_pair_name):
-    try:
-        client = boto3.client(
-            'lightsail',
-            region_name=os.getenv('AWS_REGION'),
-            aws_access_key_id=os.getenv('S3_ACCESS_KEY_ID'),
-            aws_secret_access_key=os.getenv('S3_SECRET_ACCESS_KEY')
-        )
-        response = client.get_instance(instanceName=instance_name)
-        instance_key_pair_name = response['instance']['sshKeyName']
 
-        if instance_key_pair_name == expected_key_pair_name:
-            print(f"Instance '{instance_name}' is associated with key pair '{expected_key_pair_name}'.")
-            return True
+
+
+
+
+@login_required
+def setup_odoo_docker_view(request, setup_id, company_info_id):
+    try:
+        setup = OdooDomainSetup.objects.get(id=setup_id)
+        unique_suffix = str(uuid.uuid4()).split('-')[0]
+        db_name = f"{setup.domain.replace('.', '_')}_{unique_suffix}_db"
+        db_user = f"{setup.domain.replace('.', '_')}_{unique_suffix}"
+        db_password = f"{setup.domain.replace('.', '_')}_{unique_suffix}"
+        setup.db_name = db_name
+        setup.db_user = db_user
+        setup.db_password = db_password
+        setup.save()
+
+        instance_public_ip = setup.instance_public_ip
+
+        # Debug statements to check setup values
+        print(f"Instance Public IP: {instance_public_ip}")
+        print(f"DB User: {setup.db_user}")
+        print(f"DB Password: {setup.db_password}")
+
+        # Create PostgreSQL user
+        if not create_postgresql_user(setup.db_user, setup.db_password):
+            messages.error(request, "Failed to create PostgreSQL user.")
+            return redirect('addMyDomain', company_info_id)
+
+        # Docker Compose and Nginx configuration content
+        docker_compose_content = f"""
+version: '3.9'
+services:
+    odoo:
+        image: odoo:17.0
+        restart: always
+        tty: true
+        volumes:
+            - ./custom_addons:/mnt/extra-addons
+            - ./config:/etc/odoo
+            - odoo_data:/var/lib/odoo
+        ports:
+            - "8069:8069"
+        networks:
+            - odoo-network
+    db:
+        image: postgres:latest
+        environment:
+            POSTGRES_DB: {db_name}
+            POSTGRES_USER: {db_user}
+            POSTGRES_PASSWORD: {db_password}
+        volumes:
+            - db_data:/var/lib/postgresql/data
+        networks:
+            - odoo-network
+networks:
+  odoo-network:
+volumes:
+  odoo_data:
+  db_data:
+"""
+
+        odoo_conf_content = f"""
+[options]
+; admin_passwd = admin
+db_host = {os.getenv('MS_DB_HOST')}
+db_user = {setup.db_user}
+db_password = {setup.db_password}
+"""
+
+        nginx_conf_content = f"""
+upstream odoo {{
+ server 127.0.0.1:8069;
+}}
+
+upstream odoochat {{
+ server 127.0.0.1:8072;
+}}
+
+server {{
+    listen 80;
+    server_name {setup.domain}; # Replace with actual domain
+
+    proxy_read_timeout 720s;
+    proxy_connect_timeout 720s;
+    proxy_send_timeout 720s;
+
+    # Proxy headers
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Real-IP $remote_addr;
+
+    # log files
+    access_log /var/log/nginx/odoo.access.log;
+    error_log /var/log/nginx/odoo.error.log;
+
+    # Handle longpoll requests
+    location /longpolling {{
+        proxy_pass http://odoochat;
+    }}
+
+    # Handle / requests
+    location / {{
+       proxy_redirect off;
+       proxy_pass http://odoo;
+    }}
+
+    # Cache static files
+    location ~* /web/static/ {{
+        proxy_cache_valid 200 90m;
+        proxy_buffering on;
+        expires 864000;
+        proxy_pass http://odoo;
+    }}
+
+    # Gzip
+    gzip_types text/css text/less text/plain text/xml application/xml application/json application/javascript;
+    gzip on;
+}}
+"""
+
+        # Commands to be executed on the remote server
+        commands = [
+            'sudo apt update',
+            'sudo apt install -y docker.io docker-compose nginx python3-certbot-nginx',
+            'sudo systemctl start docker',
+            'sudo systemctl enable docker',
+            'sudo docker rm -f db odoo || true',
+            'sudo docker network create odoo-network || true',
+            'mkdir -p odoo1/config odoo1/custom_addons',
+        ]
+
+        if ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, commands):
+            # Create and transfer Docker Compose file
+            if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'docker-compose.yml', docker_compose_content, 'odoo1/docker-compose.yml'):
+                messages.error(request, "Failed to transfer Docker Compose file.")
+                return redirect('addMyDomain', company_info_id)
+
+            # Create and transfer Odoo config file
+            if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'odoo.conf', odoo_conf_content, 'odoo1/config/odoo.conf'):
+                messages.error(request, "Failed to transfer Odoo config file.")
+                return redirect('addMyDomain', company_info_id)
+
+            # Run Docker Compose
+            run_docker_cmd = 'cd odoo1 && sudo docker-compose up -d'
+            if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, [run_docker_cmd]):
+                messages.error(request, "Failed to start Docker containers.")
+                return redirect('addMyDomain', company_info_id)
+
+            # Remove default Nginx config
+            remove_nginx_default_cmd = 'sudo rm /etc/nginx/sites-enabled/default || true'
+            if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, [remove_nginx_default_cmd]):
+                messages.error(request, "Failed to remove default Nginx config.")
+                return redirect('addMyDomain', company_info_id)
+
+            # Create and transfer Nginx config file
+            if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'odoo.conf', nginx_conf_content, '/tmp/odoo.conf'):
+                messages.error(request, "Failed to transfer Nginx config file.")
+                return redirect('addMyDomain', company_info_id)
+
+            # Move the Nginx config file to the appropriate directory and create symlink
+            nginx_commands = [
+                'sudo mv /tmp/odoo.conf /etc/nginx/sites-available/odoo.conf',
+                'sudo ln -s /etc/nginx/sites-available/odoo.conf /etc/nginx/sites-enabled/',
+                'sudo nginx -t',
+                'sudo systemctl restart nginx.service',
+                f'sudo certbot --nginx -d {setup.domain} --register-unsafely-without-email --agree-tos --no-eff-email'
+            ]
+            if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, nginx_commands):
+                messages.error(request, "Failed to configure Nginx.")
+                return redirect('addMyDomain', company_info_id)
+
+            # Check if Docker containers are running
+            check_docker_cmd = 'sudo docker ps --format "{{.Names}}"'
+            container_names = ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, [check_docker_cmd], get_output=True)
+            if 'odoo' in container_names and 'db' in container_names:
+                print('Odoo deployment successful.')
+                setup.deployed = True
+                setup.save()
+                messages.success(request, "Odoo deployment successful.")
+            else:
+                print('Docker containers not running as expected.')
+                messages.error(request, "Docker containers not running as expected.")
+                return redirect('addMyDomain', company_info_id)
         else:
-            print(f"Instance '{instance_name}' is associated with key pair '{instance_key_pair_name}', not '{expected_key_pair_name}'.")
-            return False
+            print('Odoo deployment failed.')
+            messages.error(request, "Odoo deployment failed.")
+            return redirect('addMyDomain', company_info_id)
+
+    except OdooDomainSetup.DoesNotExist:
+        messages.error(request, "Setup not found.")
+        return redirect('addMyDomain', company_info_id)
     except Exception as e:
-        print(f"Error verifying instance key pair: {e}")
+        print(f"Error during deployment: {e}")
+        messages.error(request, "Error during deployment.")
+        return redirect('addMyDomain', company_info_id)
+
+    company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
+    return render(request, 'Automatic_Deployment/instance_created.html',
+                  {'setup': setup, 'company_info': company_info, 'user_info': request.user})
+
+
+def ssh_transfer_file(instance_ip, username, private_key_string, local_file_name, file_content, remote_file_path):
+    try:
+        private_key_file = StringIO(private_key_string)
+        ssh_key = paramiko.RSAKey.from_private_key(private_key_file)
+
+        ssh_client = paramiko.SSHClient()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh_client.connect(instance_ip, username=username, pkey=ssh_key)
+        print("SSH Connected")
+
+        sftp_client = ssh_client.open_sftp()
+        with sftp_client.file(remote_file_path, 'w') as remote_file:
+            remote_file.set_pipelined()
+            remote_file.write(file_content)
+            remote_file.chmod(0o644)
+
+        sftp_client.close()
+        ssh_client.close()
+        print(f"File {local_file_name} transferred successfully to {remote_file_path}.")
+        return True
+    except Exception as e:
+        print(f"File transfer failed: {e}")
         return False
 
 
-def create_postgresql_db(db_name, db_user, db_password):
+def create_postgresql_user(db_user, db_password):
     try:
-        rds_host = os.getenv('MS_DB_HOST')
-        rds_port = os.getenv('MS_DB_PORT', 5432)
-        rds_master_user = os.getenv('MS_DB_USER')
-        rds_master_password = os.getenv('MS_DB_PASSWORD')
-        rds_master_name = os.getenv('MS_DB_NAME')
-
         connection = psycopg2.connect(
-            host=rds_host,
-            port=rds_port,
-            user=rds_master_user,
-            password=rds_master_password,
-            dbname=rds_master_name
+            host=os.getenv('MS_DB_HOST'),
+            port=os.getenv('MS_DB_PORT'),
+            user=os.getenv('MS_DB_USER'),
+            password=os.getenv('MS_DB_PASSWORD')
         )
         connection.autocommit = True
         cursor = connection.cursor()
 
-        cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = '{db_name}';")
-        db_exists = cursor.fetchone()
-
-        if not db_exists:
-            cursor.execute(sql.SQL('CREATE DATABASE {} OWNER {};').format(
-                sql.Identifier(db_name),
-                sql.Identifier(rds_master_user)
-            ))
-
-        cursor.execute(f"SELECT 1 FROM pg_roles WHERE rolname = '{db_user}';")
+        cursor.execute(sql.SQL("SELECT 1 FROM pg_roles WHERE rolname=%s"), [db_user])
         user_exists = cursor.fetchone()
 
         if not user_exists:
@@ -437,22 +657,18 @@ def create_postgresql_db(db_name, db_user, db_password):
         cursor.execute(sql.SQL("ALTER USER {} CREATEDB;").format(
             sql.Identifier(db_user)
         ))
-        cursor.execute(sql.SQL("GRANT ALL PRIVILEGES ON DATABASE {} TO {};").format(
-            sql.Identifier(db_name),
-            sql.Identifier(db_user)
-        ))
 
         cursor.close()
         connection.close()
-        print(f"Database {db_name} and user {db_user} created or verified successfully.")
+        print(f"User {db_user} created or verified successfully.")
         return True
 
     except Exception as e:
-        print(f"Error creating or verifying database or user: {e}")
+        print(f"Error creating or verifying user: {e}")
         return False
 
 
-def ssh_execute_command(instance_ip, username, private_key_string, commands):
+def ssh_execute_command(instance_ip, username, private_key_string, commands, get_output=False):
     try:
         private_key_file = StringIO(private_key_string)
         ssh_key = paramiko.RSAKey.from_private_key(private_key_file)
@@ -462,70 +678,151 @@ def ssh_execute_command(instance_ip, username, private_key_string, commands):
         ssh_client.connect(instance_ip, username=username, pkey=ssh_key)
         print("SSH Connected")
 
+        output = ""
         for command in commands:
+            print(f"Executing command: {command}")
             stdin, stdout, stderr = ssh_client.exec_command(command)
-            print(stdout.read().decode())
-            print(stderr.read().decode())
+            command_output = stdout.read().decode()
+            command_error = stderr.read().decode()
+            print(command_output)
+            print(command_error)
+            if get_output:
+                output += command_output
 
         ssh_client.close()
-        return True
-
+        return output if get_output else True
     except Exception as e:
         print(f"SSH connection or command execution failed: {e}")
         return False
 
 
-@login_required
-def setup_odoo_docker_view(request, setup_id, company_info_id):
-    setup = OdooDomainSetup.objects.get(id=setup_id)
-    instance_public_ip = setup.instance_public_ip
 
 
 
 
-
-    try:
-        with transaction.atomic():
-            if not create_postgresql_db(setup.db_name, setup.db_user, setup.db_password):
-                raise Exception("Failed to create PostgreSQL database and user.")
-
-        print('Deploying Odoo ...')
-
-
-        commands = [
-            'sudo apt update',
-            'sudo apt install -y docker.io',
-            'sudo groupadd docker || true',  # Create the Docker group if it doesn't exist
-            'sudo usermod -aG docker $USER',
-            'sudo systemctl start docker',
-            'sudo systemctl enable docker',
-            'sudo docker network create odoo-network || true',
-            f'sudo docker run -d --name db --network odoo-network -e POSTGRES_DB={setup.db_name} '
-            f'-e POSTGRES_USER={setup.db_user} -e POSTGRES_PASSWORD={setup.db_password} postgres:latest',
-            f'sudo docker run -d --name odoo --network odoo-network -p 8069:8069 '
-            f"-e DB_HOST={os.getenv('MS_DB_HOST')} -e DB_PORT={os.getenv('MS_DB_PORT', 5432)} -e DB_NAME={os.getenv('MS_DB_NAME')}"
-            f"-e DB_USER={os.getenv('MS_DB_USER')} -e DB_PASSWORD={os.getenv('MS_DB_PASSWORD')} odoo:latest"
-        ]
-
-
-        if ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, commands):
-            print('Odoo deployment successful.')
-            setup.deployed = True
-            setup.save()
-            messages.success(request, "Odoo deployment successful.")
-        else:
-            print('Odoo deployment failed.')
-            messages.error(request, "Odoo deployment failed.")
-            return redirect('addMyDomain', company_info_id)
-
-    except Exception as e:
-        print(f"Setup failed: {e}")
-        messages.error(request, f"Setup failed: {e}")
-        return redirect('addMyDomain', company_info_id)
-
-    company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
-    return render(request, 'Automatic_Deployment/instance_created.html',
-                  {'setup': setup, "company_info": company_info, "user_info": request.user})
+# def create_postgresql_db(db_name, db_user, db_password):
+#     try:
+#         rds_host = os.getenv('MS_DB_HOST')
+#         rds_port = os.getenv('MS_DB_PORT', 5432)
+#         rds_master_user = os.getenv('MS_DB_USER')
+#         rds_master_password = os.getenv('MS_DB_PASSWORD')
+#         rds_master_name = os.getenv('MS_DB_NAME')
+#
+#         connection = psycopg2.connect(
+#             host=rds_host,
+#             port=rds_port,
+#             user=rds_master_user,
+#             password=rds_master_password,
+#             dbname=rds_master_name
+#         )
+#         connection.autocommit = True
+#         cursor = connection.cursor()
+#
+#         cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = '{db_name}';")
+#         db_exists = cursor.fetchone()
+#
+#         if not db_exists:
+#             cursor.execute(sql.SQL('CREATE DATABASE {} OWNER {};').format(
+#                 sql.Identifier(db_name),
+#                 sql.Identifier(rds_master_user)
+#             ))
+#
+#         cursor.execute(f"SELECT 1 FROM pg_roles WHERE rolname = '{db_user}';")
+#         user_exists = cursor.fetchone()
+#
+#         if not user_exists:
+#             cursor.execute(sql.SQL("CREATE USER {} WITH PASSWORD %s;").format(
+#                 sql.Identifier(db_user)
+#             ), [db_password])
+#
+#         cursor.execute(sql.SQL("ALTER USER {} CREATEDB;").format(
+#             sql.Identifier(db_user)
+#         ))
+#         cursor.execute(sql.SQL("GRANT ALL PRIVILEGES ON DATABASE {} TO {};").format(
+#             sql.Identifier(db_name),
+#             sql.Identifier(db_user)
+#         ))
+#
+#         cursor.close()
+#         connection.close()
+#         print(f"Database {db_name} and user {db_user} created or verified successfully.")
+#         return True
+#
+#     except Exception as e:
+#         print(f"Error creating or verifying database or user: {e}")
+#         return False
+#
+#
+# def ssh_execute_command(instance_ip, username, private_key_string, commands):
+#     try:
+#         private_key_file = StringIO(private_key_string)
+#         ssh_key = paramiko.RSAKey.from_private_key(private_key_file)
+#
+#         ssh_client = paramiko.SSHClient()
+#         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+#         ssh_client.connect(instance_ip, username=username, pkey=ssh_key)
+#         print("SSH Connected")
+#
+#         for command in commands:
+#             stdin, stdout, stderr = ssh_client.exec_command(command)
+#             print(stdout.read().decode())
+#             print(stderr.read().decode())
+#
+#         ssh_client.close()
+#         return True
+#
+#     except Exception as e:
+#         print(f"SSH connection or command execution failed: {e}")
+#         return False
+#
+#
+# @login_required
+# def setup_odoo_docker_view(request, setup_id, company_info_id):
+#     setup = OdooDomainSetup.objects.get(id=setup_id)
+#     instance_public_ip = setup.instance_public_ip
+#
+#     try:
+#         with transaction.atomic():
+#             if not create_postgresql_db(setup.db_name, setup.db_user, setup.db_password):
+#                 raise Exception("Failed to create PostgreSQL database and user.")
+#
+#         print('Deploying Odoo ...')
+#
+#
+#         commands = [
+#             'sudo apt update',
+#             'sudo apt install -y docker.io',
+#             'sudo groupadd docker || true',  # Create the Docker group if it doesn't exist
+#             'sudo usermod -aG docker $USER',
+#             'sudo systemctl start docker',
+#             'sudo systemctl enable docker',
+#             'sudo docker network create odoo-network || true',
+#             f'sudo docker run -d --name db --network odoo-network -e POSTGRES_DB={setup.db_name} '
+#             f'-e POSTGRES_USER={setup.db_user} -e POSTGRES_PASSWORD={setup.db_password} postgres:latest',
+#             f'sudo docker run -d --name odoo --network odoo-network -p 8069:8069 '
+#             f"-e DB_HOST={os.getenv('MS_DB_HOST')} -e DB_PORT={os.getenv('MS_DB_PORT', 5432)} -e DB_NAME={os.getenv('MS_DB_NAME')}"
+#             f"-e DB_USER={os.getenv('MS_DB_USER')} -e DB_PASSWORD={os.getenv('MS_DB_PASSWORD')} odoo:latest"
+#         ]
+#
+#
+#         if ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, commands):
+#             print('Odoo deployment successful.')
+#             setup.deployed = True
+#             setup.save()
+#             messages.success(request, "Odoo deployment successful.")
+#         else:
+#             print('Odoo deployment failed.')
+#             messages.error(request, "Odoo deployment failed.")
+#             return redirect('addMyDomain', company_info_id)
+#
+#     except Exception as e:
+#         print(f"Setup failed: {e}")
+#         messages.error(request, f"Setup failed: {e}")
+#         return redirect('addMyDomain', company_info_id)
+#
+#     company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
+#     return render(request, 'Automatic_Deployment/instance_created.html',
+#                   {'setup': setup, "company_info": company_info, "user_info": request.user})
 
 
 # def connect_to_instance(instance_ip, username, private_key):
