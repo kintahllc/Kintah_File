@@ -450,6 +450,7 @@ services:
             - odoo_data:/var/lib/odoo
         ports:
             - "8069:8069"
+            - "8072:8072"  # Expose Odoo longpolling port
         networks:
             - odoo-network
     db:
@@ -471,7 +472,6 @@ volumes:
 
         odoo_conf_content = f"""
 [options]
-; admin_passwd = admin
 db_host = {os.getenv('MS_DB_HOST')}
 db_user = {setup.db_user}
 db_password = {setup.db_password}
@@ -488,7 +488,7 @@ upstream odoochat {{
 
 server {{
     listen 80;
-    server_name {setup.domain}; # Replace with actual domain
+    server_name {setup.domain};  # Replace with actual domain
 
     proxy_read_timeout 720s;
     proxy_connect_timeout 720s;
@@ -694,7 +694,6 @@ def ssh_execute_command(instance_ip, username, private_key_string, commands, get
     except Exception as e:
         print(f"SSH connection or command execution failed: {e}")
         return False
-
 
 
 
