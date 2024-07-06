@@ -408,9 +408,6 @@ def create_instance_view(request, company_info_id, setup_id):
 
 
 
-
-
-
 @login_required
 def setup_odoo_docker_view(request, setup_id, company_info_id):
     try:
@@ -436,6 +433,14 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
             messages.error(request, "Failed to create PostgreSQL user.")
             return redirect('addMyDomain', company_info_id)
 
+        # Clone Odoo repository
+        clone_odoo_repo_commands = [
+            'git clone https://github.com/odoo/odoo.git -b 17.0 --depth 1 /home/ubuntu/odoo'
+        ]
+        if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, clone_odoo_repo_commands):
+            messages.error(request, "Failed to clone Odoo repository.")
+            return redirect('addMyDomain', company_info_id)
+
         # Docker Compose and Nginx configuration content
         docker_compose_content = f"""
 version: '3.9'
@@ -444,9 +449,11 @@ services:
         image: odoo:17.0
         restart: always
         tty: true
+        command: -c /etc/odoo/odoo.conf
         volumes:
             - ./custom_addons:/mnt/extra-addons
             - ./config:/etc/odoo
+            - /home/ubuntu/odoo:/mnt/odoo
             - odoo_data:/var/lib/odoo
         ports:
             - "8069:8069"
@@ -475,6 +482,7 @@ volumes:
 db_host = {os.getenv('MS_DB_HOST')}
 db_user = {setup.db_user}
 db_password = {setup.db_password}
+addons_path = /mnt/extra-addons,/mnt/odoo/addons
 """
 
         nginx_conf_content = f"""
@@ -542,12 +550,14 @@ server {{
 
         if ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, commands):
             # Create and transfer Docker Compose file
-            if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'docker-compose.yml', docker_compose_content, 'odoo1/docker-compose.yml'):
+            if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'docker-compose.yml',
+                                     docker_compose_content, 'odoo1/docker-compose.yml'):
                 messages.error(request, "Failed to transfer Docker Compose file.")
                 return redirect('addMyDomain', company_info_id)
 
             # Create and transfer Odoo config file
-            if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'odoo.conf', odoo_conf_content, 'odoo1/config/odoo.conf'):
+            if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'odoo.conf', odoo_conf_content,
+                                     'odoo1/config/odoo.conf'):
                 messages.error(request, "Failed to transfer Odoo config file.")
                 return redirect('addMyDomain', company_info_id)
 
@@ -564,13 +574,13 @@ server {{
                 return redirect('addMyDomain', company_info_id)
 
             # Create and transfer Nginx config file
-            if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'odoo.conf', nginx_conf_content, '/tmp/odoo.conf'):
+            if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'nginx.conf', nginx_conf_content,
+                                     '/etc/nginx/sites-available/odoo.conf'):
                 messages.error(request, "Failed to transfer Nginx config file.")
                 return redirect('addMyDomain', company_info_id)
 
-            # Move the Nginx config file to the appropriate directory and create symlink
+            # Create symlink for Nginx config
             nginx_commands = [
-                'sudo mv /tmp/odoo.conf /etc/nginx/sites-available/odoo.conf',
                 'sudo ln -s /etc/nginx/sites-available/odoo.conf /etc/nginx/sites-enabled/',
                 'sudo nginx -t',
                 'sudo systemctl restart nginx.service',
@@ -582,7 +592,8 @@ server {{
 
             # Check if Docker containers are running
             check_docker_cmd = 'sudo docker ps --format "{{.Names}}"'
-            container_names = ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, [check_docker_cmd], get_output=True)
+            container_names = ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, [check_docker_cmd],
+                                                  get_output=True)
             if 'odoo' in container_names and 'db' in container_names:
                 print('Odoo deployment successful.')
                 setup.deployed = True
@@ -621,10 +632,14 @@ def ssh_transfer_file(instance_ip, username, private_key_string, local_file_name
         print("SSH Connected")
 
         sftp_client = ssh_client.open_sftp()
-        with sftp_client.file(remote_file_path, 'w') as remote_file:
-            remote_file.set_pipelined()
-            remote_file.write(file_content)
+        temp_remote_file_path = f"/tmp/{local_file_name}"
+        with sftp_client.file(temp_remote_file_path, 'w') as remote_file:
+            remote_file.write(file_content.encode())
             remote_file.chmod(0o644)
+
+        # Move the file to the desired location using sudo
+        move_command = f"sudo mv {temp_remote_file_path} {remote_file_path}"
+        ssh_execute_command(instance_ip, username, private_key_string, [move_command])
 
         sftp_client.close()
         ssh_client.close()
