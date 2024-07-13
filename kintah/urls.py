@@ -20,6 +20,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+admin.site.site_header = "Kintah Admin Penal"
+admin.site.site_title = "Kintah Admin"
+admin.site.index_title = "Kintah Admin Penal"
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('User_Registration_App.urls')),
