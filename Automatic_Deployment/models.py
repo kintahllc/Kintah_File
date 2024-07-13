@@ -21,6 +21,7 @@ class OdooDomainSetup(models.Model):
     private_key = models.TextField(blank=True, null=True, help_text='Private key for the instance.')  # New field
     key_pair_name = models.CharField(max_length=255, blank=True, null=True, help_text='Name of the Key Pair')
     confirmed = models.BooleanField(default=False, help_text='Has the static IP been confirmed?')
+    deployed = models.BooleanField(default=False, help_text='Has the site is deployed?')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
