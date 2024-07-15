@@ -19,12 +19,40 @@ from io import StringIO
 
 
 @login_required
-def addMyDomain(request, pk):
+def addMyDomain(request, pk, sub_id):
+    getSubcription = SubscriptionInformation.objects.filter(id=sub_id).last()
+    try:
+        check_odoo_instance = OdooDomainSetup.objects.filter(subscription_package=getSubcription)
+        if check_odoo_instance:
+            getOdooDomain = OdooDomainSetup.objects.filter(subscription_package=getSubcription).last()
+            if getOdooDomain.domain:
+                # already have domain
+                if getOdooDomain.confirmed:
+                    # ip is confirmed
+                    if getOdooDomain.deployed:
+                        # deployed
+                        if getOdooDomain.finish_process:
+                            # finished
+                            return redirect("finish_odoo_deploy", pk, getOdooDomain.id)
+                        else:
+                            return redirect("step4_finish_odoo_page", pk, getOdooDomain.id)
+                    else:
+                        return redirect('step3_launge_odoo_page', pk, getOdooDomain.id)
+                else:
+                    return redirect('confirm_ip', pk, getOdooDomain.id)
+            else:
+                pass
+        else:
+            pass
+    except Exception as e:
+        print(f'Failed to check odoo instance : {e}')
+
+
+    # print(pk, sub_id)
     if request.user.is_authenticated:
         company_info = CompanyRegistrationInformation.objects.get(id=pk)
-
         Added_Domains = OdooDomainSetup.objects.filter(user=request.user)
-        context={'company_info':company_info, "user_info":request.user, 'Added_Domains':Added_Domains}
+        context={'company_info':company_info, "user_info":request.user, 'Added_Domains':Added_Domains, 'sub_id':sub_id}
         return render(request, "Automatic_Deployment/addMyDomain.html", context)
     else:
         return redirect('login_info')
@@ -34,12 +62,19 @@ def addMyDomain(request, pk):
 @login_required
 def get_static_ip_view(request):
     if request.method == 'POST':
-        domain = request.POST.get('domain')
         company_info_id = request.POST.get('company_info_id')
+        sub_id = request.POST.get('sub_id')
+
+        domain = request.POST.get('domain')
+
+        if OdooDomainSetup.objects.filter(domain=domain):
+            messages.error(request, "Domain already exist!")
+            return redirect("addMyDomain", company_info_id, sub_id)
+
 
         domain_name = domain.replace(".", "_")
 
-        subcription = SubscriptionInformation.objects.filter(company_info=company_info_id).last()
+        subcription = SubscriptionInformation.objects.filter(id=sub_id).last()
         erp_users = int(subcription.number_of_expected_users_of_the_platform)
 
         try:
@@ -55,7 +90,7 @@ def get_static_ip_view(request):
         except Exception as e:
             print(f"Failed to get the aws client according aws credentials : {e}")
             messages.error(request, f"Failed to get the aws client according aws credentials : {e}")
-            return redirect('addMyDomain', company_info_id)
+            return redirect('addMyDomain', company_info_id, sub_id)
 
         try:
             print('Trying Allocate static IP ...')
@@ -67,7 +102,7 @@ def get_static_ip_view(request):
         except Exception as e:
             print(f'Failed to Allocate static IP : {e}')
             messages.error(request, f'Failed to Allocate static IP : {e}')
-            return redirect('addMyDomain', company_info_id)
+            return redirect('addMyDomain', company_info_id, sub_id)
 
         try:
             print('Trying Retrieve the allocated IP to get the address ...')
@@ -82,6 +117,7 @@ def get_static_ip_view(request):
 
         setup = OdooDomainSetup(
             user=request.user,
+            subscription_package=subcription,
             domain=domain,
             erp_users=erp_users,
             static_ip_name=static_ip_name,
@@ -103,6 +139,33 @@ def confirm_ip_view(request, company_info_id, setup_id):
         print('Confirmed ip and pointed to domain ...')
         setup_id = setup.id
         return redirect('create_instance', company_info_id, setup_id)
+
+    getSubcription = SubscriptionInformation.objects.filter(id=setup.subscription_package.id).last()
+    try:
+        check_odoo_instance = OdooDomainSetup.objects.filter(subscription_package=getSubcription)
+        if check_odoo_instance:
+            getOdooDomain = OdooDomainSetup.objects.filter(subscription_package=getSubcription).last()
+            if getOdooDomain.domain:
+                # already have domain
+                if getOdooDomain.confirmed:
+                    # ip is confirmed
+                    if getOdooDomain.deployed:
+                        # deployed
+                        if getOdooDomain.finish_process:
+                            # finished
+                            return redirect("finish_odoo_deploy_view", company_info_id, setup_id)
+                        else:
+                            return redirect("step4_finish_odoo_page", company_info_id, setup_id)
+                    else:
+                        return redirect('step3_launge_odoo_page', company_info_id, setup_id)
+                else:
+                    pass
+            else:
+                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+        else:
+            return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+    except Exception as e:
+        print(f'Failed to check odoo instance : {e}')
 
     company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
     print('Waiting for confirming ip and point to domain ...')
@@ -178,7 +241,7 @@ def create_instance_view(request, company_info_id, setup_id):
         except Exception as e:
             print(f"Failed to create key pair: {e}")
             messages.error(request, "Failed to create key pair.")
-            return redirect('addMyDomain', company_info_id)
+            return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
     if setup.instance_name:
         print("Instance Already Created for this domain")
     else:
@@ -205,8 +268,23 @@ def create_instance_view(request, company_info_id, setup_id):
         except Exception as e:
             print(f'Failed to create instance: {e}')
             messages.error(request, "Failed to create instance !")
-            return redirect('addMyDomain', company_info_id)
+            return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
+    return redirect('create_instance_second', company_info_id, setup_id, instance_name)
+
+
+
+
+def create_instance_second(request, company_info_id, setup_id, instance_name):
+    setup = OdooDomainSetup.objects.get(id=setup_id)
+
+    # Connect to Lightsail
+    client = boto3.client(
+        'lightsail',
+        region_name=os.getenv('AWS_REGION'),
+        aws_access_key_id=os.getenv('S3_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('S3_SECRET_ACCESS_KEY')
+    )
 
     # Wait for the instance to be in "running" state
     instance_state = ""
@@ -276,8 +354,43 @@ def create_instance_view(request, company_info_id, setup_id):
     except Exception as e:
         print(f"Failed to add firewall rules: {e}")
 
+    return redirect('step3_launge_odoo_page', company_info_id, setup_id)
+
+
+
+@login_required
+def step3_launge_odoo_page(request, company_info_id, setup_id):
+    setup = OdooDomainSetup.objects.get(id=setup_id)
+    getSubcription = SubscriptionInformation.objects.filter(id=setup.subscription_package.id).last()
+    try:
+        check_odoo_instance = OdooDomainSetup.objects.filter(subscription_package=getSubcription)
+        if check_odoo_instance:
+            getOdooDomain = OdooDomainSetup.objects.filter(subscription_package=getSubcription).last()
+            if getOdooDomain.domain:
+                # already have domain
+                if getOdooDomain.confirmed:
+                    # ip is confirmed
+                    if getOdooDomain.deployed:
+                        # deployed
+                        if getOdooDomain.finish_process:
+                            # finished
+                            return redirect("finish_odoo_deploy_view", company_info_id, setup_id)
+                        else:
+                            return redirect("step4_finish_odoo_page", company_info_id, setup_id)
+                    else:
+                        pass
+                else:
+                    return redirect('confirm_ip', company_info_id, setup_id)
+            else:
+                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+        else:
+            return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+    except Exception as e:
+        print(f'Failed to check odoo instance : {e}')
+    setup = OdooDomainSetup.objects.get(id=setup_id)
     company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
-    return render(request, 'Automatic_Deployment/instance_created.html', {'setup': setup, "company_info": company_info, "user_info": request.user})
+    return render(request, 'Automatic_Deployment/instance_created.html',
+                  {'setup': setup, "company_info": company_info, "user_info": request.user})
 
 
 
@@ -285,6 +398,8 @@ def create_instance_view(request, company_info_id, setup_id):
 def setup_odoo_docker_view(request, setup_id, company_info_id):
     try:
         setup = OdooDomainSetup.objects.get(id=setup_id)
+
+        master_password = request.POST.get('master_password')
 
         unique_suffix = str(uuid.uuid4()).split('-')[0]
         # db_name = f"{setup.domain.replace('.', '_')}_{unique_suffix}_db"
@@ -305,7 +420,7 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
         # Create PostgreSQL user
         if not create_postgresql_user(setup.db_user, setup.db_password):
             messages.error(request, "Failed to create PostgreSQL user.")
-            return redirect('addMyDomain', company_info_id)
+            return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
         # Clone Odoo repository
         clone_odoo_repo_commands = [
@@ -313,7 +428,7 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
         ]
         if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, clone_odoo_repo_commands):
             messages.error(request, "Failed to clone Odoo repository.")
-            return redirect('addMyDomain', company_info_id)
+            return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
         # Docker Compose and Nginx configuration content
         docker_compose_content = f"""
@@ -402,7 +517,7 @@ volumes:
 
         odoo_conf_content = f"""
 [options]
-admin_passwd = kintah
+admin_passwd = {master_password}
 db_host = {os.getenv('MS_DB_HOST')}
 db_user = {setup.db_user}
 db_password = {setup.db_password}
@@ -522,31 +637,31 @@ server {{
             if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'docker-compose.yml',
                                      docker_compose_content, 'odoo1/docker-compose.yml'):
                 messages.error(request, "Failed to transfer Docker Compose file.")
-                return redirect('addMyDomain', company_info_id)
+                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
             # Create and transfer Odoo config file
             if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'odoo.conf', odoo_conf_content,
                                      'odoo1/config/odoo.conf'):
                 messages.error(request, "Failed to transfer Odoo config file.")
-                return redirect('addMyDomain', company_info_id)
+                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
             # Run Docker Compose
             run_docker_cmd = 'cd odoo1 && sudo docker-compose up -d'
             if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, [run_docker_cmd]):
                 messages.error(request, "Failed to start Docker containers.")
-                return redirect('addMyDomain', company_info_id)
+                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
             # Remove default Nginx config
             remove_nginx_default_cmd = 'sudo rm /etc/nginx/sites-enabled/default || true'
             if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, [remove_nginx_default_cmd]):
                 messages.error(request, "Failed to remove default Nginx config.")
-                return redirect('addMyDomain', company_info_id)
+                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
             # Create and transfer Nginx config file
             if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'nginx.conf', nginx_conf_content,
                                      '/etc/nginx/sites-available/odoo.conf'):
                 messages.error(request, "Failed to transfer Nginx config file.")
-                return redirect('addMyDomain', company_info_id)
+                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
             # Create symlink for Nginx config
             nginx_commands = [
@@ -557,7 +672,7 @@ server {{
             ]
             if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, nginx_commands):
                 messages.error(request, "Failed to configure Nginx.")
-                return redirect('addMyDomain', company_info_id)
+                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
             # Check if Docker containers are running
             check_docker_cmd = 'sudo docker ps --format "{{.Names}}"'
@@ -572,22 +687,57 @@ server {{
             else:
                 print('Docker containers not running as expected.')
                 messages.error(request, "Docker containers not running as expected.")
-                return redirect('addMyDomain', company_info_id)
+                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
         else:
             print('Odoo deployment failed.')
             messages.error(request, "Odoo deployment failed.")
-            return redirect('addMyDomain', company_info_id)
+            return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
     except OdooDomainSetup.DoesNotExist:
         messages.error(request, "Setup not found.")
-        return redirect('addMyDomain', company_info_id)
+        return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
     except Exception as e:
         print(f"Error during deployment: {e}")
         messages.error(request, "Error during deployment.")
-        return redirect('addMyDomain', company_info_id)
+        return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+
+    return redirect('step4_finish_odoo_page', company_info_id, setup_id)
+
+
+@login_required
+def step4_finish_odoo_page(request, company_info_id, setup_id):
+    setup = OdooDomainSetup.objects.get(id=setup_id)
+    getSubcription = SubscriptionInformation.objects.filter(id=setup.subscription_package.id).last()
+    try:
+        check_odoo_instance = OdooDomainSetup.objects.filter(subscription_package=getSubcription)
+        if check_odoo_instance:
+            getOdooDomain = OdooDomainSetup.objects.filter(subscription_package=getSubcription).last()
+            if getOdooDomain.domain:
+                # already have domain
+                if getOdooDomain.confirmed:
+                    # ip is confirmed
+                    if getOdooDomain.deployed:
+                        # deployed
+                        if getOdooDomain.finish_process:
+                            # finished
+                            return redirect("finish_odoo_deploy_view", company_info_id, setup_id)
+                        else:
+                            pass
+                    else:
+                        return redirect('step3_launge_odoo_page', company_info_id, setup_id)
+                else:
+                    return redirect('confirm_ip', company_info_id, setup_id)
+            else:
+                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+        else:
+            return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+    except Exception as e:
+        print(f'Failed to check odoo instance : {e}')
+
+    setup = OdooDomainSetup.objects.get(id=setup_id)
 
     company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
-    return render(request, 'Automatic_Deployment/successpage.html',
+    return render(request, 'Automatic_Deployment/finish_odoo_process.html',
                   {'setup': setup, 'company_info': company_info, 'user_info': request.user})
 
 
@@ -680,4 +830,18 @@ def ssh_execute_command(instance_ip, username, private_key_string, commands, get
         print(f"SSH connection or command execution failed: {e}")
         return False
 
+
+
+
+def finish_odoo_deploy(request, company_info_id, setup_id):
+    setup = OdooDomainSetup.objects.get(id=setup_id)
+    setup.finish_process = True
+    setup.save()
+    return redirect('finish_odoo_deploy_view', company_info_id, setup_id)
+
+
+def finish_odoo_deploy_view(request, company_info_id, setup_id):
+    setup = OdooDomainSetup.objects.get(id=setup_id)
+    company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
+    return render(request, "Automatic_Deployment/successpage.html", {'setup': setup, 'company_info': company_info, 'user_info': request.user})
 

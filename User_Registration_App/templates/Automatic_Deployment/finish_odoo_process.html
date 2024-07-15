@@ -103,8 +103,8 @@
                 <span class="label">Step 3</span>
             </div>
             <div class="arrow">➔</div>
-            <div class="step completed">
-                <span class="checkmark">✔</span>
+            <div class="step running">
+                <span class="circle"></span>
                 <span class="label">Step 4</span>
             </div>
         </div>
@@ -112,34 +112,18 @@
     </div>
     <hr>
 
-    <p style=" color: yellowgreen; text-align: center; font-size: 25px; ">Complete!!!</p>
+    <p style=" color: yellowgreen; text-align: center; font-size: 25px; ">Step-4: Finish The Process!</p>
     <hr>
-
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th scope="col" colspan="2" class="text-center">Odoo successfully deployed!</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Domain</td>
-          <td>{{ setup.domain }}</td>
-        </tr>
-        <tr>
-          <td>Static IP</td>
-          <td>{{ setup.static_ip }}</td>
-        </tr>
-        <tr>
-          <td>Instance ID</td>
-          <td>{{ setup.instance_id }}</td>
-        </tr>
-
-      </tbody>
-    </table>
+    <h2>Deployment Complete!</h2>
+    <p>Domain: {{ setup.domain }}</p>
+    <p>Static IP: {{ setup.static_ip }}</p>
+    <p>Instance ID: {{ setup.instance_id }}</p>
+<!--    <p>Database: {{ setup.db_name }}</p>-->
 
     <br>
+    <p>Odoo successfully deployed!</p>
 
+    <a href="{% url 'finish_odoo_deploy' company_info.id setup.id %}" type="button" class="btn btn-success">Finish</a>
 
 {% endblock %}
 

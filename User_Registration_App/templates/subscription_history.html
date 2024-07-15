@@ -51,6 +51,7 @@
       <th>Paid Amount</th>
       <th>Paid status</th>
       <th>Date</th>
+      <th>Action</th>
     </tr>
   </thead>
   <tbody>
@@ -66,6 +67,9 @@
         <td>{{ sub.paid_payment }}</td>
         <td>{{ sub.payment_status }}</td>
         <td>{{ sub.created_at }}</td>
+        <td>
+          <a class="nav-link btn btn-warning" href="{% url 'addMyDomain' company_info.id sub.id %}">ERP Odoo Install</a>
+        </td>
     </tr>
     {% endfor %}
   </tbody>
