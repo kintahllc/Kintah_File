@@ -208,18 +208,47 @@ AUTH_USER_MODEL = 'account.User'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'large': {
+            'format': '%(asctime)s  %(levelname)s  %(process)d  %(pathname)s  %(funcName)s  %(lineno)d  %(message)s'
+        },
+    },
     'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': '/home/ubuntu/Kintah_File/logs/debug.log',
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'large',
+        },
+        'access_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'W6',
+            'interval': 1,
+            'filename': os.path.join(BASE_DIR, 'logs', 'access.log'),
+            'formatter': 'large',
+        },
+        'errors_file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'W6',
+            'interval': 1,
+            'filename': os.path.join(BASE_DIR, 'logs', 'ErrorLoggers.log'),
+            'formatter': 'large',
+        },
+        'info_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'W6',
+            'interval': 1,
+            'filename': os.path.join(BASE_DIR, 'logs', 'InfoLoggers.log'),
+            'formatter': 'large',
         },
     },
     'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
+        '': {
+            'handlers': ['access_file', 'errors_file', 'info_file'],
+            'level': 'INFO',
+            'propagate': False,
         },
     },
 }
