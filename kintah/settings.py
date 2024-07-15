@@ -202,3 +202,24 @@ AWS_REGION=env('AWS_REGION')
 ADMIN_EMAIL_TO_GET_MESSAGE=env('ADMIN_EMAIL_TO_GET_MESSAGE')
 
 AUTH_USER_MODEL = 'account.User'
+
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/home/ubuntu/Kintah_File/logs/debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
