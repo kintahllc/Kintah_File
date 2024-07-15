@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Progress Bar Example</title>
+<style>
+  .progress {
+    width: 100%;
+    height: 30px;
+    background-color: #f0f0f0;
+    margin-bottom: 10px;
+  }
+
+  .progress-bar {
+    height: 100%;
+    line-height: 30px;
+    text-align: center;
+    color: white;
+    background-color: #FE1A13;
+    transition: width 1s ease-in-out;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress">
+  <div id="progress-bar" class="progress-bar">0%</div>
+</div>
+
+<script>
+  function updateProgress(duration) {
+    const progressBar = document.getElementById('progress-bar');
+    let progress = 0;
+    const increment = 100 / (duration * 60); // Calculate increment per second
+
+    const intervalId = setInterval(() => {
+      progress += increment;
+      progressBar.style.width = progress + '%';
+      progressBar.innerHTML = Math.round(progress) + '%';
+
+      if (progress >= 100) {
+        clearInterval(intervalId);
+        progressBar.innerHTML = 'Complete!';
+      }
+    }, 1000); // Update every second
+  }
+
+  // Call updateProgress function with duration in minutes (1 minute in this case)
+  updateProgress(1);
+</script>
+
+</body>
+</html>

@@ -10,23 +10,194 @@
         }
 </style>
 
-    <p style=" color: yellowgreen; text-align: center; font-size: 25px; ">Instance Created </p>
+    <style>
+        .step_body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .step {
+            padding: 20px;
+            text-align: center;
+            background-color: gray;
+            color: white;
+            position: relative;
+            transition: background-color 0.3s;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 5px;
+        }
+
+        .completed {
+            background-color: green;
+        }
+
+        .completed .checkmark {
+            margin-bottom: 10px;
+        }
+
+        .circle {
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-radius: 50%;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .label {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .arrow {
+            font-size: 24px;
+            margin: 0 15px;
+            color: gray;
+        }
+
+        .completed + .arrow {
+            color: green;
+        }
+
+        .running {
+            background-color: #CFA016;
+        }
+    </style>
+
+
+    <div class="step_body">
+    <div class="status-container">
+        <div class="status-bar">
+            <div class="step completed">
+                <span class="checkmark">✔</span>
+                <span class="label">Step 1</span>
+            </div>
+            <div class="arrow">➔</div>
+            <div class="step completed">
+                <span class="checkmark">✔</span>
+                <span class="label">Step 2</span>
+            </div>
+            <div class="arrow">➔</div>
+            <div class="step running">
+                <span class="circle"></span>
+                <span class="label">Step 3</span>
+            </div>
+            <div class="arrow">➔</div>
+            <div class="step">
+                <span class="circle"></span>
+                <span class="label">Step 4</span>
+            </div>
+        </div>
+    </div>
+    </div>
+    <hr>
+
+    <p style=" color: yellowgreen; text-align: center; font-size: 25px; ">Step-3: Launch Odoo ERP </p>
     <hr>
     <h2>Instance Created</h2>
     <p>Domain: {{ setup.domain }}</p>
     <p>Static IP: {{ setup.static_ip }}</p>
     <p>Instance ID: {{ setup.instance_id }}</p>
-<!--    <p>Database: {{ setup.db_name }}</p>-->
 
     <br>
-    {% if setup.odoo_deployed %}
-        <p>Odoo successfully deployed!</p>
-    {% else %}
-        <form action="{% url 'setup_odoo_docker' setup_id=setup.id company_info_id=company_info.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-info">Launch Odoo Instance</button>
-        </form>
-    {% endif %}
+    <form id="form_launch_odoo" action="{% url 'setup_odoo_docker' setup_id=setup.id company_info_id=company_info.id %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="master_password">Set Master Password</label>
+            <input type="password" class="form-control" id="master_password" name="master_password" required>
+            <small id="show_status_text" style="color: red;"></small>
+          </div>
+
+        <div class="progress" style="display:none;" id="progress_div_id">
+          <div id="progress-bar" class="progress-bar">Starting ...</div>
+        </div>
+        
+        <button type="submit" class="btn btn-info" id="submit_button">Launch Odoo Instance</button>
+    </form>
+
+
+
+
+
+    <style>
+    .progress {
+    width: 100%;
+    height: 30px;
+    background-color: #f0f0f0;
+    margin-bottom: 10px;
+    }
+
+    .progress-bar {
+    height: 100%;
+    line-height: 30px;
+    text-align: center;
+    color: white;
+    background-color: green;
+    transition: width 1s ease-in-out;
+    }
+    </style>
+    <script>
+
+    document.getElementById('form_launch_odoo').addEventListener('submit', function(event) {
+
+        var master_password = document.getElementById('master_password').value;
+
+        if (master_password.length < 7) {
+            document.getElementById('show_status_text').innerHTML = "Password Need minimum 8 character!";
+            document.getElementById('progress_div_id').style.display = "none";
+            event.preventDefault();
+        }
+        else{
+            document.getElementById('submit_button').disabled = true;
+            document.getElementById('show_status_text').innerHTML = "";
+            // Call updateProgress function with duration in minutes (1 minute in this case)
+            document.getElementById('progress_div_id').style.display = "block";
+            updateProgress(4.15);
+        }
+    });
+
+
+
+    function updateProgress(duration) {
+    const progressBar = document.getElementById('progress-bar');
+    let progress = 0;
+    const increment = 100 / (duration * 60); // Calculate increment per second
+
+    const intervalId = setInterval(() => {
+      progress += increment;
+      progressBar.style.width = progress + '%';
+      progressBar.innerHTML = Math.round(progress) + '%';
+
+      if (progress >= 100) {
+        clearInterval(intervalId);
+        progressBar.innerHTML = 'Please wait ...!';
+      }
+    }, 1000); // Update every second
+    }
+
+
+    </script>
 
 {% endblock %}
 

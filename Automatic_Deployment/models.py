@@ -6,6 +6,7 @@ from account.models import User
 
 class OdooDomainSetup(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subscription_package = models.ForeignKey('subscription_app.SubscriptionInformation', on_delete=models.CASCADE, default=None, blank=True, null=True)
     domain = models.CharField(max_length=255, help_text='Your domain name.')
     erp_users = models.IntegerField(help_text='Number of ERP users.')
     static_ip_name = models.CharField(max_length=45, blank=True, null=True, help_text='Name of Assigned static IP address.')
@@ -22,6 +23,7 @@ class OdooDomainSetup(models.Model):
     key_pair_name = models.CharField(max_length=255, blank=True, null=True, help_text='Name of the Key Pair')
     confirmed = models.BooleanField(default=False, help_text='Has the static IP been confirmed?')
     deployed = models.BooleanField(default=False, help_text='Has the site is deployed?')
+    finish_process = models.BooleanField(default=False, help_text='Has all the process is complete?')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
