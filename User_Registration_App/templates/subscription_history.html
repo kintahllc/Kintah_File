@@ -68,7 +68,7 @@
         <td>{{ sub.payment_status }}</td>
         <td>{{ sub.created_at }}</td>
         <td>
-          <a class="nav-link btn btn-warning" href="{% url 'addMyDomain' company_info.id sub.id %}">ERP Odoo Install</a>
+          <a class="nav-link btn btn-warning" href="{% url 'addMyDomain' company_info.id sub.id %}" target="_blank">ERP Odoo Install</a>
         </td>
     </tr>
     {% endfor %}
