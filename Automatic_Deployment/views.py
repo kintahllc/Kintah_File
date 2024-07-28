@@ -14,9 +14,12 @@ import paramiko
 from django.shortcuts import get_object_or_404, redirect
 from psycopg2 import sql  # Import the sql module from psycopg2
 from io import StringIO
+import requests
+import xmlrpc.client
+import logging
+from django.http import JsonResponse
 
-
-
+logger = logging.getLogger(__name__)
 
 @login_required
 def addMyDomain(request, pk, sub_id):
@@ -31,11 +34,14 @@ def addMyDomain(request, pk, sub_id):
                     # ip is confirmed
                     if getOdooDomain.deployed:
                         # deployed
-                        if getOdooDomain.finish_process:
-                            # finished
-                            return redirect("finish_odoo_deploy", pk, getOdooDomain.id)
+                        if getOdooDomain.setup_company:
+                            # setup company
+                            if getOdooDomain.installations:
+                                return redirect("odoo_landing_page", pk, getOdooDomain.id)
+                            else:
+                                return redirect("step5_installation", pk, getOdooDomain.id)
                         else:
-                            return redirect("step4_finish_odoo_page", pk, getOdooDomain.id)
+                            return redirect("step4_setup_company", pk, getOdooDomain.id)
                     else:
                         return redirect('step3_launge_odoo_page', pk, getOdooDomain.id)
                 else:
@@ -56,7 +62,6 @@ def addMyDomain(request, pk, sub_id):
         return render(request, "Automatic_Deployment/addMyDomain.html", context)
     else:
         return redirect('login_info')
-
 
 
 @login_required
@@ -129,7 +134,6 @@ def get_static_ip_view(request):
         return redirect('confirm_ip', company_info_id, setup_id)
 
 
-
 @login_required
 def confirm_ip_view(request, company_info_id, setup_id):
     setup = OdooDomainSetup.objects.get(id=setup_id)
@@ -151,11 +155,14 @@ def confirm_ip_view(request, company_info_id, setup_id):
                     # ip is confirmed
                     if getOdooDomain.deployed:
                         # deployed
-                        if getOdooDomain.finish_process:
-                            # finished
-                            return redirect("finish_odoo_deploy_view", company_info_id, setup_id)
+                        if getOdooDomain.setup_company:
+                            # setup company
+                            if getOdooDomain.installations:
+                                return redirect("odoo_landing_page", company_info_id, setup_id)
+                            else:
+                                return redirect("step5_installation", company_info_id, setup_id)
                         else:
-                            return redirect("step4_finish_odoo_page", company_info_id, setup_id)
+                            return redirect("step4_setup_company", company_info_id, setup_id)
                     else:
                         return redirect('step3_launge_odoo_page', company_info_id, setup_id)
                 else:
@@ -273,8 +280,6 @@ def create_instance_view(request, company_info_id, setup_id):
     return redirect('create_instance_second', company_info_id, setup_id, instance_name)
 
 
-
-
 def create_instance_second(request, company_info_id, setup_id, instance_name):
     setup = OdooDomainSetup.objects.get(id=setup_id)
 
@@ -357,7 +362,6 @@ def create_instance_second(request, company_info_id, setup_id, instance_name):
     return redirect('step3_launge_odoo_page', company_info_id, setup_id)
 
 
-
 @login_required
 def step3_launge_odoo_page(request, company_info_id, setup_id):
     setup = OdooDomainSetup.objects.get(id=setup_id)
@@ -372,11 +376,14 @@ def step3_launge_odoo_page(request, company_info_id, setup_id):
                     # ip is confirmed
                     if getOdooDomain.deployed:
                         # deployed
-                        if getOdooDomain.finish_process:
-                            # finished
-                            return redirect("finish_odoo_deploy_view", company_info_id, setup_id)
+                        if getOdooDomain.setup_company:
+                            # setup company
+                            if getOdooDomain.installations:
+                                return redirect("odoo_landing_page", company_info_id, setup_id)
+                            else:
+                                return redirect("step5_installation", company_info_id, setup_id)
                         else:
-                            return redirect("step4_finish_odoo_page", company_info_id, setup_id)
+                            return redirect("step4_setup_company", company_info_id, setup_id)
                     else:
                         pass
                 else:
@@ -393,6 +400,95 @@ def step3_launge_odoo_page(request, company_info_id, setup_id):
                   {'setup': setup, "company_info": company_info, "user_info": request.user})
 
 
+def ssh_transfer_file(instance_ip, username, private_key_string, local_file_name, file_content, remote_file_path):
+    try:
+        private_key_file = StringIO(private_key_string)
+        ssh_key = paramiko.RSAKey.from_private_key(private_key_file)
+
+        ssh_client = paramiko.SSHClient()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh_client.connect(instance_ip, username=username, pkey=ssh_key)
+        print("SSH Connected")
+
+        sftp_client = ssh_client.open_sftp()
+        temp_remote_file_path = f"/tmp/{local_file_name}"
+        with sftp_client.file(temp_remote_file_path, 'w') as remote_file:
+            remote_file.write(file_content.encode())
+            remote_file.chmod(0o644)
+
+        # Move the file to the desired location using sudo
+        move_command = f"sudo mv {temp_remote_file_path} {remote_file_path}"
+        ssh_execute_command(instance_ip, username, private_key_string, [move_command])
+
+        sftp_client.close()
+        ssh_client.close()
+        print(f"File {local_file_name} transferred successfully to {remote_file_path}.")
+        return True
+    except Exception as e:
+        print(f"File transfer failed: {e}")
+        return False
+
+
+def create_postgresql_user(db_user, db_password):
+    try:
+        connection = psycopg2.connect(
+            host=os.getenv('MS_DB_HOST'),
+            port=os.getenv('MS_DB_PORT'),
+            user=os.getenv('MS_DB_USER'),
+            password=os.getenv('MS_DB_PASSWORD')
+        )
+        connection.autocommit = True
+        cursor = connection.cursor()
+
+        cursor.execute(sql.SQL("SELECT 1 FROM pg_roles WHERE rolname=%s"), [db_user])
+        user_exists = cursor.fetchone()
+
+        if not user_exists:
+            cursor.execute(sql.SQL("CREATE USER {} WITH PASSWORD %s;").format(
+                sql.Identifier(db_user)
+            ), [db_password])
+
+        cursor.execute(sql.SQL("ALTER USER {} CREATEDB;").format(
+            sql.Identifier(db_user)
+        ))
+
+        cursor.close()
+        connection.close()
+        print(f"User {db_user} created or verified successfully.")
+        return True
+
+    except Exception as e:
+        print(f"Error creating or verifying user: {e}")
+        return False
+
+
+def ssh_execute_command(instance_ip, username, private_key_string, commands, get_output=False):
+    try:
+        private_key_file = StringIO(private_key_string)
+        ssh_key = paramiko.RSAKey.from_private_key(private_key_file)
+
+        ssh_client = paramiko.SSHClient()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh_client.connect(instance_ip, username=username, pkey=ssh_key)
+        print("SSH Connected")
+
+        output = ""
+        for command in commands:
+            print(f"Executing command: {command}")
+            stdin, stdout, stderr = ssh_client.exec_command(command)
+            command_output = stdout.read().decode()
+            command_error = stderr.read().decode()
+            print(command_output)
+            print(command_error)
+            if get_output:
+                output += command_output
+
+        ssh_client.close()
+        return output if get_output else True
+    except Exception as e:
+        print(f"SSH connection or command execution failed: {e}")
+        return False
+
 
 @login_required
 def setup_odoo_docker_view(request, setup_id, company_info_id):
@@ -400,6 +496,33 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
         setup = OdooDomainSetup.objects.get(id=setup_id)
 
         master_password = request.POST.get('master_password')
+        Database_Name = request.POST.get('Database_Name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        phone_number = request.POST.get('phone_number')
+        language = request.POST.get('language')
+        country_code = request.POST.get('country_code')
+        demo_data = request.POST.get('demo_data')
+
+        if OdooDomainSetup.objects.filter(Database_Name=Database_Name):
+            messages.error(request, "Database Name already exist!")
+            return redirect(step3_launge_odoo_page, setup_id, company_info_id)
+
+        print(demo_data)
+
+        setup.Master_Password = master_password
+        setup.Database_Name = Database_Name
+        setup.email = email
+        setup.password = password
+        setup.phone_number = phone_number
+        setup.language = language
+        setup.country_code = country_code
+        if demo_data is None:
+            print("demo data None")
+            setup.demo_data = False
+        else:
+            setup.demo_data = True
+
 
         unique_suffix = str(uuid.uuid4()).split('-')[0]
         # db_name = f"{setup.domain.replace('.', '_')}_{unique_suffix}_db"
@@ -681,8 +804,6 @@ server {{
             # if 'odoo' in container_names and 'db' in container_names:
             if 'odoo' in container_names:
                 print('Odoo deployment successful.')
-                setup.deployed = True
-                setup.save()
                 messages.success(request, f"Odoo deployment successful.")
             else:
                 print('Docker containers not running as expected.')
@@ -701,11 +822,123 @@ server {{
         messages.error(request, "Error during deployment.")
         return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
-    return redirect('step4_finish_odoo_page', company_info_id, setup_id)
+    # return redirect('step4_setup_company', company_info_id, setup_id)
+    return redirect('create_odoo_database', company_info_id, setup_id)
+
+
+# def create_odoo_database(request, company_info_id, setup_id):
+#     setup = OdooDomainSetup.objects.get(id=setup_id)
+#     print("Creating Odoo Database ...")
+#
+#     master_password = setup.Master_Password
+#     Database_Name = setup.Database_Name
+#     email = setup.email
+#     password = setup.password
+#     phone_number = setup.phone_number
+#     language = setup.language
+#     country_code = setup.country_code
+#     demo_data = setup.demo_data
+#
+#     print(master_password)
+#     print(Database_Name)
+#     print(email)
+#     print(password)
+#     print(phone_number)
+#     print(language)
+#     print(country_code)
+#     print(demo_data)
+#
+#     form_data = {
+#         'master_pwd': master_password,
+#         'name': Database_Name,
+#         'login': email,  # Assuming email is used as the login
+#         'password': password,
+#         'confirm_password': password,  # Confirm the password
+#         'phone': phone_number,
+#         'lang': language,
+#         'country_code': country_code,
+#         'demo': '1' if demo_data == 'true' else '0'  # Assuming demo_data is a boolean
+#     }
+#
+#     response = requests.post(f'http://{setup.static_ip}/web/database/selector', data=form_data)
+#     print(response)
+#     print(response.text)
+#
+#     if response.status_code == 200:
+#         print("Odoo is deployed and database is created successfully!")
+#         messages.success(request, "Odoo is deployed and database is created successfully!")
+#         return redirect('step4_setup_company', company_info_id, setup_id)
+#     else:
+#         messages.error(request, "Odoo is deployed but database is not created!")
+#         print("Odoo is deployed but database is not created!")
+#         return redirect('step4_setup_company', company_info_id, setup_id)
+
+
+def create_odoo_database(request, company_info_id, setup_id):
+    setup = OdooDomainSetup.objects.get(id=setup_id)
+    logger.info("Creating Odoo Database ...")
+
+    # Retrieve setup details
+    master_password = setup.Master_Password
+    database_name = setup.Database_Name
+    email = setup.email
+    password = setup.password
+    phone_number = setup.phone_number
+    language = setup.language
+    country_code = setup.country_code
+    demo_data = setup.demo_data == 'true'
+
+    # Odoo server details
+    url = f'http://{setup.static_ip}'
+    admin_password = master_password
+
+    # Database details
+    new_db_name = database_name
+    admin_login = email
+    admin_pass = password
+    admin_lang = language
+
+    # XML-RPC endpoints
+    common_url = f'{url}/xmlrpc/2/common'
+    object_url = f'{url}/xmlrpc/2/object'
+    db_url = f'{url}/xmlrpc/2/db'
+
+    # Create a new database
+    try:
+        db = xmlrpc.client.ServerProxy(db_url, allow_none=True)
+        db.create_database(admin_password, new_db_name, demo_data, admin_lang, admin_pass, admin_login)
+        logger.info(f"Database '{new_db_name}' created successfully.")
+    except Exception as e:
+        logger.error(f"An error occurred while creating the database: {e}")
+        return JsonResponse({'status': 'error', 'message': 'Failed to create database', 'details': str(e)})
+
+    # Authenticate and get UID
+    try:
+        common = xmlrpc.client.ServerProxy(common_url, allow_none=True)
+        uid = common.authenticate(new_db_name, admin_login, admin_pass, {})
+        logger.info(f"Authenticated with UID: {uid}")
+    except Exception as e:
+        logger.error(f"Authentication error: {e}")
+        return JsonResponse({'status': 'error', 'message': 'Authentication failed', 'details': str(e)})
+
+    # Check installed modules
+    if 'uid' in locals():
+        try:
+            models = xmlrpc.client.ServerProxy(object_url, allow_none=True)
+            installed_modules = models.execute_kw(new_db_name, uid, admin_pass, 'ir.module.module', 'search_read',
+                                                  [[['state', '=', 'installed']]], {'fields': ['name']})
+            logger.info(f"Installed modules: {installed_modules}")
+        except Exception as e:
+            logger.error(f"Error fetching modules: {e}")
+
+    setup.deployed = True
+    setup.save()
+
+    return redirect('step4_setup_company', company_info_id, setup_id)
 
 
 @login_required
-def step4_finish_odoo_page(request, company_info_id, setup_id):
+def step4_setup_company(request, company_info_id, setup_id):
     setup = OdooDomainSetup.objects.get(id=setup_id)
     getSubcription = SubscriptionInformation.objects.filter(id=setup.subscription_package.id).last()
     try:
@@ -718,9 +951,12 @@ def step4_finish_odoo_page(request, company_info_id, setup_id):
                     # ip is confirmed
                     if getOdooDomain.deployed:
                         # deployed
-                        if getOdooDomain.finish_process:
-                            # finished
-                            return redirect("finish_odoo_deploy_view", company_info_id, setup_id)
+                        if getOdooDomain.setup_company:
+                            # setup company
+                            if getOdooDomain.installations:
+                                return redirect("odoo_landing_page", company_info_id, setup_id)
+                            else:
+                                return redirect("step5_installation", company_info_id, setup_id)
                         else:
                             pass
                     else:
@@ -737,111 +973,68 @@ def step4_finish_odoo_page(request, company_info_id, setup_id):
     setup = OdooDomainSetup.objects.get(id=setup_id)
 
     company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
-    return render(request, 'Automatic_Deployment/finish_odoo_process.html',
+    return render(request, 'Automatic_Deployment/setup_company.html',
                   {'setup': setup, 'company_info': company_info, 'user_info': request.user})
 
 
-def ssh_transfer_file(instance_ip, username, private_key_string, local_file_name, file_content, remote_file_path):
-    try:
-        private_key_file = StringIO(private_key_string)
-        ssh_key = paramiko.RSAKey.from_private_key(private_key_file)
-
-        ssh_client = paramiko.SSHClient()
-        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(instance_ip, username=username, pkey=ssh_key)
-        print("SSH Connected")
-
-        sftp_client = ssh_client.open_sftp()
-        temp_remote_file_path = f"/tmp/{local_file_name}"
-        with sftp_client.file(temp_remote_file_path, 'w') as remote_file:
-            remote_file.write(file_content.encode())
-            remote_file.chmod(0o644)
-
-        # Move the file to the desired location using sudo
-        move_command = f"sudo mv {temp_remote_file_path} {remote_file_path}"
-        ssh_execute_command(instance_ip, username, private_key_string, [move_command])
-
-        sftp_client.close()
-        ssh_client.close()
-        print(f"File {local_file_name} transferred successfully to {remote_file_path}.")
-        return True
-    except Exception as e:
-        print(f"File transfer failed: {e}")
-        return False
-
-
-def create_postgresql_user(db_user, db_password):
-    try:
-        connection = psycopg2.connect(
-            host=os.getenv('MS_DB_HOST'),
-            port=os.getenv('MS_DB_PORT'),
-            user=os.getenv('MS_DB_USER'),
-            password=os.getenv('MS_DB_PASSWORD')
-        )
-        connection.autocommit = True
-        cursor = connection.cursor()
-
-        cursor.execute(sql.SQL("SELECT 1 FROM pg_roles WHERE rolname=%s"), [db_user])
-        user_exists = cursor.fetchone()
-
-        if not user_exists:
-            cursor.execute(sql.SQL("CREATE USER {} WITH PASSWORD %s;").format(
-                sql.Identifier(db_user)
-            ), [db_password])
-
-        cursor.execute(sql.SQL("ALTER USER {} CREATEDB;").format(
-            sql.Identifier(db_user)
-        ))
-
-        cursor.close()
-        connection.close()
-        print(f"User {db_user} created or verified successfully.")
-        return True
-
-    except Exception as e:
-        print(f"Error creating or verifying user: {e}")
-        return False
-
-
-def ssh_execute_command(instance_ip, username, private_key_string, commands, get_output=False):
-    try:
-        private_key_file = StringIO(private_key_string)
-        ssh_key = paramiko.RSAKey.from_private_key(private_key_file)
-
-        ssh_client = paramiko.SSHClient()
-        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(instance_ip, username=username, pkey=ssh_key)
-        print("SSH Connected")
-
-        output = ""
-        for command in commands:
-            print(f"Executing command: {command}")
-            stdin, stdout, stderr = ssh_client.exec_command(command)
-            command_output = stdout.read().decode()
-            command_error = stderr.read().decode()
-            print(command_output)
-            print(command_error)
-            if get_output:
-                output += command_output
-
-        ssh_client.close()
-        return output if get_output else True
-    except Exception as e:
-        print(f"SSH connection or command execution failed: {e}")
-        return False
-
-
-
-
-def finish_odoo_deploy(request, company_info_id, setup_id):
+def finish_setup_company(request, company_info_id, setup_id):
     setup = OdooDomainSetup.objects.get(id=setup_id)
-    setup.finish_process = True
+    setup.setup_company = True
     setup.save()
-    return redirect('finish_odoo_deploy_view', company_info_id, setup_id)
+    return redirect('step5_installation', company_info_id, setup_id)
 
 
-def finish_odoo_deploy_view(request, company_info_id, setup_id):
+@login_required
+def step5_installation(request, company_info_id, setup_id):
+    setup = OdooDomainSetup.objects.get(id=setup_id)
+    getSubcription = SubscriptionInformation.objects.filter(id=setup.subscription_package.id).last()
+    try:
+        check_odoo_instance = OdooDomainSetup.objects.filter(subscription_package=getSubcription)
+        if check_odoo_instance:
+            getOdooDomain = OdooDomainSetup.objects.filter(subscription_package=getSubcription).last()
+            if getOdooDomain.domain:
+                # already have domain
+                if getOdooDomain.confirmed:
+                    # ip is confirmed
+                    if getOdooDomain.deployed:
+                        # deployed
+                        if getOdooDomain.setup_company:
+                            # setup company
+                            if getOdooDomain.installations:
+                                return redirect("odoo_landing_page", company_info_id, setup_id)
+                            else:
+                                pass
+                        else:
+                            return redirect("step4_setup_company", company_info_id, setup_id)
+                    else:
+                        return redirect('step3_launge_odoo_page', company_info_id, setup_id)
+                else:
+                    return redirect('confirm_ip', company_info_id, setup_id)
+            else:
+                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+        else:
+            return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+    except Exception as e:
+        print(f'Failed to check odoo instance : {e}')
+
+    setup = OdooDomainSetup.objects.get(id=setup_id)
+
+    company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
+    return render(request, 'Automatic_Deployment/installations.html',
+                  {'setup': setup, 'company_info': company_info, 'user_info': request.user})
+
+
+def finish_installation(request, company_info_id, setup_id):
+    setup = OdooDomainSetup.objects.get(id=setup_id)
+    setup.installations = True
+    setup.save()
+    return redirect('odoo_landing_page', company_info_id, setup_id)
+
+
+@login_required
+def odoo_landing_page(request, company_info_id, setup_id):
     setup = OdooDomainSetup.objects.get(id=setup_id)
     company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
     return render(request, "Automatic_Deployment/successpage.html", {'setup': setup, 'company_info': company_info, 'user_info': request.user})
+
 
