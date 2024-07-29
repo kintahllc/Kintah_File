@@ -1427,7 +1427,8 @@ def activate_my_erp(request, pk):
         subcription = SubscriptionInformation.objects.filter(company_info=company_info)
         subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
         erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info = erp).last()
+        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
+        company_name = subcription_one.company_info.file_number
         contex = {
             'user_info': user_info,
             'company_info': company_info,
@@ -1435,6 +1436,7 @@ def activate_my_erp(request, pk):
             'erp': erp,
             'subcription_one': subcription_one,
             'erp_active': erp_active,
+            'company_name': company_name,
         }
         try:
             d = erp_active.company_id
@@ -1460,7 +1462,10 @@ def activate_my_erp_info(request, pk):
         subcription = SubscriptionInformation.objects.filter(company_info=company_info)
         subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
         erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info = erp).last()
+        erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
+
+        company_name = subcription_one.company_info.file_number
+
         contex = {
             'user_info': user_info,
             'company_info': company_info,
@@ -1468,6 +1473,7 @@ def activate_my_erp_info(request, pk):
             'erp': erp,
             'subcription_one': subcription_one,
             'erp_active': erp_active,
+            'company_name': company_name,
         }
         return render(request, 'activate_my_erp_info.html', contex)
     else:
@@ -1531,7 +1537,7 @@ def add_user_with_manager_role(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info = erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'user_info': user_info,
                 'company_info': company_info,
@@ -1609,7 +1615,7 @@ def add_user_without_manager_role(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info = erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'user_info': user_info,
                 'company_info': company_info,
@@ -1672,7 +1678,7 @@ def remove_user(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info = erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             u_list = user_list_of_a_company(int(erp_active.company_id), int(erp_active.website_id))
             contex = {
                 'user_info': user_info,
@@ -1713,7 +1719,7 @@ def update_user_role(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info = erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             u_list = get_users_with_roles_from_company_id(int(erp_active.company_id), int(erp_active.website_id))
             contex = {
                 'user_info': user_info,

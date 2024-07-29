@@ -65,13 +65,13 @@ def odooo_company_and_website_create(c_name, w_name, domain):
         'country_id': 110,  # Assuming the country ID is known and correct
         'phone': '+1234567890',
         'email': 'info@newlocalcompany.com',
-        'website': domain
+        'website': w_name
     }
 
     # Data for the new website
     website_data = {
         'name': w_name,
-        'domain':w_name,
+        'domain':domain,
     }
 
     # Create the company and the website
