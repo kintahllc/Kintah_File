@@ -10,6 +10,7 @@ urlpatterns = [
     path('confirm_ip/<int:company_info_id>/<int:setup_id>/', views.confirm_ip_view, name='confirm_ip'),
     path('create_instance/<int:company_info_id>/<int:setup_id>/', views.create_instance_view, name='create_instance'),
     path('create_instance_second/<int:company_info_id>/<int:setup_id>/<str:instance_name>', views.create_instance_second, name='create_instance_second'),
+    path('create_instance_third/<int:company_info_id>/<int:setup_id>/<str:instance_name>', views.create_instance_third, name='create_instance_third'),
 
     #step-3
     path('step3_launge_odoo_page/<int:company_info_id>/<int:setup_id>/', views.step3_launge_odoo_page, name='step3_launge_odoo_page'),

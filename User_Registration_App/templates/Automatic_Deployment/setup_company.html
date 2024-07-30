@@ -130,8 +130,63 @@
 <!--<br>-->
 <!--<p>Odoo successfully deployed!</p>-->
 
-<a href="{% url 'finish_setup_company' company_info.id setup.id %}" type="button" class="btn btn-warning" style="padding:20px;">Setup Company Website</a>
+<div class="progress" style="display:none;" id="progress_div_id">
+  <div id="progress-bar" class="progress-bar">Starting ...</div>
+</div>
+<form method="post" id="form_configure_ip" action="{% url 'finish_setup_company' company_info.id setup.id %}">
+    {% csrf_token %}
+    <a type="submit" class="btn btn-warning" style="padding:20px;" id="submit_button">Setup Company Website</a>
+</form>
 
+<style>
+.progress {
+width: 100%;
+height: 30px;
+background-color: #f0f0f0;
+margin-bottom: 10px;
+}
+
+.progress-bar {
+height: 100%;
+line-height: 30px;
+text-align: center;
+color: white;
+background-color: green;
+transition: width 1s ease-in-out;
+}
+</style>
+
+
+<script>
+
+document.getElementById('form_configure_ip').addEventListener('submit', function(event) {
+    document.getElementById('submit_button').disabled = true;
+    // Call updateProgress function with duration in minutes (1 minute in this case)
+    document.getElementById('progress_div_id').style.display = "block";
+    updateProgress(1.3);
+});
+
+
+
+function updateProgress(duration) {
+const progressBar = document.getElementById('progress-bar');
+let progress = 0;
+const increment = 100 / (duration * 60); // Calculate increment per second
+
+const intervalId = setInterval(() => {
+  progress += increment;
+  progressBar.style.width = progress + '%';
+  progressBar.innerHTML = Math.round(progress) + '%';
+
+  if (progress >= 100) {
+    clearInterval(intervalId);
+    progressBar.innerHTML = 'Please wait ...!';
+  }
+}, 1000); // Update every second
+}
+
+
+</script>
 
 {% endblock %}
 
