@@ -310,6 +310,23 @@ def create_instance_second(request, company_info_id, setup_id, instance_name):
             print(f"Error retrieving instance state: {e}")
             time.sleep(10)  # Retry after 10 seconds if there's an error
 
+
+    # return redirect('step3_launge_odoo_page', company_info_id, setup_id)
+    return redirect('create_instance_third', company_info_id, setup_id, instance_name)
+
+
+
+def create_instance_third(request, company_info_id, setup_id, instance_name):
+    setup = OdooDomainSetup.objects.get(id=setup_id)
+
+    # Connect to Lightsail
+    client = boto3.client(
+        'lightsail',
+        region_name=os.getenv('AWS_REGION'),
+        aws_access_key_id=os.getenv('S3_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('S3_SECRET_ACCESS_KEY')
+    )
+
     try:
         print(f"Trying to Attach static IP with Instance ({setup.static_ip_name} + {setup.instance_name})...")
         # Attach static IP
@@ -1101,6 +1118,13 @@ def finish_installation(request, company_info_id, setup_id):
 def odoo_landing_page(request, company_info_id, setup_id):
     setup = OdooDomainSetup.objects.get(id=setup_id)
     company_info = CompanyRegistrationInformation.objects.get(id=company_info_id)
-    return render(request, "Automatic_Deployment/successpage.html", {'setup': setup, 'company_info': company_info, 'user_info': request.user})
+
+    subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
+    try:
+        erp_active_id = erp_active.id
+    except:
+        erp_active_id = None
+    return render(request, "Automatic_Deployment/successpage.html", {'setup': setup, 'company_info': company_info, 'user_info': request.user, 'subcription_one':subcription_one, 'erp_active':erp_active, 'erp_active_id':erp_active_id})
 
 
