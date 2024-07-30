@@ -140,4 +140,94 @@ def install_the_modules(modules_list):
 
 
 
+# for mail cnfiguration
+
+def configure_outgoing_mail_server(models, db, uid, password, email, email_password, email_service, company_id):
+    if email_service == 'Google Workspace':
+        smtp_host = 'smtp.gmail.com'
+        smtp_port = 587
+    elif email_service == 'Microsoft Exchange':
+        smtp_host = 'smtp.office365.com'
+        smtp_port = 587
+    else:
+        raise ValueError("Unsupported email service. Please use 'Google Workspace' or 'Microsoft Exchange'.")
+
+    mail_server_values = {
+        'name': f'{email_service} SMTP {email}',
+        'smtp_host': smtp_host,
+        'smtp_port': smtp_port,
+        'smtp_user': email,
+        'smtp_pass': email_password,
+        'smtp_encryption': 'starttls',
+        'sequence': 1,
+        'active': True,
+        # 'company_id': company_id,
+    }
+    # fields = models.execute_kw(db, uid, password, 'ir.mail_server', 'fields_get', [], {'attributes': ['string', 'help', 'type']})
+
+    mail_server_id = models.execute_kw(db, uid, password, 'ir.mail_server', 'create', [mail_server_values])
+    print(f"Outgoing Mail Server created with ID: {mail_server_id} for {email}")
+    return mail_server_id
+
+def configure_incoming_mail_server(models, db, uid, password, email, email_password, email_service, company_id):
+    if email_service == 'Google Workspace':
+        imap_host = 'imap.gmail.com'
+        imap_port = 993
+    elif email_service == 'Microsoft Exchange':
+        imap_host = 'outlook.office365.com'
+        imap_port = 993
+    else:
+        raise ValueError("Unsupported email service. Please use 'Google Workspace' or 'Microsoft Exchange'.")
+
+    action_id = models.execute_kw(db, uid, password, 'ir.actions.server', 'search', [[['name', '=', 'Default action']]])
+
+    fetchmail_server_values = {
+        'name': f'{email_service} IMAP {email}',
+        'server': imap_host,
+        'port': imap_port,
+        # 'type': 'imap',
+        'is_ssl': True,
+        'user': email,
+        'password': email_password,
+        # 'action_id': action_id[0] if action_id else False,
+        'active': True,
+        # 'company_id': company_id,
+    }
+    fields = models.execute_kw(db, uid, password, 'fetchmail.server', 'fields_get', [], {'attributes': ['string', 'help', 'type']})
+    fetchmail_server_id = models.execute_kw(db, uid, password, 'fetchmail.server', 'create', [fetchmail_server_values])
+    print(f"Incoming Mail Server created with ID: {fetchmail_server_id} for {email}")
+    return fetchmail_server_id
+
+
+
+def configure_mail(email, email_service, email_password, employee_type, company_id):
+    url = settings.ODOO_URL
+    db = settings.DB_NAME
+    username = settings.ADMIN_USERNAME
+    password = settings.ADMIN_PASSWORD
+
+    try:
+
+        common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common')
+        uid = common.authenticate(db, username, password, {})
+        if not uid:
+            raise Exception("Authentication failed")
+
+        models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object')
+
+
+        email_service = email_service
+        email_password = email_password
+        company_id = company_id
+        # email = f'support@{client_domain}'
+        email = email
+
+        # Configure email servers in Odoo for the client
+        res1 = configure_outgoing_mail_server(models, db, uid, password, email, email_password, email_service, company_id)
+        res2 = configure_incoming_mail_server(models, db, uid, password, email, email_password, email_service, company_id)
+        return res1, res2
+    except xmlrpc.client.Fault as fault:
+            return fault.faultString, 'Not Done'
+
+
 

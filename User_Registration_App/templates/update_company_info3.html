@@ -34,20 +34,20 @@
       <input type="hidden" id="fee_amount_id" class="form-control" placeholder="Fee Amount" name="fee_amount" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()"   value="0">
 
 
-    <div class="col-md-6">
+    <div class="col-md-6" style="margin-top: 10px;">
       <label for="Partner_client_company_name_id">Partner
         Client
         company name:</label>
       <input type="text" class="form-control" id="Partner_client_company_name_id" name="Partner_client_company_name" placeholder="Partner Client Company Name"  onkeyup="enable_submit_button()"  value="{{company_info.Partner_client_company_name}}">
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-6" style="margin-top: 10px;">
       <label for="partner_client_contact_full_name_id">Partner client contact full name:</label>
       <input type="text" class="form-control" id="partner_client_contact_full_name_id" name="partner_client_contact_full_name" placeholder="Partner Client Contact Full Name"  onkeyup="enable_submit_button()"  value="{{company_info.partner_client_contact_full_name}}">
     </div>
 
 
-    <div class="col-md-12">
+    <div class="col-md-12" style="margin-top: 10px;">
       <label for="input2">Client Email Address:</label>
       <input type="text"  id="client_email_address_id" class="form-control" placeholder="Client Email Address" name="client_email_address" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()" value="{{company_info.client_email_address}}" readonly="">
     </div>
@@ -61,7 +61,7 @@
 
 
 
-    <div class="col-md-12">
+    <div class="col-md-12" style="margin-top: 10px;">
       <label for="input2">Client Phone Number:</label>
 <!--      <input type="text" class="form-control" placeholder="client phone number" id="client_phone_number_id" name="client_phone_number" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()">-->
     </div>
@@ -97,13 +97,13 @@
 
 
 
-    <div class="col-md-12">
+    <div class="col-md-12" style="margin-top: 10px;">
       <label for="input2">Partner client company address:</label>
       <input type="text" id="partner_client_company_address_id" class="form-control" placeholder="Partner client company address" name="partner_client_company_address" aria-label="Username" aria-describedby="basic-addon1"  onkeyup="enable_submit_button()"  value="{{company_info.partner_client_company_address}}">
     </div>
 
 
-    <div class="form-group col-md-12">
+    <div class="form-group col-md-12" style="margin-top: 10px;">
       <label for="partner_client_company_country_id">Partner client company country</label>
       <select class="form-control" id="partner_client_company_country_id" name="partner_client_company_country" onchange="for_get_state(this)">
             <option value="{{company_info.partner_client_company_country}}">{{company_info.partner_client_company_country}}</option>

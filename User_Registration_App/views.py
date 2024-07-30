@@ -41,8 +41,10 @@ from .utils import get_or_create_category
 import logging
 from django.conf import settings
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 logger = logging.getLogger(__name__)
+
 
 
 def generate_otp(length=6):
@@ -62,9 +64,19 @@ def home_info(request):
                 else:
                     company_info = CompanyRegistrationInformation.objects.get(id=user_info.first_name)
 
+                subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
+                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
+                try:
+                    erp_active_id = erp_active.id
+                except:
+                    erp_active_id = None
+
                 contex = {
                     'user_info':user_info,
                     'company_info':company_info,
+                    'subcription_one':subcription_one,
+                    'erp_active':erp_active,
+                    'erp_active_id':erp_active_id,
                 }
                 return render(request, 'home.html', contex)
             except Exception as e:
@@ -91,10 +103,10 @@ def billing_history(request, pk):
                 company_info = CompanyRegistrationInformation.objects.get(id=pk)
             else:
                 company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info).order_by('-id')
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'user_info':user_info,
                 'company_info':company_info,
@@ -166,7 +178,7 @@ def ask_billing_question(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'user_info':user_info,
                 'company_info':company_info,
@@ -254,7 +266,7 @@ def update_company_info(request, pk):
             country_names = [country['name'] for country in country_all]
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'user_info': user_info,
                 'company_info': company_info,
@@ -305,7 +317,7 @@ def change_password(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'user_info': user_info,
                 'company_info': company_info,
@@ -340,10 +352,10 @@ def subscription_history(request, pk):
             else:
                 company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
             # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-            subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subcription = SubscriptionInformation.objects.filter(company_info=company_info).order_by('-id')
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'user_info': user_info,
                 'company_info': company_info,
@@ -376,7 +388,7 @@ def add_company_users(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'subcription_one': subcription_one,
                 'erp': erp,
@@ -419,7 +431,7 @@ def add_expected_users(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'user_info': user_info,
                 'company_info': company_info,
@@ -464,8 +476,7 @@ def upgrade_subscription(request, pk):
                     subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                              payment_status=True).last()
                     erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                                       Erp_Info=erp).last()
+                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
                     contex = {
                         'demandscaled': demandscaled,
                         'acquirescaled': acquirescaled,
@@ -871,8 +882,7 @@ def upgrade_calculate_subscriptions(request, pk):
                     subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                              payment_status=True).last()
                     erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                                       Erp_Info=erp).last()
+                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
 
                     all_company_types = PriceMatrixPerCompanyType.objects.all()
                     parameters = AdditionalCostCalculationFixParameters.objects.filter().last()
@@ -1053,7 +1063,7 @@ def upgrade_submit_subscription_inside_home(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
 
             publishable_key = settings.STRIPE_PUBLIC_KEY
 
@@ -1341,7 +1351,7 @@ def cancel_subscription(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'user_info': user_info,
                 'company_info': company_info,
@@ -1751,8 +1761,7 @@ def update_user_roles_view(request):
                     subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                              payment_status=True).last()
                     erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                                       Erp_Info=erp).last()
+                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
                     u_list = get_users_with_roles_from_company_id(int(erp_active.company_id), int(erp_active.website_id))
 
 
@@ -2216,7 +2225,7 @@ def dashboard(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'subcription_one': subcription_one,
                 'erp': erp,
@@ -2306,7 +2315,7 @@ def new_subscription_plan(request, pk):
                 subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                          payment_status=True).last()
                 erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
                 contex = {
                     'subcription_one': subcription_one,
                     'erp': erp,
@@ -2327,7 +2336,7 @@ def new_subscription_plan(request, pk):
             subcription = SubscriptionInformation.objects.filter(company_info=company_info)
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
             contex = {
                 'subcription_one': subcription_one,
                 'erp': erp,
@@ -2379,8 +2388,7 @@ def new_subscriptions(request, pk):
                 subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                          payment_status=True).last()
                 erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                                   Erp_Info=erp).last()
+                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
                 contex = {
                     'subcription_one': subcription_one,
                     'erp': erp,
@@ -2575,12 +2583,11 @@ def new_subscriptions(request, pk):
 
                     user_info = request.user
                     company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-                    subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                    subcription = SubscriptionInformation.objects.filter(company_info=company_info).order_by('-id')
                     subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                              payment_status=True).last()
                     erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                                       Erp_Info=erp).last()
+                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
 
                     all_company_types = PriceMatrixPerCompanyType.objects.all()
                     parameters = AdditionalCostCalculationFixParameters.objects.filter().last()
@@ -2688,8 +2695,7 @@ def new_subscriptions(request, pk):
                 subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                          payment_status=True).last()
                 erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                                   Erp_Info=erp).last()
+                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
                 contex = {
                     'subcription_one': subcription_one,
                     'erp': erp,
@@ -2713,8 +2719,7 @@ def new_subscriptions(request, pk):
                 subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                          payment_status=True).last()
                 erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one,
-                                                                   Erp_Info=erp).last()
+                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
                 contex = {
                     'subcription_one': subcription_one,
                     'erp': erp,
@@ -2743,6 +2748,10 @@ def submit_subscription_inside_home(request):
     if request.user.is_authenticated:
         try:
             CompanyRegistrationInformationId = request.POST.get('CompanyRegistrationInformationId')
+            select_erp_business_type = request.POST.get('select_erp_business_type')
+            if select_erp_business_type:
+                # Split the value to get the components
+                company_type_cost2, company_type_cost, select_erp_business_type = select_erp_business_type.split('|')
 
             demandscaled = request.POST.get('demandscaled')
             if demandscaled == 'on':
@@ -2811,6 +2820,7 @@ def submit_subscription_inside_home(request):
                 platform_total_payment=total_amount,
                 paid_payment=total,
                 services_plan_cost_and_platform_total_payment=all_amount_sum,
+                select_erp_business_type=select_erp_business_type,
             )
             sub.save()
 
@@ -3639,7 +3649,7 @@ def send_email_info(subject, message, recipient_list):
 
 
 
-
+from django.core.mail import EmailMessage
 # @login_required(login_url="users:login")
 def Payment_Submit(request):
     if request.user.is_authenticated:
@@ -3735,73 +3745,110 @@ def Payment_Submit(request):
                                 messages.warning(request, f"Admin Massage not sent reasone {rea}")
 
                             try:
-                                # for user massage
-                                subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
-                                email = user_info.username
+                                # # for user massage
+                                # subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
+                                # email = user_info.username
+                                # subject = "🎉 Welcome to Kintah Platform! Your Odoo ERP Journey Starts Here 🚀"
+                                # subscriber_name = name
+                                # subscription_plan_name = subcription_pk.select_erp_business_type
+                                # start_date = subcription_pk.created_at
+                                # renewal_date = "after" + subcription_pk.number_of_month_to_access
+                                # amount_paid = subcription_pk.paid_payment
+                                # order_number = 100000 + subcription_pk.id
+                                # order_date = subcription_pk.created_at
+                                # your_name = "Kintah Staff"
+                                # message = f""" Hi {subscriber_name},
+                                #
+                                # Welcome to Kintah Platform! We're thrilled to have you on board as our newest member. Thank you for choosing us for your Odoo ERP on-boarding, support, training, and customization needs.
+                                #
+                                # ### 📝 Subscription Information
+                                # **Plan Name**: {subscription_plan_name}
+                                # **Start Date**: {start_date}
+                                # **Renewal Date**: {renewal_date}
+                                # **Amount Paid**: {amount_paid} USD
+                                #
+                                # ### 🛒 Order Information
+                                # **Order Number**: {order_number}
+                                # **Order Date**: {order_date}
+                                # **Services Included**:
+                                # - Odoo ERP On-boarding
+                                # - Comprehensive Support
+                                # - In-depth Training
+                                # - Custom Solutions
+                                # - AI-driven Insights & Recommendations
+                                #
+                                # ### What’s Next?
+                                # - **Getting Started**: Our onboarding specialist will reach out to you within the next 24 hours to kickstart your journey.
+                                # - **Support**: Our support team is available 24/7 to assist you with any queries. Reach out to us anytime at support@kintah.com.
+                                # - **Training**: Stay tuned for your personalized training schedule, designed to help you make the most of Odoo ERP.
+                                # - **Customization**: We'll work closely with you to tailor Odoo ERP to meet your unique business needs.
+                                # - **AI Insights**: Discover powerful insights and recommendations driven by your Odoo ERP data.
+                                #
+                                # ### Exclusive Benefits
+                                # As a Kintah Platform subscriber, you gain access to:
+                                # - **Expert Guidance**: Our team of Odoo experts is here to ensure your success.
+                                # - **Tailored Solutions**: Customizations that align perfectly with your business goals.
+                                # - **Continuous Learning**: Regular training sessions to keep your skills sharp.
+                                # - **Smart Decisions**: Leverage AI-driven insights to make data-backed decisions.
+                                #
+                                # Thank you for placing your trust in us. We are committed to providing you with exceptional service and helping you unlock the full potential of Odoo ERP.
+                                #
+                                # If you have any questions or need assistance, please don't hesitate to reach out. We're here to help!
+                                #
+                                # Welcome aboard!
+                                #
+                                # Best regards,
+                                #
+                                # {your_name}
+                                # Customer Success Team
+                                # Kintah Platform
+                                # support@kintah.com
+                                #
+                                # ---
+                                #
+                                # P.S. Follow us on social media for the latest updates and tips on making the most of your Odoo ERP!
+                                # ---
+                                # """
+                                # recipient_list = [email]
+                                #
+                                # res = send_email_info(subject, message, recipient_list)
+                                subscription = SubscriptionInformation.objects.get(id=sub_id)
+                                user_info = request.user
+                                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+
                                 subject = "🎉 Welcome to Kintah Platform! Your Odoo ERP Journey Starts Here 🚀"
                                 subscriber_name = name
-                                subscription_plan_name = subcription_pk.select_erp_business_type
-                                start_date = subcription_pk.created_at
-                                renewal_date = "after" + subcription_pk.number_of_month_to_access
-                                amount_paid = subcription_pk.paid_payment
-                                order_number = 100000 + subcription_pk.id
-                                order_date = subcription_pk.created_at
+                                subscription_plan_name = subscription.select_erp_business_type
+                                start_date = subscription.created_at.strftime('%d/%m/%Y')
+                                renewal_date = f"after {subscription.number_of_month_to_access} month"
+                                amount_paid = f"{subscription.paid_payment} USD"
+                                order_number = 100000 + subscription.id
+                                order_date = subscription.created_at.strftime('%d/%m/%Y')
                                 your_name = "Kintah Staff"
-                                message = f""" Hi {subscriber_name},
 
-                                Welcome to Kintah Platform! We're thrilled to have you on board as our newest member. Thank you for choosing us for your Odoo ERP on-boarding, support, training, and customization needs.
+                                message = render_to_string('new_subscription_email_template.html', {
+                                    'subscriber_name': subscriber_name,
+                                    'subscription_plan_name': subscription_plan_name,
+                                    'start_date': start_date,
+                                    'renewal_date': renewal_date,
+                                    'amount_paid': amount_paid,
+                                    'order_number': order_number,
+                                    'order_date': order_date,
+                                    'your_name': your_name
+                                })
 
-                                ### 📝 Subscription Information
-                                **Plan Name**: {subscription_plan_name}  
-                                **Start Date**: {start_date}  
-                                **Renewal Date**: {renewal_date}  
-                                **Amount Paid**: {amount_paid} USD
-
-                                ### 🛒 Order Information
-                                **Order Number**: {order_number}  
-                                **Order Date**: {order_date}  
-                                **Services Included**:
-                                - Odoo ERP On-boarding
-                                - Comprehensive Support
-                                - In-depth Training
-                                - Custom Solutions
-                                - AI-driven Insights & Recommendations
-
-                                ### What’s Next?
-                                - **Getting Started**: Our onboarding specialist will reach out to you within the next 24 hours to kickstart your journey.
-                                - **Support**: Our support team is available 24/7 to assist you with any queries. Reach out to us anytime at support@kintah.com.
-                                - **Training**: Stay tuned for your personalized training schedule, designed to help you make the most of Odoo ERP.
-                                - **Customization**: We'll work closely with you to tailor Odoo ERP to meet your unique business needs.
-                                - **AI Insights**: Discover powerful insights and recommendations driven by your Odoo ERP data.
-
-                                ### Exclusive Benefits
-                                As a Kintah Platform subscriber, you gain access to:
-                                - **Expert Guidance**: Our team of Odoo experts is here to ensure your success.
-                                - **Tailored Solutions**: Customizations that align perfectly with your business goals.
-                                - **Continuous Learning**: Regular training sessions to keep your skills sharp.
-                                - **Smart Decisions**: Leverage AI-driven insights to make data-backed decisions.
-
-                                Thank you for placing your trust in us. We are committed to providing you with exceptional service and helping you unlock the full potential of Odoo ERP.
-
-                                If you have any questions or need assistance, please don't hesitate to reach out. We're here to help!
-
-                                Welcome aboard!
-
-                                Best regards,
-
-                                {your_name}  
-                                Customer Success Team  
-                                Kintah Platform  
-                                support@kintah.com
-
-                                ---
-
-                                P.S. Follow us on social media for the latest updates and tips on making the most of your Odoo ERP!
-                                ---
-                                """
+                                email = user_info.username
                                 recipient_list = [email]
 
-                                res = send_email_info(subject, message, recipient_list)
+                                email_message = EmailMessage(
+                                    subject=subject,
+                                    body=message,
+                                    from_email=settings.DEFAULT_FROM_EMAIL,
+                                    to=recipient_list,
+                                )
+                                email_message.content_subtype = "html"  # Main content is now text/html
+                                email_message.send()
+                                messages.success(request, "Subscription email sent successfully!")
                             except Exception as e:
                                 rea = str(e)
                                 messages.success(request, f"Admin Massage not sent reasone {rea}")
@@ -3826,77 +3873,79 @@ def Payment_Submit(request):
                                 messages.warning(request, f"Admin Massage not sent reasone {rea}")
 
                             try:
-                                # for user massage
+                                # # for user massage
+                                #
+                                # email = user_info.username
+                                # subcription_pk = SubscriptionInformation.objects.get(id=sub_id)
+                                # user_info = request.user
+                                # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                                #
+                                # subject = "🎉 Welcome to Kintah Platform! Your Odoo ERP Journey Starts Here 🚀"
+                                # subscriber_name = name
+                                # subscription_plan_name = subcription_pk.select_erp_business_type
+                                # start_date = subcription_pk.created_at
+                                # start_date = start_date.strftime('%d/%m/%Y')
+                                # renewal_date = "after " + subcription_pk.number_of_month_to_access + "month "
+                                # amount_paid = subcription_pk.paid_payment + "USD"
+                                # order_number = 100000 + subcription_pk.id
+                                # order_date = subcription_pk.created_at
+                                # order_date = order_date.strftime('%d/%m/%Y')
+                                # your_name = "Kintah Staff"
+                                #
+                                # message = render_to_string('new_subscription_email_template.html', {
+                                #     'subscriber_name': name,
+                                #     'subscription_plan_name': subcription_pk.select_erp_business_type,
+                                #     'start_date': subcription_pk.created_at,
+                                #     'renewal_date': f"after {subcription_pk.number_of_month_to_access}",
+                                #     'amount_paid': subcription_pk.paid_payment,
+                                #     'order_number': 100000 + subcription_pk.id,
+                                #     'order_date': subcription_pk.created_at,
+                                #     'your_name': "Kintah Staff"
+                                # })
+                                #
+                                #
+                                #
+                                # recipient_list = [email]
+                                #
+                                # res = send_email_info(subject, message, recipient_list)
+                                # For user email
+                                subscription = SubscriptionInformation.objects.get(id=sub_id)
+                                user_info = request.user
+                                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
 
-                                email = user_info.username
                                 subject = "🎉 Welcome to Kintah Platform! Your Odoo ERP Journey Starts Here 🚀"
                                 subscriber_name = name
-                                subscription_plan_name = subcription_pk.select_erp_business_type
-                                start_date = subcription_pk.created_at
-                                start_date = start_date.strftime('%d/%m/%Y')
-                                renewal_date = "after " + subcription_pk.number_of_month_to_access + "month "
-                                amount_paid = subcription_pk.paid_payment + "USD"
-                                order_number = 100000 + subcription_pk.id
-                                order_date = subcription_pk.created_at
-                                order_date = order_date.strftime('%d/%m/%Y')
+                                subscription_plan_name = subscription.select_erp_business_type
+                                start_date = subscription.created_at.strftime('%d/%m/%Y')
+                                renewal_date = f"after {subscription.number_of_month_to_access} month"
+                                amount_paid = f"{subscription.paid_payment} USD"
+                                order_number = 100000 + subscription.id
+                                order_date = subscription.created_at.strftime('%d/%m/%Y')
                                 your_name = "Kintah Staff"
-                                message = f""" Hi {subscriber_name},
 
+                                message = render_to_string('new_subscription_email_template.html', {
+                                    'subscriber_name': subscriber_name,
+                                    'subscription_plan_name': subscription_plan_name,
+                                    'start_date': start_date,
+                                    'renewal_date': renewal_date,
+                                    'amount_paid': amount_paid,
+                                    'order_number': order_number,
+                                    'order_date': order_date,
+                                    'your_name': your_name
+                                })
 
-                                Welcome to Kintah Platform! We're thrilled to have you on board as our newest member. Thank you for choosing us for your Odoo ERP on-boarding, support, training, and customization needs.
-
-                                ### 📝 Subscription Information
-                                **Plan Name**: {subscription_plan_name}  
-                                **Start Date**: {start_date}  
-                                **Renewal Date**: {renewal_date}  
-                                **Amount Paid**: {amount_paid} USD
-
-                                ### 🛒 Order Information
-                                **Order Number**: {order_number}  
-                                **Order Date**: {order_date}  
-                                **Services Included**:
-                                - Odoo ERP On-boarding
-                                - Comprehensive Support
-                                - In-depth Training
-                                - Custom Solutions
-                                - AI-driven Insights & Recommendations
-
-                                ### What’s Next?
-                                - **Getting Started**: Our onboarding specialist will reach out to you within the next 24 hours to kickstart your journey.
-                                - **Support**: Our support team is available 24/7 to assist you with any queries. Reach out to us anytime at support@kintah.com.
-                                - **Training**: Stay tuned for your personalized training schedule, designed to help you make the most of Odoo ERP.
-                                - **Customization**: We'll work closely with you to tailor Odoo ERP to meet your unique business needs.
-                                - **AI Insights**: Discover powerful insights and recommendations driven by your Odoo ERP data.
-
-                                ### Exclusive Benefits
-                                As a Kintah Platform subscriber, you gain access to:
-                                - **Expert Guidance**: Our team of Odoo experts is here to ensure your success.
-                                - **Tailored Solutions**: Customizations that align perfectly with your business goals.
-                                - **Continuous Learning**: Regular training sessions to keep your skills sharp.
-                                - **Smart Decisions**: Leverage AI-driven insights to make data-backed decisions.
-
-                                Thank you for placing your trust in us. We are committed to providing you with exceptional service and helping you unlock the full potential of Odoo ERP.
-
-                                If you have any questions or need assistance, please don't hesitate to reach out. We're here to help!
-
-                                Welcome aboard!
-
-                                Best regards,
-
-                                {your_name}  
-                                Customer Success Team  
-                                Kintah Platform  
-                                support@kintah.com
-
-                                ---
-
-                                P.S. Follow us on social media for the latest updates and tips on making the most of your Odoo ERP!
-
-                                ---
-                                """
+                                email = user_info.username
                                 recipient_list = [email]
 
-                                res = send_email_info(subject, message, recipient_list)
+                                email_message = EmailMessage(
+                                    subject=subject,
+                                    body=message,
+                                    from_email=settings.DEFAULT_FROM_EMAIL,
+                                    to=recipient_list,
+                                )
+                                email_message.content_subtype = "html"  # Main content is now text/html
+                                email_message.send()
+                                messages.success(request, "Subscription email sent successfully!")
                             except Exception as e:
                                 rea = str(e)
                                 messages.success(request, f"Admin Massage not sent reasone {rea}")
@@ -4123,7 +4172,7 @@ def import_contacts_record(request, pk):
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                      payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
 
             contex = {
                 'user_info': user_info,
@@ -4247,7 +4296,7 @@ def import_suppliers_record(request, pk):
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
                                                                      payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one, Erp_Info=erp).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
 
             context = {
                 'user_info': user_info,
@@ -4677,6 +4726,83 @@ def odoo_setup_manual_shipping(request, pk):
 
       else:
         return redirect('login_info')
+
+
+from .utils2 import configure_mail
+def odoo_configure_mail(request, pk):
+      if request.user.is_authenticated:
+        try:
+            if request.method == 'POST':
+
+                erp_active_id = request.POST.get('erp_active_id')
+
+                employee_type = request.POST.get('employee_type')
+                email_type = request.POST.get('email_type')
+                user_email = request.POST.get('user_email')
+                new_password = request.POST.get('new_password')
+
+                erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
+                website_id = int(erp_active_info.website_id)
+                company_id = int(erp_active_info.company_id)
+                try:
+
+                    # result = configure_mail(email, email_service, email_password, company_id)
+                    result_outgoing_mail_id, result_incoming_mail_id = configure_mail(user_email, email_type, new_password, employee_type, company_id)
+                    if result_incoming_mail_id == 'Not Done':
+                        messages.warning(request, 'please try again later')
+                    else:
+                        messages.success(request, 'successfully email configured.')
+                except Exception as e:
+                    error_message = str(e)
+                    if "'NoneType' object has no attribute 'company_id'" in error_message:
+                        messages.warning(request,
+                                         'There is no odoo instances, Ask administration to deploy the odoo instances.')
+                    else:
+                        messages.warning(request, error_message)
+                    # messages.warning(request, str(e))
+
+            user_info = request.user
+            if user_info.user_type == "Technical User":
+                pk = int(user_info.first_name)
+                company_info = CompanyRegistrationInformation.objects.get(id=pk)
+            else:
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            # company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+            subscription = SubscriptionInformation.objects.filter(company_info=company_info)
+            subscription_one = SubscriptionInformation.objects.filter(company_info=company_info,
+                                                                      payment_status=True).last()
+            erp = Erp_Information.objects.filter(subscription_info=subscription_one).last()
+            erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subscription_one).last()
+
+            context = {
+                'user_info': user_info,
+                'company_info': company_info,
+                'subscription': subscription,
+                'erp': erp,
+                'subscription_one': subscription_one,
+                'erp_active': erp_active,
+            }
+            return render(request, 'odoo_configure_mail.html', context)
+        except Exception as e:
+            error_message = str(e)
+            if "'NoneType' object has no attribute 'company_id'" in error_message:
+                messages.warning(request,
+                                 'There is no odoo instances, Ask administration to deploy the odoo instances.')
+            else:
+                messages.warning(request, error_message)
+            # messages.warning(request, str(e))
+            return redirect('home')
+
+      else:
+        return redirect('login_info')
+
+
+
+
+
+
+
+
 
 from . utils1 import set_website_languages
 

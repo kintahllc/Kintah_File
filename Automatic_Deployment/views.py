@@ -990,8 +990,8 @@ def finish_setup_company(request, company_info_id, setup_id):
     subcription = SubscriptionInformation.objects.filter(id=setup.subscription_package.id).last()
 
 
-    c_name = subcription.company_info.file_number
-    w_name = subcription.company_info.file_number
+    c_name = subcription.company_info.file_number+'po12'
+    w_name = subcription.company_info.file_number+'po12'
     # domain = setup.static_ip
     domain = f'http://{setup.static_ip}'
     res = odooo_company_and_website_create(c_name, w_name, domain)
@@ -1070,7 +1070,7 @@ def finish_installation(request, company_info_id, setup_id):
 
     subcription = SubscriptionInformation.objects.filter(id=setup.subscription_package.id).last()
     type = subcription.select_erp_business_type
-    pmpt = PriceMatrixPerCompanyType.objects.filter(category=type).last()
+    pmpt = PriceMatrixPerCompanyType.objects.filter(company_type_or_industry=type).last()
 
     modules_string = pmpt.module
     modules_list = [module.strip().strip("'") for module in modules_string.split(',')]
