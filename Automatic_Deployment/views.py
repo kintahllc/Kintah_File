@@ -296,19 +296,19 @@ def create_instance_second(request, company_info_id, setup_id, instance_name):
     )
 
     # Wait for the instance to be in "running" state
-    instance_state = ""
-    while instance_state != "running":
-        try:
-            instance_details = client.get_instance(instanceName=setup.instance_name)
-            instance_state = instance_details['instance']['state']['name']
-            print(f"Instance state: {instance_state}")
-            if instance_state == "running":
-                break
-            else:
-                time.sleep(10)  # Wait for 10 seconds before checking again
-        except Exception as e:
-            print(f"Error retrieving instance state: {e}")
-            time.sleep(10)  # Retry after 10 seconds if there's an error
+    # instance_state = ""
+    # while instance_state != "running":
+    #     try:
+    #         instance_details = client.get_instance(instanceName=setup.instance_name)
+    #         instance_state = instance_details['instance']['state']['name']
+    #         print(f"Instance state: {instance_state}")
+    #         if instance_state == "running":
+    #             break
+    #         else:
+    #             time.sleep(10)  # Wait for 10 seconds before checking again
+    #     except Exception as e:
+    #         print(f"Error retrieving instance state: {e}")
+    #         time.sleep(10)  # Retry after 10 seconds if there's an error
 
 
     # return redirect('step3_launge_odoo_page', company_info_id, setup_id)
@@ -317,6 +317,8 @@ def create_instance_second(request, company_info_id, setup_id, instance_name):
 
 
 def create_instance_third(request, company_info_id, setup_id, instance_name):
+
+    return HttpResponse("this is third")
     setup = OdooDomainSetup.objects.get(id=setup_id)
 
     # Connect to Lightsail
