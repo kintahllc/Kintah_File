@@ -893,16 +893,9 @@ def ssh_execute_command(instance_ip, username, private_key_string, commands, get
 #     return redirect('create_odoo_database', company_info_id, setup_id)
 
 
-import uuid
-import os
-import logging
+
 import boto3
 import time
-from django.shortcuts import redirect
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from .models import OdooDomainSetup
-from .utils import create_postgresql_user, ssh_execute_command, ssh_transfer_file
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
