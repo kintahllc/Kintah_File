@@ -496,88 +496,38 @@ def ssh_transfer_file(instance_ip, username, private_key_string, local_file_name
         return False
 
 
-# def create_postgresql_user(db_user, db_password):
-#     try:
-#         connection = psycopg2.connect(
-#             host=os.getenv('MS_DB_HOST'),
-#             port=os.getenv('MS_DB_PORT'),
-#             user=os.getenv('MS_DB_USER'),
-#             password=os.getenv('MS_DB_PASSWORD')
-#         )
-#         connection.autocommit = True
-#         cursor = connection.cursor()
-#
-#         cursor.execute(sql.SQL("SELECT 1 FROM pg_roles WHERE rolname=%s"), [db_user])
-#         user_exists = cursor.fetchone()
-#
-#         if not user_exists:
-#             cursor.execute(sql.SQL("CREATE USER {} WITH PASSWORD %s;").format(
-#                 sql.Identifier(db_user)
-#             ), [db_password])
-#
-#         cursor.execute(sql.SQL("ALTER USER {} CREATEDB;").format(
-#             sql.Identifier(db_user)
-#         ))
-#
-#         cursor.close()
-#         connection.close()
-#         print(f"User {db_user} created or verified successfully.")
-#         return True
-#
-#     except Exception as e:
-#         print(f"Error creating or verifying user: {e}")
-#         return False
-
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-
 def create_postgresql_user(db_user, db_password):
-    connection = None
     try:
-        logger.info("Attempting to connect to the database.")
         connection = psycopg2.connect(
             host=os.getenv('MS_DB_HOST'),
             port=os.getenv('MS_DB_PORT'),
             user=os.getenv('MS_DB_USER'),
             password=os.getenv('MS_DB_PASSWORD')
         )
-        logger.info("Database connection successful.")
-
         connection.autocommit = True
         cursor = connection.cursor()
 
-        logger.info("Checking if user exists.")
         cursor.execute(sql.SQL("SELECT 1 FROM pg_roles WHERE rolname=%s"), [db_user])
         user_exists = cursor.fetchone()
 
         if not user_exists:
-            logger.info(f"Creating user {db_user}.")
             cursor.execute(sql.SQL("CREATE USER {} WITH PASSWORD %s;").format(
                 sql.Identifier(db_user)
             ), [db_password])
-            logger.info(f"User {db_user} created successfully.")
-        else:
-            logger.info(f"User {db_user} already exists.")
 
-        logger.info(f"Granting CREATEDB permission to user {db_user}.")
         cursor.execute(sql.SQL("ALTER USER {} CREATEDB;").format(
             sql.Identifier(db_user)
         ))
-        logger.info(f"User {db_user} granted CREATEDB permission.")
 
         cursor.close()
+        connection.close()
+        print(f"User {db_user} created or verified successfully.")
         return True
 
     except Exception as e:
-        logger.error(f"Error creating or verifying user: {e}")
+        print(f"Error creating or verifying user: {e}")
         return False
 
-    finally:
-        if connection:
-            connection.close()
-            logger.info("Database connection closed.")
 
 def ssh_execute_command(instance_ip, username, private_key_string, commands, get_output=False):
     try:
@@ -659,15 +609,11 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
         # print(f"DB Password: {setup.db_password}")
 
         # Create PostgreSQL user
-        # if not create_postgresql_user(setup.db_user, setup.db_password):
-        #     messages.error(request, "Failed to create PostgreSQL user.")
-        #     return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
-
         if not create_postgresql_user(setup.db_user, setup.db_password):
             messages.error(request, "Failed to create PostgreSQL user.")
             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
-        print("GATE-004")
+        return HttpResponse("gate -4")
         # Clone Odoo repository
         clone_odoo_repo_commands = [
             'git clone https://github.com/odoo/odoo.git -b 17.0 --depth 1 /home/ubuntu/odoo'
