@@ -589,7 +589,6 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
         else:
             setup.demo_data = True
 
-        return HttpResponse("GATE-001")
 
 
         unique_suffix = str(uuid.uuid4()).split('-')[0]
