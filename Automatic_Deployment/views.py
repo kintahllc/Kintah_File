@@ -284,6 +284,42 @@ def create_instance_view(request, company_info_id, setup_id):
     return redirect('create_instance_second', company_info_id, setup_id, instance_name)
 
 
+# def create_instance_second(request, company_info_id, setup_id, instance_name):
+#     setup = OdooDomainSetup.objects.get(id=setup_id)
+#
+#     # Connect to Lightsail
+#     client = boto3.client(
+#         'lightsail',
+#         region_name=os.getenv('AWS_REGION'),
+#         aws_access_key_id=os.getenv('S3_ACCESS_KEY_ID'),
+#         aws_secret_access_key=os.getenv('S3_SECRET_ACCESS_KEY')
+#     )
+#
+#     # Wait for the instance to be in "running" state
+#     instance_state = ""
+#     while instance_state != "running":
+#         try:
+#             instance_details = client.get_instance(instanceName=setup.instance_name)
+#             instance_state = instance_details['instance']['state']['name']
+#             print(f"Instance state: {instance_state}")
+#             if instance_state == "running":
+#                 break
+#             else:
+#                 time.sleep(10)  # Wait for 10 seconds before checking again
+#         except Exception as e:
+#             print(f"Error retrieving instance state: {e}")
+#             time.sleep(10)  # Retry after 10 seconds if there's an error
+#
+#
+#     # return redirect('step3_launge_odoo_page', company_info_id, setup_id)
+#     return redirect('create_instance_third', company_info_id, setup_id, instance_name)
+
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 def create_instance_second(request, company_info_id, setup_id, instance_name):
     setup = OdooDomainSetup.objects.get(id=setup_id)
 
@@ -296,29 +332,37 @@ def create_instance_second(request, company_info_id, setup_id, instance_name):
     )
 
     # Wait for the instance to be in "running" state
-    # instance_state = ""
-    # while instance_state != "running":
-    #     try:
-    #         instance_details = client.get_instance(instanceName=setup.instance_name)
-    #         instance_state = instance_details['instance']['state']['name']
-    #         print(f"Instance state: {instance_state}")
-    #         if instance_state == "running":
-    #             break
-    #         else:
-    #             time.sleep(10)  # Wait for 10 seconds before checking again
-    #     except Exception as e:
-    #         print(f"Error retrieving instance state: {e}")
-    #         time.sleep(10)  # Retry after 10 seconds if there's an error
+    instance_state = ""
+    retries = 0
+    max_retries = 30  # Retry up to 30 times (5 minutes)
+    sleep_time = 10  # Wait for 10 seconds before checking again
 
+    while instance_state != "running" and retries < max_retries:
+        try:
+            instance_details = client.get_instance(instanceName=setup.instance_name)
+            instance_state = instance_details['instance']['state']['name']
+            logger.info(f"Instance state: {instance_state}")
+            if instance_state == "running":
+                break
+            else:
+                time.sleep(sleep_time)
+                retries += 1
+        except Exception as e:
+            logger.error(f"Error retrieving instance state: {e}")
+            time.sleep(sleep_time)
+            retries += 1
 
-    # return redirect('step3_launge_odoo_page', company_info_id, setup_id)
+    if instance_state != "running":
+        logger.error(f"Instance did not reach 'running' state within {max_retries * sleep_time} seconds.")
+        # Handle the error case appropriately (e.g., redirect to an error page, return an error response, etc.)
+        return redirect('error_page')  # Replace 'error_page' with your actual error page/view
+
+    # Instance is running, proceed to the next step
     return redirect('create_instance_third', company_info_id, setup_id, instance_name)
 
 
 
 def create_instance_third(request, company_info_id, setup_id, instance_name):
-
-    return HttpResponse("this is third")
     setup = OdooDomainSetup.objects.get(id=setup_id)
 
     # Connect to Lightsail
