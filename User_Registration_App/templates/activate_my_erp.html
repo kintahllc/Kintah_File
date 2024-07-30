@@ -41,7 +41,7 @@
 <table class="billing-table">
   <thead>
     <tr>
-      <th>Erp Name</th>
+      <th>Company Name</th>
       <th>Website name</th>
       <th>Domain</th>
       {% if erp_active %}
@@ -56,9 +56,9 @@
   <tbody>
 
     <tr>
-      <td>{{ erp.erp_name }}</td>
-      <td>{{ erp.erp_site_name }}</td>
-      <td>{{ erp.erp_smtp_server }}</td>
+      <td>{{ company_name }}</td>
+      <td>{{ company_name }}</td>
+      <td>{{ erp_active.domain }}</td>
 
 
           {% if erp_active %}

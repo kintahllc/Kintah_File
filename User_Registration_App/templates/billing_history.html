@@ -8,6 +8,12 @@
 
 <!-- billing_history.html -->
 <style>
+  .billing-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+
   .billing-table {
     width: 100%;
     border-collapse: collapse;
@@ -33,12 +39,17 @@
     background-color: #f2f2f2;
   }
 </style>
-
+<div class="billing-container">
 <table class="billing-table">
   <thead>
     <tr>
-      <th>Total amount</th>
+        <th>Platform amount</th>
+        <th>Services plan</th>
+        <th>Total amount</th>
         <th>Paid Amount</th>
+        <th>Remain Amount</th>
+        <th>Installment time (month)</th>
+        <th>Installment per month</th>
         <th>Paid status</th>
         <th>Date</th>
     </tr>
@@ -46,15 +57,43 @@
   <tbody>
     {% for sub in subcription %}
     <tr>
-      <td>{{ sub.platform_total_payment }}</td>
-      <td>{{ sub.paid_payment }}</td>
+      <td class="platform_total_payment">{{ sub.platform_total_payment }}</td>
+      <td class="services_plan_cost">{{ sub.services_plan_cost }}</td>
+      <td class="total_payment">{{ sub.services_plan_cost_and_platform_total_payment }}</td>
+      <td class="paid_payment">{{ sub.paid_payment }}</td>
+      <td class="remaining_payment"></td>
+      <td class="number_of_months">{{ sub.number_of_month_to_access }}</td>
+      <td class="installment_per_month"></td>
       <td>{{ sub.payment_status }}</td>
       <td>{{ sub.created_at }}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get all rows in the table body
+        var rows = document.querySelectorAll("tbody tr");
 
+        rows.forEach(function(row) {
+            // Get the values from the table cells
+            var totalPayment = parseFloat(row.querySelector(".total_payment").innerText);
+            var paidPayment = parseFloat(row.querySelector(".paid_payment").innerText);
+            var numberOfMonths = parseFloat(row.querySelector(".number_of_months").innerText);
+
+            // Perform the subtraction to find remaining payment
+            var remainingPayment = totalPayment - paidPayment;
+
+            // Calculate the installment per month
+            var installmentPerMonth = remainingPayment / numberOfMonths;
+
+            // Display the results in the respective cells
+            row.querySelector(".remaining_payment").innerText = remainingPayment.toFixed(2);
+            row.querySelector(".installment_per_month").innerText = installmentPerMonth.toFixed(2);
+        });
+    });
+</script>
 
 
 {% endblock %}

@@ -18,7 +18,7 @@
 
 
 
-<div class="container-fluid" style="width: 82%; margin-top: 25px;">
+<div class="container-fluid" style="">
   <!-- Top Menu Bar -->
   <div class="row">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark w-100" style=" height: 101px; ">
@@ -38,7 +38,7 @@
   </div>
 
   <!-- Side Menu and Content -->
-  <div class="row">
+  <div class="row" style="margin-top:20px;">
     <!-- Side Menu -->
     <!-- Side Menu -->
 <!-- Side Menu -->
@@ -98,6 +98,8 @@
       </li>
     </ul>
   </div>
+  {% endif %}
+  {% if user_info.user_type == 'Root User' and erp_active_id is not None  %}
 
   <!-- My ERP Section -->
   <div class="border border-warning rounded p-3 mb-3">
@@ -117,7 +119,8 @@
       </li>
     </ul>
   </div>
-
+  {% endif %}
+  {% if user_info.user_type == 'Root User'  %}
   <!-- My AI Assistant Dashboard Section -->
   <div class="border border-warning rounded p-3 mb-3">
     <h3 class="text-success">Kintah Analytics dashboard</h3>
@@ -129,6 +132,8 @@
     </ul>
   </div>
 
+  {% endif %}
+  {% if user_info.user_type == 'Root User' and erp_active_id is not None  %}
   <!-- My ERP Section -->
   <div class="border border-warning rounded p-3 mb-3">
     <h3 class="text-warning">Manage ERP User</h3>
@@ -179,6 +184,7 @@
       <li class="nav-item">
         <a class="nav-link btn btn-light" href="{% url 'odoo_account_accountant' company_info.id %}">Setup Accounting</a>
         <a class="nav-link btn btn-light" href="{% url 'odoo_setup_manual_shipping' company_info.id %}">Setup Manual delivery</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_configure_mail' company_info.id %}">Setup mail service</a>
         <a class="nav-link btn btn-light" href="{% url 'odoo_configure_stripe_payment' company_info.id %}">Setup Stripe Payment</a>
         <a class="nav-link btn btn-light" href="{% url 'odoo_configure_paypal_payment' company_info.id %}">Setup Paypal Payment</a>
         <a class="nav-link btn btn-light" href="{% url 'odoo_twilio_sms_config' company_info.id %}">Setup Twilio for Messaging</a>
@@ -188,7 +194,8 @@
 
     </ul>
   </div>
-
+  {% endif %}
+  {% if user_info.user_type == 'Root User'  %}
   <div class="border border-warning rounded p-3 mb-3">
     <h3 class="text-info">ERP Documentation</h3>
     <ul class="nav flex-column">
@@ -220,7 +227,7 @@
 
 
 
-  {% if user_info.user_type == 'Technical User' %}
+  {% if user_info.user_type == 'Technical User' and erp_active_id is not None %}
   <!-- My ERP Section -->
   <div class="border border-warning rounded p-3 mb-3">
     <h3 class="text-warning">Advanced ERP Management</h3>
@@ -286,6 +293,8 @@
       </li>
     </ul>
   </div>
+  {% endif %}
+  {% if user_info.user_type == 'Technical User' or user_info.user_type == 'Regular User' and erp_active_id is not None %}
 
   <!-- My ERP Section -->
   <div class="border border-warning rounded p-3 mb-3">
@@ -315,13 +324,14 @@
   {% endif %}
 
 
-  {% if user_info.user_type == 'Technical User' %}
+  {% if user_info.user_type == 'Technical User'  and erp_active_id is not None %}
   <div class="border border-warning rounded p-3 mb-3">
     <h3 class="text-warning">Advanced Setup</h3>
     <ul class="nav flex-column">
       <li class="nav-item">
         <a class="nav-link btn btn-light" href="{% url 'odoo_account_accountant' user_info.first_name %}">Setup Accounting</a>
         <a class="nav-link btn btn-light" href="{% url 'odoo_setup_manual_shipping' user_info.first_name %}">Setup Manual delivery</a>
+        <a class="nav-link btn btn-light" href="{% url 'odoo_configure_mail' company_info.id %}">Setup mail service</a>
         <a class="nav-link btn btn-light" href="{% url 'odoo_configure_stripe_payment' user_info.first_name %}">Setup Stripe Payment</a>
         <a class="nav-link btn btn-light" href="{% url 'odoo_configure_paypal_payment' user_info.first_name %}">Setup Paypal Payment</a>
         <a class="nav-link btn btn-light" href="{% url 'odoo_twilio_sms_config' user_info.first_name %}">Setup Twilio for Messaging</a>

@@ -105,6 +105,7 @@ urlpatterns = [
 
     path('odoo_account_accountant/<int:pk>', views.odoo_account_accountant, name='odoo_account_accountant'),
     path('odoo_setup_manual_shipping/<int:pk>', views.odoo_setup_manual_shipping, name='odoo_setup_manual_shipping'),
+    path('odoo_configure_mail/<int:pk>', views.odoo_configure_mail, name='odoo_configure_mail'),
     path('odoo_set_website_languages/<int:pk>', views.odoo_set_website_languages, name='odoo_set_website_languages'),
     path('odoo_configure_whatsapp_service/<int:pk>', views.odoo_configure_whatsapp_service, name='odoo_configure_whatsapp_service'),
     path('odoo_twilio_sms_config/<int:pk>', views.odoo_twilio_sms_config, name='odoo_twilio_sms_config'),
@@ -113,6 +114,8 @@ urlpatterns = [
 
     path('get_training/<int:pk>', views.get_training, name='get_training'),
     path('learn_erp/<int:pk>', views.learn_erp, name='learn_erp'),
+
+
 
 
 ]

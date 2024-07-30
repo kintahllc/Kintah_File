@@ -90,11 +90,16 @@ def upload_contacts_to_odoo(file, company_id, website_id, db, username, password
         return fault.faultString
 
 
-def upload_contacts_to_odoo_here(file, company_id, website_id):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+def upload_contacts_to_odoo_here(url, db, username, password, file, company_id, website_id):
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     res = upload_contacts_to_odoo(file, company_id, website_id, db, username, password, url)
 
@@ -154,11 +159,16 @@ def upload_employees_to_odoo(file, company_id, website_id, db, username, passwor
     except xmlrpc.client.Fault as fault:
         return fault.faultString
 
-def upload_employees_to_odoo_here(file, company_id, website_id):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+def upload_employees_to_odoo_here(url, db, username, password, file, company_id, website_id):
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     res = upload_employees_to_odoo(file, company_id, website_id, db, username, password, url)
     return res
@@ -224,11 +234,16 @@ def upload_suppliers_to_odoo(file, company_id, website_id, db, username, passwor
     except xmlrpc.client.Fault as fault:
         return fault.faultString
 
-def upload_suppliers_to_odoo_here(file, company_id, website_id):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+def upload_suppliers_to_odoo_here(url, db, username, password, file, company_id, website_id):
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     res = upload_suppliers_to_odoo(file, company_id, website_id, db, username, password, url)
     return res
@@ -288,11 +303,16 @@ def upload_fleet_assets_to_odoo(file, company_id, website_id, db, username, pass
         return fault.faultString
 
 
-def upload_fleet_assets_to_odoo_here(file, company_id, website_id):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+def upload_fleet_assets_to_odoo_here(url, db, username, password, file, company_id, website_id):
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     res = upload_fleet_assets_to_odoo(file, company_id, website_id, db, username, password, url)
     return res
@@ -462,15 +482,20 @@ def configure_accounting(
 
 
 def accounting_here(
-        company_id, website_id, fiscal_year_name, fiscal_year_start, fiscal_year_end,
+        url, db, username, password, company_id, website_id, fiscal_year_name, fiscal_year_start, fiscal_year_end,
         income_tax_name, income_tax_rate, bank_name, bank_street, bank_city, bank_state,
         bank_zip, bank_country, bank_phone, bank_account_number, sales_tax_name,
         sales_tax_rate, chart_template_name
 ):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     try:
         # Install necessary modules
@@ -547,11 +572,16 @@ def configure_manual_shipping(url, db, username, password, company_id, website_i
     except Exception as e:
         return str(e)
 
-def setup_manual_shipping(company_id, website_id, shipping_name, product_id, fixed_price, margin, sequence):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+def setup_manual_shipping(url, db, username, password, company_id, website_id, shipping_name, product_id, fixed_price, margin, sequence):
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     # Shipping method configuration
     # company_id = 1  # Replace with your actual company ID
@@ -600,11 +630,16 @@ def set_website_languages_here(url, db, username, password, company_id, website_
 
 
 
-def set_website_languages(company_id, website_id, languages):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+def set_website_languages(url, db, username, password, company_id, website_id, languages):
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     try:
         res = set_website_languages_here(url, db, username, password, company_id, website_id, languages)
@@ -648,11 +683,16 @@ def configure_whatsapp_service(url, db, username, password, company_id, website_
 
 
 
-def set_configure_whatsapp_service(company_id, website_id, twilio_account_sid, twilio_auth_token, twilio_whatsapp_number):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+def set_configure_whatsapp_service(url, db, username, password, company_id, website_id, twilio_account_sid, twilio_auth_token, twilio_whatsapp_number):
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     try:
         res = configure_whatsapp_service(url, db, username, password, company_id, website_id, twilio_account_sid, twilio_auth_token, twilio_whatsapp_number)
@@ -694,11 +734,16 @@ def twilio_sms_config(url, db, username, password, company_id, website_id, twili
 
     return "Twilio SMS service configured successfully!"
 
-def set_twilio_sms_config(company_id, website_id, twilio_account_sid, twilio_auth_token, twilio_sender_number):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+def set_twilio_sms_config(url, db, username, password, company_id, website_id, twilio_account_sid, twilio_auth_token, twilio_sender_number):
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     try:
         res = twilio_sms_config(url, db, username, password, company_id, website_id, twilio_account_sid, twilio_auth_token, twilio_sender_number)
@@ -739,11 +784,16 @@ def configure_stripe_payment_provider(url, db, username, password, company_id, w
 
 
 
-def configure_stripe_payment(company_id, website_id, stripe_secret_key, stripe_publishable_key):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+def configure_stripe_payment(url, db, username, password, company_id, website_id, stripe_secret_key, stripe_publishable_key):
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     try:
         res = configure_stripe_payment_provider(url, db, username, password, company_id, website_id, stripe_secret_key, stripe_publishable_key)
@@ -785,11 +835,16 @@ def configure_paypal_payment_provider(url, db, username, password, company_id, w
     return "PayPal payment provider configured successfully!"
 
 
-def configure_paypal_payment(company_id, website_id, paypal_email, paypal_seller_account):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+def configure_paypal_payment(url, db, username, password, company_id, website_id, paypal_email, paypal_seller_account):
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     try:
         res = configure_paypal_payment_provider(url, db, username, password, company_id, website_id, paypal_email, paypal_seller_account)

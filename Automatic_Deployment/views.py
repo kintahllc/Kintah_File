@@ -21,6 +21,10 @@ from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
 
+from User_Registration_App.models import PriceMatrixPerCompanyType
+from User_Registration_App.utils2 import install_the_modules
+
+
 @login_required
 def addMyDomain(request, pk, sub_id):
     getSubcription = SubscriptionInformation.objects.filter(id=sub_id).last()
@@ -977,11 +981,53 @@ def step4_setup_company(request, company_info_id, setup_id):
                   {'setup': setup, 'company_info': company_info, 'user_info': request.user})
 
 
+
+from User_Registration_App.utils import odooo_company_and_website_create
+from subscription_app.models import ErpActiveCompanyAndWeb
 def finish_setup_company(request, company_info_id, setup_id):
     setup = OdooDomainSetup.objects.get(id=setup_id)
-    setup.setup_company = True
-    setup.save()
-    return redirect('step5_installation', company_info_id, setup_id)
+
+    subcription = SubscriptionInformation.objects.filter(id=setup.subscription_package.id).last()
+
+
+    c_name = subcription.company_info.file_number+"1233"
+    w_name = subcription.company_info.file_number+"1233"
+    # domain = setup.static_ip
+    domain = f'http://{setup.static_ip}'
+
+    url = f'http://{setup.static_ip}'
+    db = setup.Database_Name
+    username = setup.email
+    password = setup.password
+
+    res = odooo_company_and_website_create(url, db, username, password, c_name, w_name, domain)
+    if res == None:
+        messages.warning(request,
+                         'Please make sure the erp name and erp site name is uniq and erp smtp server is a domain and try again !')
+        return redirect('step4_setup_company', company_info_id, setup_id)
+    else:
+        company_id = res[0]
+        website_id = res[1]
+        try:
+            user_count = int(setup.subscription_package.number_of_expected_users_of_the_platform)
+        except:
+            user_count = 0
+
+
+        Eerp_active = ErpActiveCompanyAndWeb(
+            subscription_info=subcription,
+            # Erp_Info=erp_info,
+            company_id=company_id,
+            website_id=website_id,
+            domain=domain,
+            user_count=user_count,
+        )
+        Eerp_active.save()
+        messages.success(request, "Successfully install cmpany and website")
+
+        setup.setup_company = True
+        setup.save()
+        return redirect('step5_installation', company_info_id, setup_id)
 
 
 @login_required
@@ -1024,11 +1070,31 @@ def step5_installation(request, company_info_id, setup_id):
                   {'setup': setup, 'company_info': company_info, 'user_info': request.user})
 
 
+
 def finish_installation(request, company_info_id, setup_id):
     setup = OdooDomainSetup.objects.get(id=setup_id)
-    setup.installations = True
-    setup.save()
-    return redirect('odoo_landing_page', company_info_id, setup_id)
+
+    subcription = SubscriptionInformation.objects.filter(id=setup.subscription_package.id).last()
+    type = subcription.select_erp_business_type
+    pmpt = PriceMatrixPerCompanyType.objects.filter(company_type_or_industry=type).last()
+
+    modules_string = pmpt.module
+    modules_list = [module.strip().strip("'") for module in modules_string.split(',')]
+
+    url = f'http://{setup.static_ip}'
+    db = setup.Database_Name
+    username = setup.email
+    password = setup.password
+
+    res = install_the_modules(url, db, username, password, modules_list)
+    ko=9
+    if res == 'Done':
+        setup.installations = True
+        setup.save()
+        return redirect('odoo_landing_page', company_info_id, setup_id)
+    else:
+        messages.warning('Please try again !')
+        return redirect("step5_installation", company_info_id, setup_id)
 
 
 @login_required
