@@ -613,7 +613,7 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
             messages.error(request, "Failed to create PostgreSQL user.")
             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
-
+        print("GATE-004")
         # Clone Odoo repository
         clone_odoo_repo_commands = [
             'git clone https://github.com/odoo/odoo.git -b 17.0 --depth 1 /home/ubuntu/odoo'
@@ -623,7 +623,7 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
 
-        print("GATE-004")
+
         # Docker Compose and Nginx configuration content
         docker_compose_content = f"""
 version: '3.9'
