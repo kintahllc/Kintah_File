@@ -130,12 +130,14 @@
 <!--<br>-->
 <!--<p>Odoo successfully deployed!</p>-->
 
-<div class="progress" style="display:none;" id="progress_div_id">
-  <div id="progress-bar" class="progress-bar">Starting ...</div>
-</div>
+
+
 <form method="post" id="form_configure_ip" action="{% url 'finish_setup_company' company_info.id setup.id %}">
     {% csrf_token %}
-    <a type="submit" class="btn btn-warning" style="padding:20px;" id="submit_button">Setup Company Website</a>
+    <div class="progress" style="display:none;" id="progress_div_id">
+      <div id="progress-bar" class="progress-bar">Starting ...</div>
+    </div>
+    <button type="submit" class="btn btn-warning" style="padding:20px;" id="submit_button">Setup Company Website</button>
 </form>
 
 <style>
