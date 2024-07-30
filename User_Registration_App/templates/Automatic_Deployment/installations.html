@@ -129,12 +129,13 @@
 <!--<br>-->
 <!--<p>Odoo successfully deployed!</p>-->
 
-<div class="progress" style="display:none;" id="progress_div_id">
-  <div id="progress-bar" class="progress-bar">Starting ...</div>
-</div>
+
 <form method="post" id="form_configure_ip" action="{% url 'finish_installation' company_info.id setup.id %}">
     {% csrf_token %}
-    <a type="submit" class="btn btn-warning" style="padding:20px;"  id="submit_button">Install</a>
+    <div class="progress" style="display:none;" id="progress_div_id">
+      <div id="progress-bar" class="progress-bar">Starting ...</div>
+    </div>
+    <button type="submit" class="btn btn-warning" style="padding:24px;"  id="submit_button">Install</button>
 </form>
 
 <style>
@@ -158,11 +159,11 @@ transition: width 1s ease-in-out;
 
 <script>
 
-document.getElementById('submit_button').addEventListener('click', function(event) {
+document.getElementById('form_configure_ip').addEventListener('submit', function(event) {
     document.getElementById('submit_button').disabled = true;
     // Call updateProgress function with duration in minutes (1 minute in this case)
     document.getElementById('progress_div_id').style.display = "block";
-    updateProgress(1.3);
+    updateProgress(3.1);
 });
 
 

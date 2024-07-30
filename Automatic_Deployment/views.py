@@ -19,10 +19,13 @@ import xmlrpc.client
 import logging
 from django.http import JsonResponse
 
+
 logger = logging.getLogger(__name__)
 
 from User_Registration_App.models import PriceMatrixPerCompanyType
 from User_Registration_App.utils2 import install_the_modules
+
+
 
 
 @login_required
@@ -56,7 +59,6 @@ def addMyDomain(request, pk, sub_id):
             pass
     except Exception as e:
         print(f'Failed to check odoo instance : {e}')
-
 
     # print(pk, sub_id)
     if request.user.is_authenticated:
@@ -284,6 +286,41 @@ def create_instance_view(request, company_info_id, setup_id):
     return redirect('create_instance_second', company_info_id, setup_id, instance_name)
 
 
+# def create_instance_second(request, company_info_id, setup_id, instance_name):
+#     setup = OdooDomainSetup.objects.get(id=setup_id)
+#
+#     # Connect to Lightsail
+#     client = boto3.client(
+#         'lightsail',
+#         region_name=os.getenv('AWS_REGION'),
+#         aws_access_key_id=os.getenv('S3_ACCESS_KEY_ID'),
+#         aws_secret_access_key=os.getenv('S3_SECRET_ACCESS_KEY')
+#     )
+#
+#     # Wait for the instance to be in "running" state
+#     instance_state = ""
+#     while instance_state != "running":
+#         try:
+#             instance_details = client.get_instance(instanceName=setup.instance_name)
+#             instance_state = instance_details['instance']['state']['name']
+#             print(f"Instance state: {instance_state}")
+#             if instance_state == "running":
+#                 break
+#             else:
+#                 time.sleep(10)  # Wait for 10 seconds before checking again
+#         except Exception as e:
+#             print(f"Error retrieving instance state: {e}")
+#             time.sleep(10)  # Retry after 10 seconds if there's an error
+#
+#
+#     # return redirect('step3_launge_odoo_page', company_info_id, setup_id)
+#     return redirect('create_instance_third', company_info_id, setup_id, instance_name)
+
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 def create_instance_second(request, company_info_id, setup_id, instance_name):
     setup = OdooDomainSetup.objects.get(id=setup_id)
 
@@ -297,21 +334,31 @@ def create_instance_second(request, company_info_id, setup_id, instance_name):
 
     # Wait for the instance to be in "running" state
     instance_state = ""
-    while instance_state != "running":
+    retries = 0
+    max_retries = 30  # Retry up to 30 times (5 minutes)
+    sleep_time = 10  # Wait for 10 seconds before checking again
+
+    while instance_state != "running" and retries < max_retries:
         try:
             instance_details = client.get_instance(instanceName=setup.instance_name)
             instance_state = instance_details['instance']['state']['name']
-            print(f"Instance state: {instance_state}")
+            logger.info(f"Instance state: {instance_state}")
             if instance_state == "running":
                 break
             else:
-                time.sleep(10)  # Wait for 10 seconds before checking again
+                time.sleep(sleep_time)
+                retries += 1
         except Exception as e:
-            print(f"Error retrieving instance state: {e}")
-            time.sleep(10)  # Retry after 10 seconds if there's an error
+            logger.error(f"Error retrieving instance state: {e}")
+            time.sleep(sleep_time)
+            retries += 1
 
+    if instance_state != "running":
+        logger.error(f"Instance did not reach 'running' state within {max_retries * sleep_time} seconds.")
+        # Handle the error case appropriately (e.g., redirect to an error page, return an error response, etc.)
+        return redirect('error_page')  # Replace 'error_page' with your actual error page/view
 
-    # return redirect('step3_launge_odoo_page', company_info_id, setup_id)
+    # Instance is running, proceed to the next step
     return redirect('create_instance_third', company_info_id, setup_id, instance_name)
 
 
@@ -529,7 +576,6 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
             messages.error(request, "Database Name already exist!")
             return redirect(step3_launge_odoo_page, setup_id, company_info_id)
 
-        print(demo_data)
 
         setup.Master_Password = master_password
         setup.Database_Name = Database_Name
@@ -545,6 +591,7 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
             setup.demo_data = True
 
 
+
         unique_suffix = str(uuid.uuid4()).split('-')[0]
         # db_name = f"{setup.domain.replace('.', '_')}_{unique_suffix}_db"
         db_user = f"{setup.domain.replace('.', '_')}_{unique_suffix}"
@@ -553,6 +600,7 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
         setup.db_user = db_user
         setup.db_password = db_password
         setup.save()
+
 
         instance_public_ip = setup.instance_public_ip
 
@@ -566,6 +614,7 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
             messages.error(request, "Failed to create PostgreSQL user.")
             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
+        # return HttpResponse("gate -4")
         # Clone Odoo repository
         clone_odoo_repo_commands = [
             'git clone https://github.com/odoo/odoo.git -b 17.0 --depth 1 /home/ubuntu/odoo'
@@ -573,6 +622,8 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
         if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, clone_odoo_repo_commands):
             messages.error(request, "Failed to clone Odoo repository.")
             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+
+
 
         # Docker Compose and Nginx configuration content
         docker_compose_content = f"""
@@ -846,53 +897,6 @@ server {{
     # return redirect('step4_setup_company', company_info_id, setup_id)
     return redirect('create_odoo_database', company_info_id, setup_id)
 
-
-# def create_odoo_database(request, company_info_id, setup_id):
-#     setup = OdooDomainSetup.objects.get(id=setup_id)
-#     print("Creating Odoo Database ...")
-#
-#     master_password = setup.Master_Password
-#     Database_Name = setup.Database_Name
-#     email = setup.email
-#     password = setup.password
-#     phone_number = setup.phone_number
-#     language = setup.language
-#     country_code = setup.country_code
-#     demo_data = setup.demo_data
-#
-#     print(master_password)
-#     print(Database_Name)
-#     print(email)
-#     print(password)
-#     print(phone_number)
-#     print(language)
-#     print(country_code)
-#     print(demo_data)
-#
-#     form_data = {
-#         'master_pwd': master_password,
-#         'name': Database_Name,
-#         'login': email,  # Assuming email is used as the login
-#         'password': password,
-#         'confirm_password': password,  # Confirm the password
-#         'phone': phone_number,
-#         'lang': language,
-#         'country_code': country_code,
-#         'demo': '1' if demo_data == 'true' else '0'  # Assuming demo_data is a boolean
-#     }
-#
-#     response = requests.post(f'http://{setup.static_ip}/web/database/selector', data=form_data)
-#     print(response)
-#     print(response.text)
-#
-#     if response.status_code == 200:
-#         print("Odoo is deployed and database is created successfully!")
-#         messages.success(request, "Odoo is deployed and database is created successfully!")
-#         return redirect('step4_setup_company', company_info_id, setup_id)
-#     else:
-#         messages.error(request, "Odoo is deployed but database is not created!")
-#         print("Odoo is deployed but database is not created!")
-#         return redirect('step4_setup_company', company_info_id, setup_id)
 
 
 def create_odoo_database(request, company_info_id, setup_id):
