@@ -26,6 +26,8 @@ from User_Registration_App.models import PriceMatrixPerCompanyType
 from User_Registration_App.utils2 import install_the_modules
 
 
+
+
 @login_required
 def addMyDomain(request, pk, sub_id):
     getSubcription = SubscriptionInformation.objects.filter(id=sub_id).last()
@@ -57,7 +59,6 @@ def addMyDomain(request, pk, sub_id):
             pass
     except Exception as e:
         print(f'Failed to check odoo instance : {e}')
-
 
     # print(pk, sub_id)
     if request.user.is_authenticated:
@@ -613,7 +614,7 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
             messages.error(request, "Failed to create PostgreSQL user.")
             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
-        return HttpResponse("gate -4")
+        # return HttpResponse("gate -4")
         # Clone Odoo repository
         clone_odoo_repo_commands = [
             'git clone https://github.com/odoo/odoo.git -b 17.0 --depth 1 /home/ubuntu/odoo'
