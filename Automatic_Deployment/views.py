@@ -557,11 +557,368 @@ def ssh_execute_command(instance_ip, username, private_key_string, commands, get
         return False
 
 
+# @login_required
+# def setup_odoo_docker_view(request, setup_id, company_info_id):
+#     try:
+#         setup = OdooDomainSetup.objects.get(id=setup_id)
+#
+#         master_password = request.POST.get('master_password')
+#         Database_Name = request.POST.get('Database_Name')
+#         email = request.POST.get('email')
+#         password = request.POST.get('password')
+#         phone_number = request.POST.get('phone_number')
+#         language = request.POST.get('language')
+#         country_code = request.POST.get('country_code')
+#         demo_data = request.POST.get('demo_data')
+#
+#         if OdooDomainSetup.objects.filter(Database_Name=Database_Name):
+#             messages.error(request, "Database Name already exist!")
+#             return redirect(step3_launge_odoo_page, setup_id, company_info_id)
+#
+#         print(demo_data)
+#
+#         setup.Master_Password = master_password
+#         setup.Database_Name = Database_Name
+#         setup.email = email
+#         setup.password = password
+#         setup.phone_number = phone_number
+#         setup.language = language
+#         setup.country_code = country_code
+#         if demo_data is None:
+#             print("demo data None")
+#             setup.demo_data = False
+#         else:
+#             setup.demo_data = True
+#
+#
+#         unique_suffix = str(uuid.uuid4()).split('-')[0]
+#         # db_name = f"{setup.domain.replace('.', '_')}_{unique_suffix}_db"
+#         db_user = f"{setup.domain.replace('.', '_')}_{unique_suffix}"
+#         db_password = f"{setup.domain.replace('.', '_')}_{unique_suffix}"
+#         # setup.db_name = db_name
+#         setup.db_user = db_user
+#         setup.db_password = db_password
+#         setup.save()
+#
+#         instance_public_ip = setup.instance_public_ip
+#
+#         # Debug statements to check setup values
+#         print(f"Instance Public IP: {instance_public_ip}")
+#         print(f"DB User: {setup.db_user}")
+#         # print(f"DB Password: {setup.db_password}")
+#
+#         # Create PostgreSQL user
+#         if not create_postgresql_user(setup.db_user, setup.db_password):
+#             messages.error(request, "Failed to create PostgreSQL user.")
+#             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#
+#         # Clone Odoo repository
+#         clone_odoo_repo_commands = [
+#             'git clone https://github.com/odoo/odoo.git -b 17.0 --depth 1 /home/ubuntu/odoo'
+#         ]
+#         if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, clone_odoo_repo_commands):
+#             messages.error(request, "Failed to clone Odoo repository.")
+#             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#
+#         # Docker Compose and Nginx configuration content
+#         docker_compose_content = f"""
+# version: '3.9'
+# services:
+#     odoo:
+#         image: odoo:17.0
+#         restart: always
+#         tty: true
+#         command: -c /etc/odoo/odoo.conf
+#         volumes:
+#             - ./custom_addons:/mnt/extra-addons
+#             - ./config:/etc/odoo
+#             - /home/ubuntu/odoo:/mnt/odoo
+#             - odoo_data:/var/lib/odoo
+#         ports:
+#             - "8069:8069"
+#             - "8072:8072"  # Expose Odoo longpolling port
+#         networks:
+#             - odoo-network
+# networks:
+#   odoo-network:
+# volumes:
+#   odoo_data:
+# """
+#
+#
+#
+# #         docker_compose_content = f"""
+# # version: '3.9'
+# # services:
+# #     odoo:
+# #         image: odoo:17.0
+# #         restart: always
+# #         tty: true
+# #         command: -c /etc/odoo/odoo.conf
+# #         volumes:
+# #             - ./custom_addons:/mnt/extra-addons
+# #             - ./config:/etc/odoo
+# #             - /home/ubuntu/odoo:/mnt/odoo
+# #             - odoo_data:/var/lib/odoo
+# #         ports:
+# #             - "8069:8069"
+# #             - "8072:8072"  # Expose Odoo longpolling port
+# #         networks:
+# #             - odoo-network
+# #     db:
+# #         image: postgres:latest
+# #         environment:
+# #             POSTGRES_DB: {db_name}
+# #             POSTGRES_USER: {db_user}
+# #             POSTGRES_PASSWORD: {db_password}
+# #         volumes:
+# #             - db_data:/var/lib/postgresql/data
+# #         networks:
+# #             - odoo-network
+# # networks:
+# #   odoo-network:
+# # volumes:
+# #   odoo_data:
+# #   db_data:
+# # """
+#
+#
+#         # Docker Compose and Nginx configuration content
+# #         docker_compose_content = f"""
+# # version: '3.9'
+# # services:
+# #     odoo:
+# #         image: odoo:17.0
+# #         restart: always
+# #         tty: true
+# #         volumes:
+# #              - ./custom_addons:/mnt/extra-addons
+# #              - ./config:/etc/odoo
+# #              - odoo_data:/var/lib/odoo
+# #         ports:
+# #              - "8069:8069"
+# #              - "8072:8072"
+# # volumes:
+# #     odoo_data:
+# # """
+#
+#
+#
+#
+#         odoo_conf_content = f"""
+# [options]
+# admin_passwd = {master_password}
+# db_host = {os.getenv('MS_DB_HOST')}
+# db_user = {setup.db_user}
+# db_password = {setup.db_password}
+# addons_path = /mnt/extra-addons,/mnt/odoo/addons
+#
+# data_dir = /var/lib/odoo
+# proxy_mode = True
+# dbfilter = .*
+# http_port = 8069
+# longpolling_port = 8072
+# limit_memory_hard = 1677721600
+# limit_memory_soft = 629145600
+# limit_request = 8192
+# limit_time_cpu = 600
+# limit_time_real = 1200
+# max_cron_threads = 1
+# workers = 5
+#
+# logfile = /var/log/odoo/odoo-server.log
+# """
+#
+#         # odoo_conf_content = f"""
+#         # [options]
+#         # ; This is the password that allows database operations:
+#         # admin_passwd = admin
+#         # addons_path = /mnt/extra-addons
+#         # data_dir = /var/lib/odoo
+#         # db_host = {os.getenv('MS_DB_HOST')}
+#         # db_port = {os.getenv('MS_DB_PORT')}
+#         # db_user = {setup.db_user}
+#         # db_password = {setup.db_password}
+#         # proxy_mode = True
+#         # ; dbfilter = .*
+#         # xmlrpc_port = 8069
+#         # longpolling_port = 8072
+#         # ; limit_memory_hard = 1677721600
+#         # ; limit_memory_soft = 629145600
+#         # limit_request = 8192
+#         # limit_time_cpu = 600
+#         # limit_time_real = 1200
+#         # max_cron_threads = 1
+#         # workers = 5
+#         # """
+#
+#
+#
+#
+#
+#         nginx_conf_content = f"""
+# upstream odoo {{
+#  server 127.0.0.1:8069;
+# }}
+#
+# upstream odoochat {{
+#  server 127.0.0.1:8072;
+# }}
+#
+# server {{
+#     listen 80;
+#     server_name {setup.domain} www.{setup.domain};  # Replace with actual domain
+#
+#     proxy_read_timeout 720s;
+#     proxy_connect_timeout 720s;
+#     proxy_send_timeout 720s;
+#
+#     # Proxy headers
+#     proxy_set_header X-Forwarded-Host $host;
+#     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#     proxy_set_header X-Forwarded-Proto $scheme;
+#     proxy_set_header X-Real-IP $remote_addr;
+#
+#     # log files
+#     access_log /var/log/nginx/odoo.access.log;
+#     error_log /var/log/nginx/odoo.error.log;
+#
+#     # Handle longpoll requests
+#     location /longpolling {{
+#         proxy_pass http://odoochat;
+#     }}
+#
+#     # Handle / requests
+#     location / {{
+#        proxy_redirect off;
+#        proxy_pass http://odoo;
+#     }}
+#
+#     # Cache static files
+#     location ~* /web/static/ {{
+#         proxy_cache_valid 200 90m;
+#         proxy_buffering on;
+#         expires 864000;
+#         proxy_pass http://odoo;
+#     }}
+#
+#     # Gzip
+#     gzip_types text/css text/less text/plain text/xml application/xml application/json application/javascript;
+#     gzip on;
+# }}
+# """
+#
+#
+#
+#
+#         # Commands to be executed on the remote server
+#         commands = [
+#             'sudo apt update',
+#             'sudo apt install -y docker.io docker-compose nginx python3-certbot-nginx',
+#             'sudo systemctl start docker',
+#             'sudo systemctl enable docker',
+#             'sudo docker rm -f db odoo || true',
+#             'sudo docker network create odoo-network || true',
+#             'mkdir -p odoo1/config odoo1/custom_addons',
+#         ]
+#
+#         if ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, commands):
+#             # Create and transfer Docker Compose file
+#             if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'docker-compose.yml',
+#                                      docker_compose_content, 'odoo1/docker-compose.yml'):
+#                 messages.error(request, "Failed to transfer Docker Compose file.")
+#                 return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#
+#             # Create and transfer Odoo config file
+#             if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'odoo.conf', odoo_conf_content,
+#                                      'odoo1/config/odoo.conf'):
+#                 messages.error(request, "Failed to transfer Odoo config file.")
+#                 return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#
+#             # Run Docker Compose
+#             run_docker_cmd = 'cd odoo1 && sudo docker-compose up -d'
+#             if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, [run_docker_cmd]):
+#                 messages.error(request, "Failed to start Docker containers.")
+#                 return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#
+#             # Remove default Nginx config
+#             remove_nginx_default_cmd = 'sudo rm /etc/nginx/sites-enabled/default || true'
+#             if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, [remove_nginx_default_cmd]):
+#                 messages.error(request, "Failed to remove default Nginx config.")
+#                 return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#
+#             # Create and transfer Nginx config file
+#             if not ssh_transfer_file(instance_public_ip, 'ubuntu', setup.private_key, 'nginx.conf', nginx_conf_content,
+#                                      '/etc/nginx/sites-available/odoo.conf'):
+#                 messages.error(request, "Failed to transfer Nginx config file.")
+#                 return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#
+#             # Create symlink for Nginx config
+#             nginx_commands = [
+#                 'sudo ln -s /etc/nginx/sites-available/odoo.conf /etc/nginx/sites-enabled/',
+#                 'sudo nginx -t',
+#                 'sudo systemctl restart nginx.service',
+#                 f'sudo certbot --nginx -d {setup.domain} -d www.{setup.domain} --register-unsafely-without-email --agree-tos --no-eff-email'
+#             ]
+#             if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, nginx_commands):
+#                 messages.error(request, "Failed to configure Nginx.")
+#                 return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#
+#             # Check if Docker containers are running
+#             check_docker_cmd = 'sudo docker ps --format "{{.Names}}"'
+#             container_names = ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, [check_docker_cmd],
+#                                                   get_output=True)
+#             # if 'odoo' in container_names and 'db' in container_names:
+#             if 'odoo' in container_names:
+#                 print('Odoo deployment successful.')
+#                 messages.success(request, f"Odoo deployment successful.")
+#             else:
+#                 print('Docker containers not running as expected.')
+#                 messages.error(request, "Docker containers not running as expected.")
+#                 return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#         else:
+#             print('Odoo deployment failed.')
+#             messages.error(request, "Odoo deployment failed.")
+#             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#
+#     except OdooDomainSetup.DoesNotExist:
+#         messages.error(request, "Setup not found.")
+#         return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#     except Exception as e:
+#         print(f"Error during deployment: {e}")
+#         messages.error(request, "Error during deployment.")
+#         return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+#
+#     # return redirect('step4_setup_company', company_info_id, setup_id)
+#     return redirect('create_odoo_database', company_info_id, setup_id)
+
+
+import uuid
+import os
+import logging
+import boto3
+import time
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import OdooDomainSetup
+from .utils import create_postgresql_user, ssh_execute_command, ssh_transfer_file
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 @login_required
 def setup_odoo_docker_view(request, setup_id, company_info_id):
+    if request.method != "POST":
+        messages.error(request, "Invalid request method.")
+        return redirect('step3_launge_odoo_page', setup_id, company_info_id)
+
     try:
         setup = OdooDomainSetup.objects.get(id=setup_id)
 
+        # Retrieve POST data
         master_password = request.POST.get('master_password')
         Database_Name = request.POST.get('Database_Name')
         email = request.POST.get('email')
@@ -571,12 +928,12 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
         country_code = request.POST.get('country_code')
         demo_data = request.POST.get('demo_data')
 
-        if OdooDomainSetup.objects.filter(Database_Name=Database_Name):
-            messages.error(request, "Database Name already exist!")
-            return redirect(step3_launge_odoo_page, setup_id, company_info_id)
+        # Check if Database_Name already exists
+        if OdooDomainSetup.objects.filter(Database_Name=Database_Name).exists():
+            messages.error(request, "Database Name already exists!")
+            return redirect('step3_launge_odoo_page', setup_id, company_info_id)
 
-        print(demo_data)
-
+        # Update setup object
         setup.Master_Password = master_password
         setup.Database_Name = Database_Name
         setup.email = email
@@ -584,28 +941,19 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
         setup.phone_number = phone_number
         setup.language = language
         setup.country_code = country_code
-        if demo_data is None:
-            print("demo data None")
-            setup.demo_data = False
-        else:
-            setup.demo_data = True
-
+        setup.demo_data = demo_data is not None
 
         unique_suffix = str(uuid.uuid4()).split('-')[0]
-        # db_name = f"{setup.domain.replace('.', '_')}_{unique_suffix}_db"
         db_user = f"{setup.domain.replace('.', '_')}_{unique_suffix}"
         db_password = f"{setup.domain.replace('.', '_')}_{unique_suffix}"
-        # setup.db_name = db_name
         setup.db_user = db_user
         setup.db_password = db_password
         setup.save()
 
         instance_public_ip = setup.instance_public_ip
 
-        # Debug statements to check setup values
-        print(f"Instance Public IP: {instance_public_ip}")
-        print(f"DB User: {setup.db_user}")
-        # print(f"DB Password: {setup.db_password}")
+        logger.info(f"Instance Public IP: {instance_public_ip}")
+        logger.info(f"DB User: {setup.db_user}")
 
         # Create PostgreSQL user
         if not create_postgresql_user(setup.db_user, setup.db_password):
@@ -645,66 +993,6 @@ volumes:
   odoo_data:
 """
 
-
-
-#         docker_compose_content = f"""
-# version: '3.9'
-# services:
-#     odoo:
-#         image: odoo:17.0
-#         restart: always
-#         tty: true
-#         command: -c /etc/odoo/odoo.conf
-#         volumes:
-#             - ./custom_addons:/mnt/extra-addons
-#             - ./config:/etc/odoo
-#             - /home/ubuntu/odoo:/mnt/odoo
-#             - odoo_data:/var/lib/odoo
-#         ports:
-#             - "8069:8069"
-#             - "8072:8072"  # Expose Odoo longpolling port
-#         networks:
-#             - odoo-network
-#     db:
-#         image: postgres:latest
-#         environment:
-#             POSTGRES_DB: {db_name}
-#             POSTGRES_USER: {db_user}
-#             POSTGRES_PASSWORD: {db_password}
-#         volumes:
-#             - db_data:/var/lib/postgresql/data
-#         networks:
-#             - odoo-network
-# networks:
-#   odoo-network:
-# volumes:
-#   odoo_data:
-#   db_data:
-# """
-
-
-        # Docker Compose and Nginx configuration content
-#         docker_compose_content = f"""
-# version: '3.9'
-# services:
-#     odoo:
-#         image: odoo:17.0
-#         restart: always
-#         tty: true
-#         volumes:
-#              - ./custom_addons:/mnt/extra-addons
-#              - ./config:/etc/odoo
-#              - odoo_data:/var/lib/odoo
-#         ports:
-#              - "8069:8069"
-#              - "8072:8072"
-# volumes:
-#     odoo_data:
-# """
-
-
-
-
         odoo_conf_content = f"""
 [options]
 admin_passwd = {master_password}
@@ -712,7 +1000,6 @@ db_host = {os.getenv('MS_DB_HOST')}
 db_user = {setup.db_user}
 db_password = {setup.db_password}
 addons_path = /mnt/extra-addons,/mnt/odoo/addons
-
 data_dir = /var/lib/odoo
 proxy_mode = True
 dbfilter = .*
@@ -725,36 +1012,8 @@ limit_time_cpu = 600
 limit_time_real = 1200
 max_cron_threads = 1
 workers = 5
-
 logfile = /var/log/odoo/odoo-server.log
 """
-
-        # odoo_conf_content = f"""
-        # [options]
-        # ; This is the password that allows database operations:
-        # admin_passwd = admin
-        # addons_path = /mnt/extra-addons
-        # data_dir = /var/lib/odoo
-        # db_host = {os.getenv('MS_DB_HOST')}
-        # db_port = {os.getenv('MS_DB_PORT')}
-        # db_user = {setup.db_user}
-        # db_password = {setup.db_password}
-        # proxy_mode = True
-        # ; dbfilter = .*
-        # xmlrpc_port = 8069
-        # longpolling_port = 8072
-        # ; limit_memory_hard = 1677721600
-        # ; limit_memory_soft = 629145600
-        # limit_request = 8192
-        # limit_time_cpu = 600
-        # limit_time_real = 1200
-        # max_cron_threads = 1
-        # workers = 5
-        # """
-
-
-
-
 
         nginx_conf_content = f"""
 upstream odoo {{
@@ -808,9 +1067,6 @@ server {{
 }}
 """
 
-
-
-
         # Commands to be executed on the remote server
         commands = [
             'sudo apt update',
@@ -861,84 +1117,26 @@ server {{
                 f'sudo certbot --nginx -d {setup.domain} -d www.{setup.domain} --register-unsafely-without-email --agree-tos --no-eff-email'
             ]
             if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, nginx_commands):
-                messages.error(request, "Failed to configure Nginx.")
+                messages.error(request, "Failed to set up Nginx and SSL certificates.")
                 return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
-            # Check if Docker containers are running
-            check_docker_cmd = 'sudo docker ps --format "{{.Names}}"'
-            container_names = ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, [check_docker_cmd],
-                                                  get_output=True)
-            # if 'odoo' in container_names and 'db' in container_names:
-            if 'odoo' in container_names:
-                print('Odoo deployment successful.')
-                messages.success(request, f"Odoo deployment successful.")
-            else:
-                print('Docker containers not running as expected.')
-                messages.error(request, "Docker containers not running as expected.")
-                return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+            messages.success(request, "Odoo setup and Docker containers started successfully!")
+            return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
         else:
-            print('Odoo deployment failed.')
-            messages.error(request, "Odoo deployment failed.")
+            messages.error(request, "Failed to execute initial setup commands.")
             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
     except OdooDomainSetup.DoesNotExist:
-        messages.error(request, "Setup not found.")
-        return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+        messages.error(request, "Setup object not found.")
+        return redirect('step3_launge_odoo_page', setup_id, company_info_id)
+
     except Exception as e:
-        print(f"Error during deployment: {e}")
-        messages.error(request, "Error during deployment.")
+        logger.error(f"Error during Odoo Docker setup: {e}")
+        messages.error(request, f"Error during Odoo Docker setup: {e}")
         return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
-    # return redirect('step4_setup_company', company_info_id, setup_id)
-    return redirect('create_odoo_database', company_info_id, setup_id)
 
 
-# def create_odoo_database(request, company_info_id, setup_id):
-#     setup = OdooDomainSetup.objects.get(id=setup_id)
-#     print("Creating Odoo Database ...")
-#
-#     master_password = setup.Master_Password
-#     Database_Name = setup.Database_Name
-#     email = setup.email
-#     password = setup.password
-#     phone_number = setup.phone_number
-#     language = setup.language
-#     country_code = setup.country_code
-#     demo_data = setup.demo_data
-#
-#     print(master_password)
-#     print(Database_Name)
-#     print(email)
-#     print(password)
-#     print(phone_number)
-#     print(language)
-#     print(country_code)
-#     print(demo_data)
-#
-#     form_data = {
-#         'master_pwd': master_password,
-#         'name': Database_Name,
-#         'login': email,  # Assuming email is used as the login
-#         'password': password,
-#         'confirm_password': password,  # Confirm the password
-#         'phone': phone_number,
-#         'lang': language,
-#         'country_code': country_code,
-#         'demo': '1' if demo_data == 'true' else '0'  # Assuming demo_data is a boolean
-#     }
-#
-#     response = requests.post(f'http://{setup.static_ip}/web/database/selector', data=form_data)
-#     print(response)
-#     print(response.text)
-#
-#     if response.status_code == 200:
-#         print("Odoo is deployed and database is created successfully!")
-#         messages.success(request, "Odoo is deployed and database is created successfully!")
-#         return redirect('step4_setup_company', company_info_id, setup_id)
-#     else:
-#         messages.error(request, "Odoo is deployed but database is not created!")
-#         print("Odoo is deployed but database is not created!")
-#         return redirect('step4_setup_company', company_info_id, setup_id)
 
 
 def create_odoo_database(request, company_info_id, setup_id):
