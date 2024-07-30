@@ -495,8 +495,12 @@ def ssh_transfer_file(instance_ip, username, private_key_string, local_file_name
         print(f"File transfer failed: {e}")
         return False
 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def create_postgresql_user(db_user, db_password):
+    connection = None
     try:
         connection = psycopg2.connect(
             host=os.getenv('MS_DB_HOST'),
@@ -507,26 +511,68 @@ def create_postgresql_user(db_user, db_password):
         connection.autocommit = True
         cursor = connection.cursor()
 
+        # Check if user already exists
         cursor.execute(sql.SQL("SELECT 1 FROM pg_roles WHERE rolname=%s"), [db_user])
         user_exists = cursor.fetchone()
 
         if not user_exists:
+            # Create the user if not exists
             cursor.execute(sql.SQL("CREATE USER {} WITH PASSWORD %s;").format(
                 sql.Identifier(db_user)
             ), [db_password])
+            logger.info(f"User {db_user} created successfully.")
+        else:
+            logger.info(f"User {db_user} already exists.")
 
+        # Grant the user the ability to create databases
         cursor.execute(sql.SQL("ALTER USER {} CREATEDB;").format(
             sql.Identifier(db_user)
         ))
+        logger.info(f"User {db_user} granted CREATEDB permission.")
 
         cursor.close()
-        connection.close()
-        print(f"User {db_user} created or verified successfully.")
         return True
 
     except Exception as e:
-        print(f"Error creating or verifying user: {e}")
+        logger.error(f"Error creating or verifying user: {e}")
         return False
+
+    finally:
+        if connection:
+            connection.close()
+
+
+# def create_postgresql_user(db_user, db_password):
+#     try:
+#         connection = psycopg2.connect(
+#             host=os.getenv('MS_DB_HOST'),
+#             port=os.getenv('MS_DB_PORT'),
+#             user=os.getenv('MS_DB_USER'),
+#             password=os.getenv('MS_DB_PASSWORD')
+#         )
+#         connection.autocommit = True
+#         cursor = connection.cursor()
+#
+#         cursor.execute(sql.SQL("SELECT 1 FROM pg_roles WHERE rolname=%s"), [db_user])
+#         user_exists = cursor.fetchone()
+#
+#         if not user_exists:
+#             cursor.execute(sql.SQL("CREATE USER {} WITH PASSWORD %s;").format(
+#                 sql.Identifier(db_user)
+#             ), [db_password])
+#
+#         cursor.execute(sql.SQL("ALTER USER {} CREATEDB;").format(
+#             sql.Identifier(db_user)
+#         ))
+#
+#         cursor.close()
+#         connection.close()
+#         print(f"User {db_user} created or verified successfully.")
+#         return True
+#
+#     except Exception as e:
+#         print(f"Error creating or verifying user: {e}")
+#         return False
 
 
 def ssh_execute_command(instance_ip, username, private_key_string, commands, get_output=False):
@@ -609,6 +655,10 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
         # print(f"DB Password: {setup.db_password}")
 
         # Create PostgreSQL user
+        # if not create_postgresql_user(setup.db_user, setup.db_password):
+        #     messages.error(request, "Failed to create PostgreSQL user.")
+        #     return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+
         if not create_postgresql_user(setup.db_user, setup.db_password):
             messages.error(request, "Failed to create PostgreSQL user.")
             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
