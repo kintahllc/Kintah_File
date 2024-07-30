@@ -4,13 +4,18 @@ from django.conf import settings
 
 
 
-def install_the_modules(modules_list):
+def install_the_modules(url, db, username, password, modules_list):
     k=0
     try:
-        url = settings.ODOO_URL
-        db = settings.DB_NAME
-        username = settings.ADMIN_USERNAME
-        password = settings.ADMIN_PASSWORD
+        # url = settings.ODOO_URL
+        # db = settings.DB_NAME
+        # username = settings.ADMIN_USERNAME
+        # password = settings.ADMIN_PASSWORD
+
+        url = url
+        db = db
+        username = username
+        password = password
 
         common = xmlrpc.client.ServerProxy('{}/xmlrpc/2/common'.format(url))
         uid = common.authenticate(db, username, password, {})
@@ -200,11 +205,16 @@ def configure_incoming_mail_server(models, db, uid, password, email, email_passw
 
 
 
-def configure_mail(email, email_service, email_password, employee_type, company_id):
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+def configure_mail(url, db, username, password, email, email_service, email_password, employee_type, company_id):
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+
+    url = url
+    db = db
+    username = username
+    password = password
 
     try:
 

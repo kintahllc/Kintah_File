@@ -990,11 +990,17 @@ def finish_setup_company(request, company_info_id, setup_id):
     subcription = SubscriptionInformation.objects.filter(id=setup.subscription_package.id).last()
 
 
-    c_name = subcription.company_info.file_number+'po12'
-    w_name = subcription.company_info.file_number+'po12'
+    c_name = subcription.company_info.file_number+"1233"
+    w_name = subcription.company_info.file_number+"1233"
     # domain = setup.static_ip
     domain = f'http://{setup.static_ip}'
-    res = odooo_company_and_website_create(c_name, w_name, domain)
+
+    url = f'http://{setup.static_ip}'
+    db = setup.Database_Name
+    username = setup.email
+    password = setup.password
+
+    res = odooo_company_and_website_create(url, db, username, password, c_name, w_name, domain)
     if res == None:
         messages.warning(request,
                          'Please make sure the erp name and erp site name is uniq and erp smtp server is a domain and try again !')
@@ -1075,7 +1081,12 @@ def finish_installation(request, company_info_id, setup_id):
     modules_string = pmpt.module
     modules_list = [module.strip().strip("'") for module in modules_string.split(',')]
 
-    res = install_the_modules(modules_list)
+    url = f'http://{setup.static_ip}'
+    db = setup.Database_Name
+    username = setup.email
+    password = setup.password
+
+    res = install_the_modules(url, db, username, password, modules_list)
     ko=9
     if res == 'Done':
         setup.installations = True

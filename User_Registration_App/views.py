@@ -43,6 +43,9 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
+
+from Automatic_Deployment.models import OdooDomainSetup
+
 logger = logging.getLogger(__name__)
 
 
@@ -1513,7 +1516,13 @@ def add_user_with_manager_role(request, pk):
                         erp_active_info.save()
                         GROUP_NAME = 'Manager'
 
-                        res = create_user_manager_role(user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
+                        setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                        url = f'http://{setup.static_ip}'
+                        db = setup.Database_Name
+                        username = setup.email
+                        password1 = setup.password
+
+                        res = create_user_manager_role(url, db, username, password1, user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
 
                         if res == None:
                             remain = erp_active_info.user_count
@@ -1592,7 +1601,13 @@ def add_user_without_manager_role(request, pk):
                         erp_active_info.save()
                         GROUP_NAME = 'User'
 
-                        res = create_user_manager_role(user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
+                        setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                        url = f'http://{setup.static_ip}'
+                        db = setup.Database_Name
+                        username = setup.email
+                        password1 = setup.password
+
+                        res = create_user_manager_role(url, db, username, password1, user_name, user_login, user_email, new_password, company_id, website_id, GROUP_NAME)
 
                         if res == None:
                             remain = erp_active_info.user_count
@@ -1661,7 +1676,14 @@ def remove_user(request, pk):
                     erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
                     website_id = int(erp_active_info.website_id)
                     company_id = int(erp_active_info.company_id)
-                    res = disable_user_with_user_id(user_id, company_id, website_id)
+
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
+
+                    res = disable_user_with_user_id(url, db, username, password, user_id, company_id, website_id)
                     if res=="DONE":
                         messages.success(request,'user is disabled !')
 
@@ -1689,7 +1711,14 @@ def remove_user(request, pk):
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
             erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
-            u_list = user_list_of_a_company(int(erp_active.company_id), int(erp_active.website_id))
+
+            setup = OdooDomainSetup.objects.get(subscription_package=erp_active.subscription_info)
+            url = f'http://{setup.static_ip}'
+            db = setup.Database_Name
+            username = setup.email
+            password = setup.password
+
+            u_list = user_list_of_a_company(url, db, username, password, int(erp_active.company_id), int(erp_active.website_id))
             contex = {
                 'user_info': user_info,
                 'company_info': company_info,
@@ -1730,7 +1759,14 @@ def update_user_role(request, pk):
             subcription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
             erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
             erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
-            u_list = get_users_with_roles_from_company_id(int(erp_active.company_id), int(erp_active.website_id))
+
+            setup = OdooDomainSetup.objects.get(subscription_package=erp_active.subscription_info)
+            url = f'http://{setup.static_ip}'
+            db = setup.Database_Name
+            username = setup.email
+            password = setup.password
+
+            u_list = get_users_with_roles_from_company_id(url, db, username, password, int(erp_active.company_id), int(erp_active.website_id))
             contex = {
                 'user_info': user_info,
                 'company_info': company_info,
@@ -1754,23 +1790,33 @@ def update_user_roles_view(request):
         try:
             if request.method == 'POST':
                 first_page = request.POST.get('first_page')
+
+                user_info = request.user
+                company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
+                subcription = SubscriptionInformation.objects.filter(company_info=company_info)
+                subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
+                                                                         payment_status=True).last()
+                erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
+                erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
+
                 if first_page =="first_page":
-                    user_info = request.user
-                    company_info = CompanyRegistrationInformation.objects.filter(user_info=user_info).last()
-                    subcription = SubscriptionInformation.objects.filter(company_info=company_info)
-                    subcription_one = SubscriptionInformation.objects.filter(company_info=company_info,
-                                                                             payment_status=True).last()
-                    erp = Erp_Information.objects.filter(subscription_info=subcription_one).last()
-                    erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subcription_one).last()
-                    u_list = get_users_with_roles_from_company_id(int(erp_active.company_id), int(erp_active.website_id))
+
+
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
+
+                    u_list = get_users_with_roles_from_company_id(url, db, username, password, int(erp_active.company_id), int(erp_active.website_id))
 
 
                     user_id = request.POST.get('user_id')
 
                     if user_id:
                         user_id = int(user_id)
-                        roles = get_all_user_roles()
-                        user_roles = get_user_roles(user_id)
+                        roles = get_all_user_roles(url, db, username, password)
+                        user_roles = get_user_roles(url, db, username, password, user_id)
 
 
 
@@ -1792,12 +1838,17 @@ def update_user_roles_view(request):
                         messages.warning(request, 'user id is not present !')
                         return redirect('update_user_role', pk=1)
                 else:
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
 
                     user_id = int(request.POST.get('user_id'))
                     group_ids = request.POST.getlist('group_ids')
                     group_ids = list(map(int, group_ids))
 
-                    result = update_user_roles(user_id, group_ids)
+                    result = update_user_roles(url, db, username, password, user_id, group_ids)
                     if result:
                         messages.success(request, 'User roles updated successfully !')
                         return redirect('update_user_role', pk=1)
@@ -2185,7 +2236,14 @@ def export_product_and_image(request, pk):
                 subscription_one = SubscriptionInformation.objects.filter(company_info=company_info, payment_status=True).last()
                 erp = Erp_Information.objects.filter(subscription_info=subscription_one).last()
                 erp_active = ErpActiveCompanyAndWeb.objects.filter(subscription_info=subscription_one, Erp_Info=erp).last()
-                u_list = get_users_with_roles_from_company_id(int(erp_active.company_id), int(erp_active.website_id))
+
+                setup = OdooDomainSetup.objects.get(subscription_package=erp_active.subscription_info)
+                url = f'http://{setup.static_ip}'
+                db = setup.Database_Name
+                username = setup.email
+                password = setup.password
+
+                u_list = get_users_with_roles_from_company_id(url, db, username, password, int(erp_active.company_id), int(erp_active.website_id))
                 context = {
                     'user_info': user_info,
                     'company_info': company_info,
@@ -4143,7 +4201,13 @@ def import_contacts_record(request, pk):
                 # Odoo credentials from environment variables
 
                 try:
-                    res3 = upload_contacts_to_odoo_here(file, company_id, website_id)
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
+
+                    res3 = upload_contacts_to_odoo_here(url, db, username, password, file, company_id, website_id)
 
                     messages.success(request, res3)
                 except Exception as e:
@@ -4270,7 +4334,13 @@ def import_suppliers_record(request, pk):
                 # Odoo credentials from environment variables
 
                 try:
-                    res3 = upload_suppliers_to_odoo_here(file, company_id, website_id)
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
+
+                    res3 = upload_suppliers_to_odoo_here(url, db, username, password, file, company_id, website_id)
 
                     messages.success(request, res3)
                 except Exception as e:
@@ -4391,7 +4461,13 @@ def import_employees_record(request, pk):
                 # Odoo credentials from environment variables
 
                 try:
-                    res3 = upload_employees_to_odoo_here(file, company_id, website_id)
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
+
+                    res3 = upload_employees_to_odoo_here(url, db, username, password, file, company_id, website_id)
 
                     messages.success(request, res3)
                 except Exception as e:
@@ -4509,7 +4585,13 @@ def import_fleet_assets_record(request, pk):
                 # Odoo credentials from environment variables
 
                 try:
-                    res3 = upload_fleet_assets_to_odoo_here(file, company_id, website_id)
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
+
+                    res3 = upload_fleet_assets_to_odoo_here(url, db, username, password, file, company_id, website_id)
 
                     messages.success(request, res3)
                 except Exception as e:
@@ -4588,8 +4670,14 @@ def odoo_account_accountant(request, pk):
                 website_id = int(erp_active_info.website_id)
                 company_id = int(erp_active_info.company_id)
                 try:
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
+
                     result = accounting_here(
-                        company_id=company_id, website_id=website_id,
+                        url=url, db=db, username=username, password=password, company_id=company_id, website_id=website_id,
                         fiscal_year_name=fiscal_year_name, fiscal_year_start=fiscal_year_start, fiscal_year_end=fiscal_year_end,
                         income_tax_name=income_tax_name, income_tax_rate=income_tax_rate, bank_name=bank_name,
                         bank_street=bank_street,
@@ -4676,8 +4764,13 @@ def odoo_setup_manual_shipping(request, pk):
                 website_id = int(erp_active_info.website_id)
                 company_id = int(erp_active_info.company_id)
                 try:
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
 
-                    result = setup_manual_shipping(company_id, website_id, shipping_name, product_id, fixed_price, margin, sequence)
+                    result = setup_manual_shipping(url, db, username, password, company_id, website_id, shipping_name, product_id, fixed_price, margin, sequence)
                     messages.warning(request, str(result))
 
                 except Exception as e:
@@ -4744,10 +4837,16 @@ def odoo_configure_mail(request, pk):
                 erp_active_info = ErpActiveCompanyAndWeb.objects.get(id=erp_active_id)
                 website_id = int(erp_active_info.website_id)
                 company_id = int(erp_active_info.company_id)
+
+                setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                url = f'http://{setup.static_ip}'
+                db = setup.Database_Name
+                username = setup.email
+                password = setup.password
                 try:
 
                     # result = configure_mail(email, email_service, email_password, company_id)
-                    result_outgoing_mail_id, result_incoming_mail_id = configure_mail(user_email, email_type, new_password, employee_type, company_id)
+                    result_outgoing_mail_id, result_incoming_mail_id = configure_mail(url, db, username, password, user_email, email_type, new_password, employee_type, company_id)
                     if result_incoming_mail_id == 'Not Done':
                         messages.warning(request, 'please try again later')
                     else:
@@ -4821,7 +4920,13 @@ def odoo_set_website_languages(request, pk):
                 company_id = int(erp_active_info.company_id)
                 try:
 
-                    result = set_website_languages(company_id, website_id, languages)
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
+
+                    result = set_website_languages(url, db, username, password, company_id, website_id, languages)
                     messages.warning(request, str(result))
 
                 except Exception as e:
@@ -4889,8 +4994,13 @@ def odoo_configure_whatsapp_service(request, pk):
                 website_id = int(erp_active_info.website_id)
                 company_id = int(erp_active_info.company_id)
                 try:
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
 
-                    result = set_configure_whatsapp_service(company_id, website_id, twilio_account_sid, twilio_auth_token, twilio_whatsapp_number)
+                    result = set_configure_whatsapp_service(url, db, username, password, company_id, website_id, twilio_account_sid, twilio_auth_token, twilio_whatsapp_number)
                     messages.warning(request, str(result))
 
                 except Exception as e:
@@ -4955,8 +5065,13 @@ def odoo_twilio_sms_config(request, pk):
                 website_id = int(erp_active_info.website_id)
                 company_id = int(erp_active_info.company_id)
                 try:
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
 
-                    result = set_twilio_sms_config(company_id, website_id, twilio_account_sid, twilio_auth_token, twilio_sender_number)
+                    result = set_twilio_sms_config(url, db, username, password, company_id, website_id, twilio_account_sid, twilio_auth_token, twilio_sender_number)
                     messages.warning(request, str(result))
 
                 except Exception as e:
@@ -5021,8 +5136,13 @@ def odoo_configure_stripe_payment(request, pk):
                 website_id = int(erp_active_info.website_id)
                 company_id = int(erp_active_info.company_id)
                 try:
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
 
-                    result = configure_stripe_payment(company_id, website_id, stripe_secret_key, stripe_publishable_key)
+                    result = configure_stripe_payment(url, db, username, password, company_id, website_id, stripe_secret_key, stripe_publishable_key)
                     messages.warning(request, str(result))
 
                 except Exception as e:
@@ -5087,8 +5207,13 @@ def odoo_configure_paypal_payment(request, pk):
                 website_id = int(erp_active_info.website_id)
                 company_id = int(erp_active_info.company_id)
                 try:
+                    setup = OdooDomainSetup.objects.get(subscription_package=erp_active_info.subscription_info)
+                    url = f'http://{setup.static_ip}'
+                    db = setup.Database_Name
+                    username = setup.email
+                    password = setup.password
 
-                    result = configure_paypal_payment(company_id, website_id, paypal_email, paypal_seller_account)
+                    result = configure_paypal_payment(url, db, username, password, company_id, website_id, paypal_email, paypal_seller_account)
                     messages.warning(request, str(result))
 
                 except Exception as e:

@@ -37,6 +37,36 @@ def create_company_and_website(url, db, username, password, company_data, websit
     website_data['company_id'] = company_id
 
     try:
+
+# for ecom test start
+
+        module_installed = models.execute_kw(db, uid, password, 'ir.module.module', 'search_count',
+                                             [[['name', '=', 'website'], ['state', '=', 'installed']]])
+
+        if module_installed:
+            print("The website_sale module is already installed.")
+        else:
+            # Install the website_sale module
+            module_id = models.execute_kw(
+                db, uid, password,
+                'ir.module.module', 'search',
+                [[['name', '=', 'website_sale']]]
+            )
+
+            if module_id:
+                models.execute_kw(
+                    db, uid, password,
+                    'ir.module.module', 'button_immediate_install',
+                    [module_id]
+                )
+                print("The website_sale module has been installed successfully.")
+            else:
+                print("The website_sale module was not found.")
+# for ecom test end
+
+
+
+
         website_id = models.execute_kw(db, uid, password, 'website', 'create', [website_data])
         print("New website created for the company with ID:", website_id)
     except Exception as e:
@@ -46,14 +76,35 @@ def create_company_and_website(url, db, username, password, company_data, websit
     return (company_id,  website_id)
 
 
-def odooo_company_and_website_create(c_name, w_name, domain):
+def odooo_company_and_website_create(url, db, username, password, c_name, w_name, domain):
     # Odoo server information for local use
 
 
-    url = settings.ODOO_URL
-    db = settings.DB_NAME
-    username = settings.ADMIN_USERNAME
-    password = settings.ADMIN_PASSWORD
+    # url = settings.ODOO_URL
+    # db = settings.DB_NAME
+    # username = settings.ADMIN_USERNAME
+    # password = settings.ADMIN_PASSWORD
+    # DB_NAME = odoo
+    # ADMIN_USERNAME = admin @ gmail.com
+    # ADMIN_PASSWORD = admin
+    # Static ip
+    # Database Name
+    # Email
+    # Password
+
+    # url = "http://3.143.117.70"
+    # db = "master_db1"
+    # username = "master1@gmail.com"
+    # password = "emailpass1"
+
+    url = url
+    db = db
+    username = username
+    password = password
+
+    # c_name = "swswswswsws1234"
+    # w_name = "swswswswsws1234"
+    # domain = ""
 
 
     # Data for the new company
@@ -71,7 +122,7 @@ def odooo_company_and_website_create(c_name, w_name, domain):
     # Data for the new website
     website_data = {
         'name': w_name,
-        'domain':domain,
+        # 'domain':domain,
     }
 
     # Create the company and the website
@@ -231,12 +282,17 @@ def create_odoo_user_with_manager_role(url, db, username, password, user_data, c
 
 
 
-def create_user_manager_role(name, login, email, password, company_id, website_id, GROUP_NAME):
+def create_user_manager_role(url, db, username, password1, name, login, email, password, company_id, website_id, GROUP_NAME):
     # Configuration
-    ODOO_URL = settings.ODOO_URL
-    DB_NAME = settings.DB_NAME
-    ADMIN_USERNAME = settings.ADMIN_USERNAME
-    ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+    # ODOO_URL = settings.ODOO_URL
+    # DB_NAME = settings.DB_NAME
+    # ADMIN_USERNAME = settings.ADMIN_USERNAME
+    # ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+
+    ODOO_URL = url
+    DB_NAME = db
+    ADMIN_USERNAME = username
+    ADMIN_PASSWORD = password1
 
     if GROUP_NAME == 'Manager':
         res = assign_access_rights_to_all(ODOO_URL, DB_NAME, ADMIN_USERNAME, ADMIN_PASSWORD, GROUP_NAME)
@@ -304,11 +360,17 @@ def get_users_by_company(url, db, username, password, company_id, website_id):
     users = models.execute_kw(db, uid, password, 'res.users', 'read', [user_ids], {'fields': ['id', 'name', 'login', 'email']})
 
     return users
-def user_list_of_a_company(company_id, website_id):
-    ODOO_URL = settings.ODOO_URL
-    DB_NAME = settings.DB_NAME
-    ADMIN_USERNAME = settings.ADMIN_USERNAME
-    ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+def user_list_of_a_company(url, db, username, password, company_id, website_id):
+    # ODOO_URL = settings.ODOO_URL
+    # DB_NAME = settings.DB_NAME
+    # ADMIN_USERNAME = settings.ADMIN_USERNAME
+    # ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+
+    ODOO_URL = url
+    DB_NAME = db
+    ADMIN_USERNAME = username
+    ADMIN_PASSWORD = password
+
     res = get_users_by_company(ODOO_URL, DB_NAME, ADMIN_USERNAME, ADMIN_PASSWORD, company_id, website_id)
     return res
 
@@ -359,12 +421,17 @@ def disable_user(url, db, username, password, website_id, company_id, user_id):
     except Exception as e:
         return None
 
-def disable_user_with_user_id(user_id, company_id, website_id):
+def disable_user_with_user_id(url, db, username, password, user_id, company_id, website_id):
     # Example usage
-    ODOO_URL = settings.ODOO_URL
-    DB_NAME = settings.DB_NAME
-    ADMIN_USERNAME = settings.ADMIN_USERNAME
-    ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+    # ODOO_URL = settings.ODOO_URL
+    # DB_NAME = settings.DB_NAME
+    # ADMIN_USERNAME = settings.ADMIN_USERNAME
+    # ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+
+    ODOO_URL = url
+    DB_NAME = db
+    ADMIN_USERNAME = username
+    ADMIN_PASSWORD = password
 
 
     result = disable_user(ODOO_URL, DB_NAME, ADMIN_USERNAME, ADMIN_PASSWORD, website_id, company_id, user_id)
@@ -462,12 +529,17 @@ def get_users_with_specific_roles(url, db, username, password, company_id, websi
     except Exception as e:
         return str(e)
 
-def get_users_with_roles_from_company_id(company_id, website_id):
+def get_users_with_roles_from_company_id(url, db, username, password, company_id, website_id):
     # Example usage
-    ODOO_URL = settings.ODOO_URL
-    DB_NAME = settings.DB_NAME
-    ADMIN_USERNAME = settings.ADMIN_USERNAME
-    ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+    # ODOO_URL = settings.ODOO_URL
+    # DB_NAME = settings.DB_NAME
+    # ADMIN_USERNAME = settings.ADMIN_USERNAME
+    # ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+
+    ODOO_URL = url
+    DB_NAME = db
+    ADMIN_USERNAME = username
+    ADMIN_PASSWORD = password
 
 
 
@@ -476,11 +548,18 @@ def get_users_with_roles_from_company_id(company_id, website_id):
     return users_with_roles
 
 
-def get_all_user_roles():
-    ODOO_URL = settings.ODOO_URL
-    DB_NAME = settings.DB_NAME
-    ADMIN_USERNAME = settings.ADMIN_USERNAME
-    ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+def get_all_user_roles(url, db, username, password):
+    # ODOO_URL = settings.ODOO_URL
+    # DB_NAME = settings.DB_NAME
+    # ADMIN_USERNAME = settings.ADMIN_USERNAME
+    # ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+
+    ODOO_URL = url
+    DB_NAME = db
+    ADMIN_USERNAME = username
+    ADMIN_PASSWORD = password
+
+
     res = get_all_user_roles_info(ODOO_URL, DB_NAME, ADMIN_USERNAME, ADMIN_PASSWORD)
     return res
 
@@ -500,11 +579,17 @@ def get_all_user_roles_info(url, db, username, password):
         return []
 
 
-def get_user_roles(user_id):
-    ODOO_URL = settings.ODOO_URL
-    DB_NAME = settings.DB_NAME
-    ADMIN_USERNAME = settings.ADMIN_USERNAME
-    ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+def get_user_roles(url, db, username, password, user_id):
+    # ODOO_URL = settings.ODOO_URL
+    # DB_NAME = settings.DB_NAME
+    # ADMIN_USERNAME = settings.ADMIN_USERNAME
+    # ADMIN_PASSWORD = settings.
+
+    ODOO_URL = url
+    DB_NAME = db
+    ADMIN_USERNAME = username
+    ADMIN_PASSWORD = password
+
     res = get_user_roles_info(ODOO_URL, DB_NAME, ADMIN_USERNAME, ADMIN_PASSWORD, user_id)
     return res
 def get_user_roles_info(url, db, username, password, user_id):
@@ -524,12 +609,18 @@ def get_user_roles_info(url, db, username, password, user_id):
         return []
 
 
-def update_user_roles(user_id, group_ids):
+def update_user_roles(url, db, username, password, user_id, group_ids):
 
-    ODOO_URL = settings.ODOO_URL
-    DB_NAME = settings.DB_NAME
-    ADMIN_USERNAME = settings.ADMIN_USERNAME
-    ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+    # ODOO_URL = settings.ODOO_URL
+    # DB_NAME = settings.DB_NAME
+    # ADMIN_USERNAME = settings.ADMIN_USERNAME
+    # ADMIN_PASSWORD = settings.ADMIN_PASSWORD
+
+    ODOO_URL = url
+    DB_NAME = db
+    ADMIN_USERNAME = username
+    ADMIN_PASSWORD = password
+
     res = update_user_roles_info(ODOO_URL, DB_NAME, ADMIN_USERNAME, ADMIN_PASSWORD, user_id, group_ids)
     return res
 def update_user_roles_info(url, db, username, password, user_id, group_ids):
