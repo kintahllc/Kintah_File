@@ -613,7 +613,7 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
             messages.error(request, "Failed to create PostgreSQL user.")
             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
 
-        return HttpResponse("gate -4")
+
         # Clone Odoo repository
         clone_odoo_repo_commands = [
             'git clone https://github.com/odoo/odoo.git -b 17.0 --depth 1 /home/ubuntu/odoo'
@@ -621,6 +621,7 @@ def setup_odoo_docker_view(request, setup_id, company_info_id):
         if not ssh_execute_command(instance_public_ip, 'ubuntu', setup.private_key, clone_odoo_repo_commands):
             messages.error(request, "Failed to clone Odoo repository.")
             return redirect('addMyDomain', company_info_id, setup.subscription_package.id)
+        return HttpResponse("gate -4")
 
 
 
