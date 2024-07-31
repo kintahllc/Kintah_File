@@ -148,10 +148,11 @@ document.getElementById('domainForm').addEventListener('submit', function(event)
         document.getElementById('show_status_text').innerHTML = "";
         // Call updateProgress function with duration in minutes (1 minute in this case)
         document.getElementById('progress_div_id').style.display = "block";
-        updateProgress(0.06);
+        updateProgress(0.05);
     }
 });
 </script>
+
 <style>
 .progress {
 width: 100%;
@@ -168,6 +169,7 @@ background-color: green;
 transition: width 1s ease-in-out;
 }
 </style>
+
 <script>
 function updateProgress(duration) {
 const progressBar = document.getElementById('progress-bar');

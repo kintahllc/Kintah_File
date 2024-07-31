@@ -203,7 +203,7 @@ ADMIN_EMAIL_TO_GET_MESSAGE=env('ADMIN_EMAIL_TO_GET_MESSAGE')
 
 AUTH_USER_MODEL = 'account.User'
 
-
+LOGIN_URL = '/login_info/'
 
 # LOGGING = {
 #     'version': 1,
