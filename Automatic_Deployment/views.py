@@ -1005,6 +1005,8 @@ def step4_setup_company(request, company_info_id, setup_id):
 
 from User_Registration_App.utils import odooo_company_and_website_create
 from subscription_app.models import ErpActiveCompanyAndWeb
+
+@login_required
 def finish_setup_company(request, company_info_id, setup_id):
     setup = OdooDomainSetup.objects.get(id=setup_id)
 
@@ -1090,8 +1092,7 @@ def step5_installation(request, company_info_id, setup_id):
     return render(request, 'Automatic_Deployment/installations.html',
                   {'setup': setup, 'company_info': company_info, 'user_info': request.user})
 
-
-
+@login_required
 def finish_installation(request, company_info_id, setup_id):
     setup = OdooDomainSetup.objects.get(id=setup_id)
 
@@ -1114,7 +1115,7 @@ def finish_installation(request, company_info_id, setup_id):
         setup.save()
         return redirect('odoo_landing_page', company_info_id, setup_id)
     else:
-        messages.warning('Please try again !')
+        messages.warning(request, 'Please try again !')
         return redirect("step5_installation", company_info_id, setup_id)
 
 

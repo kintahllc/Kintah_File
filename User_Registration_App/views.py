@@ -56,6 +56,7 @@ def generate_otp(length=6):
     return otp
 
 
+@login_required
 def home_info(request):
     if request.user.is_authenticated:
         user_info= request.user
@@ -96,7 +97,7 @@ def home_info(request):
         return redirect('login_info')
 
 
-
+@login_required
 def billing_history(request, pk):
     if request.user.is_authenticated:
         try:
@@ -132,7 +133,7 @@ def billing_history(request, pk):
         return redirect('login_info')
 
 
-
+@login_required
 def ask_billing_question(request, pk):
 
     if request.user.is_authenticated:
@@ -205,8 +206,7 @@ def ask_billing_question(request, pk):
         return redirect('login_info')
 
 
-
-
+@login_required
 def update_company_info(request, pk):
     if request.user.is_authenticated:
         try:
@@ -295,7 +295,7 @@ def update_company_info(request, pk):
         return redirect('login_info')
 
 
-
+@login_required
 def change_password(request, pk):
     if request.user.is_authenticated:
 
@@ -344,7 +344,7 @@ def change_password(request, pk):
         return redirect('login_info')
 
 
-
+@login_required
 def subscription_history(request, pk):
     if request.user.is_authenticated:
         try:
@@ -382,6 +382,8 @@ def subscription_history(request, pk):
         return redirect('login_info')
 
 
+
+@login_required
 def add_company_users(request, pk):
     if request.user.is_authenticated:
 
@@ -414,6 +416,7 @@ def add_company_users(request, pk):
         return redirect('login_info')
 
 
+@login_required
 def add_expected_users(request, pk):
     if request.user.is_authenticated:
         try:
@@ -457,6 +460,7 @@ def add_expected_users(request, pk):
         return redirect('login_info')
 
 
+@login_required
 def upgrade_subscription(request, pk):
     if request.user.is_authenticated:
         try:
@@ -575,15 +579,7 @@ def upgrade_subscription(request, pk):
 
 
 
-
-
-
-
-
-
-
-
-
+@login_required
 def upgrade_new_subscription_plan(request, pk):
     if request.user.is_authenticated:
         try:
@@ -687,17 +683,7 @@ def upgrade_new_subscription_plan(request, pk):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+@login_required
 def upgrade_calculate_subscriptions(request, pk):
     if request.user.is_authenticated:
         try:
@@ -1011,7 +997,7 @@ def upgrade_calculate_subscriptions(request, pk):
 
 
 
-
+@login_required
 def upgrade_submit_subscription_inside_home(request, pk):
     if request.user.is_authenticated:
         try:
@@ -1115,6 +1101,7 @@ def upgrade_submit_subscription_inside_home(request, pk):
 
 
 # @login_required(login_url="users:login")
+@login_required
 def Payment_Submit_for_upgrade(request):
     if request.user.is_authenticated:
         # Getting post requests values
@@ -1337,6 +1324,7 @@ def Payment_Submit_for_upgrade(request):
         return redirect('login_info')
 
 
+@login_required
 def cancel_subscription(request, pk):
     if request.user.is_authenticated:
         try:
@@ -1379,6 +1367,7 @@ def cancel_subscription(request, pk):
 import re
 
 
+@login_required
 def activate_my_erp(request, pk):
     if request.user.is_authenticated:
         if request.method == 'POST':
@@ -1461,7 +1450,7 @@ def activate_my_erp(request, pk):
 
 
 
-
+@login_required
 def activate_my_erp_info(request, pk):
     if request.user.is_authenticated:
 
@@ -1494,7 +1483,7 @@ def activate_my_erp_info(request, pk):
 
 
 
-
+@login_required
 def add_user_with_manager_role(request, pk):
     if request.user.is_authenticated:
         try:
@@ -1579,7 +1568,7 @@ def add_user_with_manager_role(request, pk):
         return redirect('login_info')
 
 
-
+@login_required
 def add_user_without_manager_role(request, pk):
     if request.user.is_authenticated:
         try:
@@ -1663,7 +1652,7 @@ def add_user_without_manager_role(request, pk):
         return redirect('login_info')
 
 
-
+@login_required
 def remove_user(request, pk):
     if request.user.is_authenticated:
         try:
@@ -1744,6 +1733,7 @@ def remove_user(request, pk):
 
 
 from .utils import get_users_with_roles_from_company_id, get_all_user_roles, get_user_roles, update_user_roles
+@login_required
 def update_user_role(request, pk):
     if request.user.is_authenticated:
         try:
@@ -1784,7 +1774,7 @@ def update_user_role(request, pk):
     else:
         return redirect('login_info')
 
-
+@login_required
 def update_user_roles_view(request):
     if request.user.is_authenticated:
         try:
@@ -2036,6 +2026,8 @@ import logging
 # Set up logging
 logger = logging.getLogger(__name__)
 
+
+@login_required
 def export_product_and_image(request, pk):
     if request.user.is_authenticated:
         try:
@@ -2269,7 +2261,7 @@ def export_product_and_image(request, pk):
 
 
 
-
+@login_required
 def dashboard(request, pk):
     if request.user.is_authenticated:
         try:
@@ -2309,7 +2301,7 @@ def dashboard(request, pk):
         return redirect('login_info')
 
 
-
+@login_required
 def new_subscription_plan(request, pk):
     if request.user.is_authenticated:
         try:
@@ -2423,7 +2415,7 @@ def new_subscription_plan(request, pk):
 
 
 
-
+@login_required
 def new_subscriptions(request, pk):
     if request.user.is_authenticated:
         # if request.method == 'POST':
@@ -2802,6 +2794,7 @@ def new_subscriptions(request, pk):
         return redirect('login_info')
 
 
+@login_required
 def submit_subscription_inside_home(request):
     if request.user.is_authenticated:
         try:
@@ -2926,11 +2919,11 @@ def submit_subscription_inside_home(request):
 
 
 def home(request):
-
     return redirect('home_info')
 
-def index(request):
 
+
+def index(request):
     # return render(request, 'registration6.html', {'phone_codes': all_phone_code})
     return render(request, 'registration6.html', {'phone_codes': all_phone_code})
     # return render(request, 'erp_info.html')
@@ -3101,8 +3094,8 @@ def user_logout(request):
         return redirect('home')
 
 
-def subscription_plan(request):
 
+def subscription_plan(request):
     if request.method == 'POST':
         try:
             file_number = request.POST.get('file_number')
@@ -3709,6 +3702,8 @@ def send_email_info(subject, message, recipient_list):
 
 from django.core.mail import EmailMessage
 # @login_required(login_url="users:login")
+
+@login_required
 def Payment_Submit(request):
     if request.user.is_authenticated:
         # Getting post requests values
@@ -4131,6 +4126,8 @@ def get_bucket_name(company_id, type):
 #     bucket_name = bucket_name[:255]
 #     return bucket_name
 
+
+@login_required
 def import_contacts_record(request, pk):
     if request.user.is_authenticated:
         try:
@@ -4263,6 +4260,7 @@ def import_contacts_record(request, pk):
         return redirect('login_info')
 
 
+@login_required
 def import_suppliers_record(request, pk):
     if request.user.is_authenticated:
         try:
@@ -4391,6 +4389,9 @@ def import_suppliers_record(request, pk):
     else:
         return redirect('login_info')
 
+
+
+@login_required
 def import_employees_record(request, pk):
     if request.user.is_authenticated:
         try:
@@ -4515,6 +4516,9 @@ def import_employees_record(request, pk):
             return redirect('home')
     else:
         return redirect('login_info')
+
+
+@login_required
 def import_fleet_assets_record(request, pk):
     if request.user.is_authenticated:
         try:
@@ -4643,6 +4647,8 @@ def import_fleet_assets_record(request, pk):
 
 
 from . utils1 import accounting_here
+
+@login_required
 def odoo_account_accountant(request, pk):
       if request.user.is_authenticated:
         try:
@@ -4747,8 +4753,10 @@ def odoo_account_accountant(request, pk):
 
 
 from . utils1 import setup_manual_shipping
+
+@login_required
 def odoo_setup_manual_shipping(request, pk):
-      if request.user.is_authenticated:
+    if request.user.is_authenticated:
         try:
             if request.method == 'POST':
 
@@ -4816,12 +4824,12 @@ def odoo_setup_manual_shipping(request, pk):
                 messages.warning(request, error_message)
             # messages.warning(request, str(e))
             return redirect('home')
-
-      else:
+    else:
         return redirect('login_info')
 
 
 from .utils2 import configure_mail
+@login_required
 def odoo_configure_mail(request, pk):
       if request.user.is_authenticated:
         try:
@@ -4905,6 +4913,7 @@ def odoo_configure_mail(request, pk):
 
 from . utils1 import set_website_languages
 
+@login_required
 def odoo_set_website_languages(request, pk):
       if request.user.is_authenticated:
         try:
@@ -4978,6 +4987,7 @@ def odoo_set_website_languages(request, pk):
 
 
 from .utils1 import set_configure_whatsapp_service
+@login_required
 def odoo_configure_whatsapp_service(request, pk):
       if request.user.is_authenticated:
         try:
@@ -5049,6 +5059,7 @@ def odoo_configure_whatsapp_service(request, pk):
 
 
 from .utils1 import set_twilio_sms_config
+@login_required
 def odoo_twilio_sms_config(request, pk):
       if request.user.is_authenticated:
         try:
@@ -5122,6 +5133,7 @@ def odoo_twilio_sms_config(request, pk):
 
 
 from .utils1 import configure_stripe_payment
+@login_required
 def odoo_configure_stripe_payment(request, pk):
       if request.user.is_authenticated:
         try:
@@ -5193,6 +5205,7 @@ def odoo_configure_stripe_payment(request, pk):
 
 
 from .utils1 import configure_paypal_payment
+@login_required
 def odoo_configure_paypal_payment(request, pk):
       if request.user.is_authenticated:
         try:
@@ -5262,7 +5275,7 @@ def odoo_configure_paypal_payment(request, pk):
 
 
 
-
+@login_required
 def get_training(request, pk):
       if request.user.is_authenticated:
         try:
@@ -5335,6 +5348,8 @@ def get_training(request, pk):
         return redirect('login_info')
 
 
+
+@login_required
 def learn_erp(request, pk):
       if request.user.is_authenticated:
         try:
